@@ -160,7 +160,6 @@
         
         /* Progress Ring */
         .progress-ring-circle {
-            transition: stroke-dashoffset 1s ease;
             transform: rotate(-90deg);
             transform-origin: 50% 50%;
         }
@@ -967,21 +966,36 @@
         function initPathAnimations() {
             // Animate paths sequentially
             const paths = ['#path1', '#path2', '#path3', '#path-survival', '#path-death'];
-            
+
             paths.forEach((path, index) => {
                 const pathElement = document.querySelector(path);
                 if (pathElement) {
-                    const length = pathElement.getTotalLength();
-                    pathElement.style.strokeDasharray = length;
-                    pathElement.style.strokeDashoffset = length;
-                    
-                    anime({
-                        targets: path,
-                        strokeDashoffset: [length, 0],
-                        easing: 'easeInOutQuad',
-                        duration: 1500,
-                        delay: 500 + (index * 400)
-                    });
+                    const isDeathBranch = pathElement.classList.contains('branch-death');
+
+                    if (isDeathBranch) {
+                        const finalOpacity = parseFloat(getComputedStyle(pathElement).opacity) || 1;
+                        pathElement.style.opacity = 0;
+
+                        anime({
+                            targets: pathElement,
+                            opacity: [0, finalOpacity],
+                            easing: 'easeInOutQuad',
+                            duration: 1200,
+                            delay: 500 + (index * 400)
+                        });
+                    } else {
+                        const length = pathElement.getTotalLength();
+                        pathElement.style.strokeDasharray = length;
+                        pathElement.style.strokeDashoffset = length;
+
+                        anime({
+                            targets: path,
+                            strokeDashoffset: [length, 0],
+                            easing: 'easeInOutQuad',
+                            duration: 1500,
+                            delay: 500 + (index * 400)
+                        });
+                    }
                 }
             });
             
