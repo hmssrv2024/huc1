@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide 10 - Características Sociodemográficas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-adolescent {
+            background: linear-gradient(135deg, #ef4444 0%, #f87171 50%, #fca5a5 100%);
+        }
+        
+        .gradient-reproductive {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #60a5fa 100%);
+        }
+        
+        .gradient-advanced {
+            background: linear-gradient(135deg, #334155 0%, #64748b 50%, #94a3b8 100%);
+        }
+        
+        .pulse-alert {
+            animation: pulseGlow 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulseGlow {
+            0%, 100% {
+                box-shadow: 0 0 5px rgba(239, 68, 68, 0.4),
+                           0 0 10px rgba(239, 68, 68, 0.3),
+                           0 0 15px rgba(239, 68, 68, 0.2);
+            }
+            50% {
+                box-shadow: 0 0 10px rgba(239, 68, 68, 0.6),
+                           0 0 20px rgba(239, 68, 68, 0.5),
+                           0 0 30px rgba(239, 68, 68, 0.3);
+            }
+        }
+        
+        .heartbeat {
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            14% { transform: scale(1.05); }
+            28% { transform: scale(1); }
+            42% { transform: scale(1.05); }
+            70% { transform: scale(1); }
+        }
+        
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .tooltip-container {
+            position: relative;
+        }
+        
+        .custom-tooltip {
+            position: absolute;
+            left: 50%;
+            bottom: calc(100% + 15px);
+            transform: translateX(-50%) scale(0.8);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 100;
+            width: 320px;
+        }
+        
+        .tooltip-container:hover .custom-tooltip {
+            opacity: 1;
+            transform: translateX(-50%) scale(1);
+        }
+        
+        .tooltip-arrow {
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 10px solid #1e293b;
+        }
+        
+        .bar-container {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .bar-fill {
+            position: relative;
+            height: 100%;
+            border-radius: 0.75rem;
+            overflow: hidden;
+        }
+        
+        .bar-shine {
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent 0%,
+                rgba(255, 255, 255, 0.3) 50%,
+                transparent 100%
+            );
+            animation: shine 3s ease-in-out infinite;
+        }
+        
+        @keyframes shine {
+            0% { left: -100%; }
+            50%, 100% { left: 100%; }
+        }
+        
+        .icon-circle {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .silhouette-bg {
+            position: absolute;
+            right: -20px;
+            bottom: -20px;
+            opacity: 0.08;
+            font-size: 180px;
+            color: #3b82f6;
+            transform: rotate(-15deg);
+        }
+        
+        .stat-card {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899);
+        }
+        
+        .number-highlight {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .alert-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 9999px;
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+        }
+        
+        .progress-track {
+            background: linear-gradient(90deg, #e2e8f0 0%, #f1f5f9 100%);
+            border-radius: 0.75rem;
+            height: 48px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .data-label {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: white;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+        }
+        
+        .bar-label-container {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 8px;
+        }
+        
+        .insight-panel {
+            background: linear-gradient(135deg, #fef2f2 0%, #fff1f2 100%);
+            border-left: 4px solid #ef4444;
+            border-radius: 0 12px 12px 0;
+        }
+        
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        .slide-container {
+            min-height: 100vh;
+            background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+        
+        .decorative-circle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.5;
+            filter: blur(60px);
+        }
+        
+        .circle-1 {
+            width: 300px;
+            height: 300px;
+            background: #dbeafe;
+            top: -100px;
+            right: -100px;
+        }
+        
+        .circle-2 {
+            width: 200px;
+            height: 200px;
+            background: #fecaca;
+            bottom: 50px;
+            left: -50px;
+        }
+        
+        .age-ring {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: conic-gradient(
+                #3b82f6 0deg 216deg,
+                #ef4444 216deg 304deg,
+                #64748b 304deg 343deg,
+                #cbd5e1 343deg 360deg
+            );
+            position: relative;
+        }
+        
+        .age-ring-inner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-slate-50">
+    <div class="slide-container relative overflow-hidden p-8 lg:p-12">
+        <!-- Decorative Elements -->
+        <div class="decorative-circle circle-1"></div>
+        <div class="decorative-circle circle-2"></div>
+        
+        <!-- Header Section -->
+        <header class="relative z-10 mb-10 fade-in" id="header">
+            <div class="flex items-center gap-4 mb-3">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
+                    <i class="fas fa-users text-white text-xl"></i>
+                </div>
+                <div>
+                    <span class="text-xs font-semibold text-blue-600 uppercase tracking-wider">Slide 10 · Resultados</span>
+                </div>
+            </div>
+            <h1 class="text-4xl lg:text-5xl font-extrabold text-slate-800 mb-3">
+                Características <span class="number-highlight">Sociodemográficas</span>
+            </h1>
+            <p class="text-lg text-slate-500 max-w-2xl">
+                El rostro de la paciente: perfil etario de la población estudiada
+                <span class="inline-flex items-center ml-2 px-3 py-1 bg-slate-200 rounded-full text-sm font-semibold text-slate-700">
+                    <i class="fas fa-chart-pie mr-2 text-blue-500"></i>
+                    n = 290 casos
+                </span>
+            </p>
+        </header>
+        
+        <!-- Main Content Grid -->
+        <div class="relative z-10 grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
+            
+            <!-- Left Column - Central Statistic -->
+            <div class="lg:col-span-1 fade-in" id="central-stat">
+                <div class="stat-card bg-white rounded-3xl shadow-xl shadow-slate-200/50 p-8 relative overflow-hidden">
+                    <!-- Background Silhouette -->
+                    <div class="silhouette-bg">
+                        <i class="fas fa-female"></i>
+                    </div>
+                    
+                    <div class="relative z-10">
+                        <div class="flex items-center gap-2 mb-6">
+                            <span class="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full uppercase tracking-wide">
+                                Dato Central
+                            </span>
+                        </div>
+                        
+                        <!-- Main Age Display -->
+                        <div class="text-center mb-8 float-animation">
+                            <div class="inline-flex flex-col items-center justify-center w-44 h-44 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 shadow-2xl shadow-blue-500/40">
+                                <span class="text-6xl font-extrabold text-white" id="age-counter">0</span>
+                                <span class="text-blue-100 text-sm font-medium mt-1">años</span>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center">
+                            <h3 class="text-xl font-bold text-slate-800 mb-2">Edad Promedio</h3>
+                            <p class="text-sm text-slate-500 mb-4">
+                                Desviación estándar: ± 6.6 años
+                            </p>
+                            <div class="flex justify-center gap-4 text-xs text-slate-400">
+                                <span class="flex items-center gap-1">
+                                    <i class="fas fa-arrow-down text-green-500"></i>
+                                    Mín: 14
+                                </span>
+                                <span class="flex items-center gap-1">
+                                    <i class="fas fa-arrow-up text-red-500"></i>
+                                    Máx: 42
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Age Distribution Ring Chart -->
+                <div class="mt-6 bg-white rounded-2xl shadow-lg shadow-slate-200/50 p-6 fade-in" id="ring-chart">
+                    <h4 class="text-sm font-bold text-slate-700 mb-4 flex items-center gap-2">
+                        <i class="fas fa-chart-pie text-blue-500"></i>
+                        Distribución Visual
+                    </h4>
+                    <div class="flex justify-center">
+                        <div class="age-ring" id="age-ring">
+                            <div class="age-ring-inner">
+                                <span class="text-2xl font-bold text-slate-800">290</span>
+                                <span class="text-xs text-slate-500">pacientes</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 grid grid-cols-2 gap-2 text-xs">
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded-full bg-blue-500"></div>
+                            <span class="text-slate-600">20-34 años</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                            <span class="text-slate-600">&lt; 20 años</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded-full bg-slate-500"></div>
+                            <span class="text-slate-600">≥ 35 años</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded-full bg-slate-300"></div>
+                            <span class="text-slate-600">Sin dato</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column - Comparative Bars -->
+            <div class="lg:col-span-2 fade-in" id="bars-section">
+                <div class="bg-white rounded-3xl shadow-xl shadow-slate-200/50 p-8">
+                    <div class="flex items-center justify-between mb-8">
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-800 mb-1">Distribución por Grupos Etarios</h3>
+                            <p class="text-sm text-slate-500">Comparativa visual de la población</p>
+                        </div>
+                        <div class="flex items-center gap-2 px-4 py-2 bg-red-50 rounded-xl">
+                            <i class="fas fa-exclamation-triangle text-red-500"></i>
+                            <span class="text-sm font-semibold text-red-700">Atención al grupo vulnerable</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Bar 1 - Adolescents (ALERT) -->
+                    <div class="mb-8 tooltip-container" id="bar-adolescent">
+                        <!-- Tooltip -->
+                        <div class="custom-tooltip">
+                            <div class="bg-slate-800 text-white p-5 rounded-2xl shadow-2xl">
+                                <div class="flex items-start gap-3 mb-3">
+                                    <div class="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-exclamation-circle text-red-400 text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="font-bold text-red-400 mb-1">Hallazgo Crítico</h5>
+                                        <p class="text-sm text-slate-300 leading-relaxed">
+                                            <strong class="text-white">1 de cada 4</strong> pacientes graves era adolescente, evidenciando una <strong class="text-red-400">doble vulnerabilidad</strong> (biológica y social).
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2 text-xs text-slate-400 border-t border-slate-700 pt-3 mt-3">
+                                    <i class="fas fa-lightbulb text-yellow-500"></i>
+                                    <span>Relacionado con fallas en planificación familiar ("demora cero")</span>
+                                </div>
+                            </div>
+                            <div class="tooltip-arrow"></div>
+                        </div>
+                        
+                        <div class="bar-label-container">
+                            <div class="icon-circle gradient-adolescent shadow-lg shadow-red-500/30 pulse-alert relative">
+                                <i class="fas fa-child text-white text-xl"></i>
+                                <span class="alert-badge heartbeat">ALERTA</span>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-baseline gap-2">
+                                    <span class="text-lg font-bold text-slate-800">Adolescentes</span>
+                                    <span class="text-sm text-slate-500">(&lt; 20 años)</span>
+                                </div>
+                                <span class="text-xs text-red-600 font-medium">Grupo de alta vulnerabilidad</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-3xl font-extrabold text-red-500" id="percent-adolescent">0</span>
+                                <span class="text-lg font-bold text-red-400">%</span>
+                                <div class="text-xs text-slate-500">n = 71</div>
+                            </div>
+                        </div>
+                        
+                        <div class="progress-track">
+                            <div class="bar-fill gradient-adolescent pulse-alert" id="bar-fill-adolescent" style="width: 0%;">
+                                <div class="bar-shine"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Bar 2 - Reproductive Age (Majority) -->
+                    <div class="mb-8" id="bar-reproductive">
+                        <div class="bar-label-container">
+                            <div class="icon-circle gradient-reproductive shadow-lg shadow-blue-500/30">
+                                <i class="fas fa-female text-white text-xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-baseline gap-2">
+                                    <span class="text-lg font-bold text-slate-800">Edad Reproductiva Plena</span>
+                                    <span class="text-sm text-slate-500">(20 - 34 años)</span>
+                                </div>
+                                <span class="text-xs text-blue-600 font-medium">Grupo mayoritario</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-3xl font-extrabold text-blue-600" id="percent-reproductive">0</span>
+                                <span class="text-lg font-bold text-blue-400">%</span>
+                                <div class="text-xs text-slate-500">n = 174</div>
+                            </div>
+                        </div>
+                        
+                        <div class="progress-track">
+                            <div class="bar-fill gradient-reproductive" id="bar-fill-reproductive" style="width: 0%;">
+                                <div class="bar-shine"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Bar 3 - Advanced Age -->
+                    <div class="mb-8" id="bar-advanced">
+                        <div class="bar-label-container">
+                            <div class="icon-circle gradient-advanced shadow-lg shadow-slate-500/30">
+                                <i class="fas fa-user text-white text-xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-baseline gap-2">
+                                    <span class="text-lg font-bold text-slate-800">Edad Materna Avanzada</span>
+                                    <span class="text-sm text-slate-500">(≥ 35 años)</span>
+                                </div>
+                                <span class="text-xs text-slate-500 font-medium">Mayor riesgo obstétrico</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-3xl font-extrabold text-slate-600" id="percent-advanced">0</span>
+                                <span class="text-lg font-bold text-slate-400">%</span>
+                                <div class="text-xs text-slate-500">n = 31</div>
+                            </div>
+                        </div>
+                        
+                        <div class="progress-track">
+                            <div class="bar-fill gradient-advanced" id="bar-fill-advanced" style="width: 0%;">
+                                <div class="bar-shine"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Insight Panel -->
+                    <div class="insight-panel p-5 mt-6 fade-in" id="insight-panel">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-red-500 flex items-center justify-center flex-shrink-0 shadow-lg shadow-red-500/30">
+                                <i class="fas fa-heart-pulse text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-red-800 mb-2">Interpretación Clave</h4>
+                                <p class="text-sm text-red-700 leading-relaxed">
+                                    El <strong>24.5% de adolescentes</strong> en la cohorte de morbilidad grave supera significativamente los reportes de otros centros. Este hallazgo sugiere una combinación de <strong>inmadurez biológica</strong> con <strong>vulnerabilidad socioeconómica</strong>, relacionada con fallas en el acceso a planificación familiar ("demora cero").
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Additional Statistics Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                    <div class="bg-white rounded-2xl shadow-lg shadow-slate-200/50 p-5 fade-in" id="card-origin">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
+                                <i class="fas fa-map-marker-alt text-purple-600"></i>
+                            </div>
+                            <div>
+                                <span class="text-xs text-slate-500">Procedencia Principal</span>
+                                <p class="font-bold text-slate-800">Distrito Capital</p>
+                            </div>
+                        </div>
+                        <div class="flex items-baseline gap-1">
+                            <span class="text-3xl font-extrabold text-purple-600" id="percent-capital">0</span>
+                            <span class="text-lg text-purple-400 font-bold">%</span>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-1">197 de 290 pacientes</p>
+                    </div>
+                    
+                    <div class="bg-white rounded-2xl shadow-lg shadow-slate-200/50 p-5 fade-in" id="card-miranda">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 rounded-lg bg-teal-100 flex items-center justify-center">
+                                <i class="fas fa-route text-teal-600"></i>
+                            </div>
+                            <div>
+                                <span class="text-xs text-slate-500">Estado Miranda</span>
+                                <p class="font-bold text-slate-800">Referidas</p>
+                            </div>
+                        </div>
+                        <div class="flex items-baseline gap-1">
+                            <span class="text-3xl font-extrabold text-teal-600" id="percent-miranda">0</span>
+                            <span class="text-lg text-teal-400 font-bold">%</span>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-1">84 de 290 pacientes</p>
+                    </div>
+                    
+                    <div class="bg-white rounded-2xl shadow-lg shadow-slate-200/50 p-5 fade-in" id="card-other">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center">
+                                <i class="fas fa-question-circle text-amber-600"></i>
+                            </div>
+                            <div>
+                                <span class="text-xs text-slate-500">Datos No Disponibles</span>
+                                <p class="font-bold text-slate-800">Edad sin registrar</p>
+                            </div>
+                        </div>
+                        <div class="flex items-baseline gap-1">
+                            <span class="text-3xl font-extrabold text-amber-600" id="percent-nodata">0</span>
+                            <span class="text-lg text-amber-400 font-bold">%</span>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-1">14 de 290 pacientes</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer Note -->
+        <footer class="relative z-10 mt-10 text-center fade-in" id="footer">
+            <div class="inline-flex items-center gap-3 px-6 py-3 bg-white rounded-full shadow-lg shadow-slate-200/50">
+                <i class="fas fa-info-circle text-slate-400"></i>
+                <span class="text-sm text-slate-500">
+                    Fuente: Tabla 2 · En el <strong class="text-slate-700">4.8%</strong> de los casos (n=14) no se registró la edad materna en el expediente clínico
+                </span>
+            </div>
+        </footer>
+    </div>
+    
+    <script>
+        // Animation Controller
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initial state - hide all fade-in elements
+            const fadeElements = document.querySelectorAll('.fade-in');
+            fadeElements.forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(30px)';
+            });
+            
+            // Animation Timeline
+            const timeline = anime.timeline({
+                easing: 'easeOutExpo'
+            });
+            
+            // 1. Header Animation
+            timeline.add({
+                targets: '#header',
+                opacity: [0, 1],
+                translateY: [30, 0],
+                duration: 800
+            });
+            
+            // 2. Central Stat Animation
+            timeline.add({
+                targets: '#central-stat',
+                opacity: [0, 1],
+                translateY: [30, 0],
+                duration: 800
+            }, '-=400');
+            
+            // 3. Age Counter Animation
+            timeline.add({
+                targets: { value: 0 },
+                value: 25.2,
+                round: 10,
+                duration: 1500,
+                easing: 'easeOutExpo',
+                update: function(anim) {
+                    document.getElementById('age-counter').textContent = 
+                        anim.animations[0].currentValue.toFixed(1);
+                }
+            }, '-=600');
+            
+            // 4. Ring Chart
+            timeline.add({
+                targets: '#ring-chart',
+                opacity: [0, 1],
+                translateY: [30, 0],
+                duration: 600
+            }, '-=1000');
+            
+            // 5. Bars Section
+            timeline.add({
+                targets: '#bars-section',
+                opacity: [0, 1],
+                translateY: [30, 0],
+                duration: 800
+            }, '-=1200');
+            
+            // 6. Adolescent Bar Animation (First - Most Important)
+            timeline.add({
+                targets: '#bar-fill-adolescent',
+                width: ['0%', '40.8%'], // Scaled to max (60% = 100% width, so 24.5% = ~40.8%)
+                duration: 1200,
+                easing: 'easeOutElastic(1, .8)'
+            }, '-=600');
+            
+            // Counter for adolescent percentage
+            timeline.add({
+                targets: { value: 0 },
+                value: 24.5,
+                round: 10,
+                duration: 1200,
+                easing: 'easeOutExpo',
+                update: function(anim) {
+                    document.getElementById('percent-adolescent').textContent = 
+                        anim.animations[0].currentValue.toFixed(1);
+                }
+            }, '-=1200');
+            
+            // 7. Reproductive Bar Animation
+            timeline.add({
+                targets: '#bar-fill-reproductive',
+                width: ['0%', '100%'], // This is the max (60%)
+                duration: 1200,
+                easing: 'easeOutElastic(1, .8)'
+            }, '-=800');
+            
+            // Counter for reproductive percentage
+            timeline.add({
+                targets: { value: 0 },
+                value: 60.0,
+                round: 10,
+                duration: 1200,
+                easing: 'easeOutExpo',
+                update: function(anim) {
+                    document.getElementById('percent-reproductive').textContent = 
+                        anim.animations[0].currentValue.toFixed(1);
+                }
+            }, '-=1200');
+            
+            // 8. Advanced Age Bar Animation
+            timeline.add({
+                targets: '#bar-fill-advanced',
+                width: ['0%', '17.8%'], // Scaled (10.7% of 60% max)
+                duration: 1000,
+                easing: 'easeOutElastic(1, .8)'
+            }, '-=800');
+            
+            // Counter for advanced percentage
+            timeline.add({
+                targets: { value: 0 },
+                value: 10.7,
+                round: 10,
+                duration: 1000,
+                easing: 'easeOutExpo',
+                update: function(anim) {
+                    document.getElementById('percent-advanced').textContent = 
+                        anim.animations[0].currentValue.toFixed(1);
+                }
+            }, '-=1000');
+            
+            // 9. Insight Panel
+            timeline.add({
+                targets: '#insight-panel',
+                opacity: [0, 1],
+                translateY: [20, 0],
+                duration: 600
+            }, '-=400');
+            
+            // 10. Additional Cards
+            timeline.add({
+                targets: ['#card-origin', '#card-miranda', '#card-other'],
+                opacity: [0, 1],
+                translateY: [20, 0],
+                duration: 600,
+                delay: anime.stagger(150)
+            }, '-=200');
+            
+            // Counter for Capital percentage
+            timeline.add({
+                targets: { value: 0 },
+                value: 67.9,
+                round: 10,
+                duration: 800,
+                easing: 'easeOutExpo',
+                update: function(anim) {
+                    document.getElementById('percent-capital').textContent = 
+                        anim.animations[0].currentValue.toFixed(1);
+                }
+            }, '-=600');
+            
+            // Counter for Miranda percentage
+            timeline.add({
+                targets: { value: 0 },
+                value: 29.0,
+                round: 10,
+                duration: 800,
+                easing: 'easeOutExpo',
+                update: function(anim) {
+                    document.getElementById('percent-miranda').textContent = 
+                        anim.animations[0].currentValue.toFixed(1);
+                }
+            }, '-=800');
+            
+            // Counter for No Data percentage
+            timeline.add({
+                targets: { value: 0 },
+                value: 4.8,
+                round: 10,
+                duration: 800,
+                easing: 'easeOutExpo',
+                update: function(anim) {
+                    document.getElementById('percent-nodata').textContent = 
+                        anim.animations[0].currentValue.toFixed(1);
+                }
+            }, '-=800');
+            
+            // 11. Footer
+            timeline.add({
+                targets: '#footer',
+                opacity: [0, 1],
+                translateY: [20, 0],
+                duration: 600
+            }, '-=400');
+            
+            // Hover interaction for adolescent bar - add visual feedback
+            const adolescentBar = document.getElementById('bar-adolescent');
+            
+            adolescentBar.addEventListener('mouseenter', function() {
+                anime({
+                    targets: '#bar-fill-adolescent',
+                    scale: [1, 1.02],
+                    duration: 300,
+                    easing: 'easeOutCubic'
+                });
+            });
+            
+            adolescentBar.addEventListener('mouseleave', function() {
+                anime({
+                    targets: '#bar-fill-adolescent',
+                    scale: [1.02, 1],
+                    duration: 300,
+                    easing: 'easeOutCubic'
+                });
+            });
+            
+            // Animate ring chart rotation
+            anime({
+                targets: '#age-ring',
+                rotate: ['-90deg', '0deg'],
+                duration: 1500,
+                delay: 1000,
+                easing: 'easeOutExpo'
+            });
+        });
+    </script>
+</body>
+</html>

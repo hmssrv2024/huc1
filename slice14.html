@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide 14 - El Mapa del Daño: Disfunción Orgánica Múltiple</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .scan-line {
+            background: linear-gradient(
+                to bottom,
+                transparent 0%,
+                rgba(6, 182, 212, 0.1) 50%,
+                transparent 100%
+            );
+            animation: scanMove 3s linear infinite;
+        }
+        
+        @keyframes scanMove {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+        
+        .grid-pattern {
+            background-image: 
+                linear-gradient(rgba(148, 163, 184, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(148, 163, 184, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        
+        .health-bar-bg {
+            background: linear-gradient(90deg, rgba(148, 163, 184, 0.2) 0%, rgba(148, 163, 184, 0.1) 100%);
+        }
+        
+        .organ-glow {
+            filter: drop-shadow(0 0 8px currentColor);
+        }
+        
+        .organ-intense-glow {
+            filter: drop-shadow(0 0 15px currentColor) drop-shadow(0 0 30px currentColor);
+        }
+        
+        .heartbeat {
+            animation: heartbeat 1s ease-in-out infinite;
+        }
+        
+        .heartbeat-fast {
+            animation: heartbeat 0.5s ease-in-out infinite;
+        }
+        
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            15% { transform: scale(1.1); }
+            30% { transform: scale(1); }
+            45% { transform: scale(1.05); }
+            60% { transform: scale(1); }
+        }
+        
+        .breathing {
+            animation: breathing 4s ease-in-out infinite;
+        }
+        
+        .breathing-fast {
+            animation: breathing 2s ease-in-out infinite;
+        }
+        
+        @keyframes breathing {
+            0%, 100% { opacity: 0.7; transform: scaleX(1); }
+            50% { opacity: 1; transform: scaleX(1.02); }
+        }
+        
+        .medical-card {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(148, 163, 184, 0.3);
+        }
+        
+        .bar-item:hover .bar-indicator {
+            transform: scaleX(1.02);
+        }
+        
+        .body-silhouette {
+            fill: none;
+            stroke: #cbd5e1;
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        
+        .organ-base {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .organ-highlight {
+            stroke-width: 2;
+        }
+        
+        .pulse-ring {
+            animation: pulseRing 2s ease-out infinite;
+        }
+        
+        @keyframes pulseRing {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+        
+        .data-stream {
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(6, 182, 212, 0.3) 50%, 
+                transparent 100%);
+            animation: dataFlow 2s linear infinite;
+        }
+        
+        @keyframes dataFlow {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .corner-bracket::before,
+        .corner-bracket::after {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-color: #06b6d4;
+            border-style: solid;
+        }
+        
+        .corner-bracket::before {
+            top: -1px;
+            left: -1px;
+            border-width: 2px 0 0 2px;
+        }
+        
+        .corner-bracket::after {
+            bottom: -1px;
+            right: -1px;
+            border-width: 0 2px 2px 0;
+        }
+        
+        .status-dot {
+            animation: statusBlink 2s ease-in-out infinite;
+        }
+        
+        @keyframes statusBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen overflow-hidden">
+    <!-- Main Container -->
+    <div class="w-full h-screen p-6 grid-pattern relative">
+        <!-- Scan Line Effect -->
+        <div class="absolute inset-0 scan-line pointer-events-none opacity-50"></div>
+        
+        <!-- Header -->
+        <header class="relative z-10 mb-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="w-2 h-2 rounded-full bg-cyan-500 status-dot"></div>
+                        <span class="mono text-xs text-slate-400 tracking-wider">ANÁLISIS DE DISFUNCIÓN ORGÁNICA</span>
+                    </div>
+                    <h1 class="text-3xl font-bold text-slate-800 tracking-tight">
+                        Sistemas Afectados
+                    </h1>
+                    <p class="text-slate-500 mt-1">
+                        Distribución de la disfunción orgánica en morbilidad materna grave
+                        <span class="mono text-cyan-600 ml-2">(n=290)</span>
+                    </p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="bg-white rounded-lg px-4 py-2 shadow-sm border border-slate-200">
+                        <span class="text-xs text-slate-400 block">Período</span>
+                        <span class="mono text-sm font-medium text-slate-700">2011-2020</span>
+                    </div>
+                    <div class="bg-white rounded-lg px-4 py-2 shadow-sm border border-slate-200">
+                        <span class="text-xs text-slate-400 block">Centro</span>
+                        <span class="mono text-sm font-medium text-slate-700">HUC</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-10 gap-6 h-[calc(100vh-160px)] relative z-10">
+            
+            <!-- Left Panel - Health Bars List (40%) -->
+            <div class="col-span-4 bg-white rounded-2xl shadow-lg border border-slate-200 p-6 relative overflow-hidden corner-bracket">
+                <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-red-500 via-violet-500 to-cyan-500 opacity-60"></div>
+                
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-lg font-semibold text-slate-700 flex items-center gap-2">
+                        <i class="fas fa-chart-bar text-cyan-500"></i>
+                        Ranking de Afectación
+                    </h2>
+                    <span class="mono text-xs bg-slate-100 px-3 py-1 rounded-full text-slate-500">
+                        <i class="fas fa-mouse-pointer mr-1"></i> Interactivo
+                    </span>
+                </div>
+                
+                <!-- Health Bars Container -->
+                <div class="space-y-4" id="healthBars">
+                    
+                    <!-- Cardiovascular -->
+                    <div class="bar-item group cursor-pointer p-3 rounded-xl hover:bg-red-50 transition-all duration-300" 
+                         data-system="cardiovascular" data-value="68.3">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-red-100 flex items-center justify-center">
+                                    <i class="fas fa-heart text-red-500 text-lg"></i>
+                                </div>
+                                <div>
+                                    <span class="font-medium text-slate-700 group-hover:text-red-600 transition-colors">
+                                        Cardiovascular
+                                    </span>
+                                    <span class="block text-xs text-slate-400">Hipertensión, shock</span>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="mono text-2xl font-bold text-red-500 bar-value">0</span>
+                                <span class="mono text-sm text-red-400">%</span>
+                                <span class="block text-xs text-slate-400 mono">n=198</span>
+                            </div>
+                        </div>
+                        <div class="h-3 health-bar-bg rounded-full overflow-hidden relative">
+                            <div class="bar-indicator absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-red-500 to-red-400 transition-transform"
+                                 style="width: 0%"></div>
+                            <div class="absolute inset-0 data-stream opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Hematológico -->
+                    <div class="bar-item group cursor-pointer p-3 rounded-xl hover:bg-violet-50 transition-all duration-300" 
+                         data-system="hematologico" data-value="24.8">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-violet-100 flex items-center justify-center">
+                                    <i class="fas fa-tint text-violet-500 text-lg"></i>
+                                </div>
+                                <div>
+                                    <span class="font-medium text-slate-700 group-hover:text-violet-600 transition-colors">
+                                        Hematológico
+                                    </span>
+                                    <span class="block text-xs text-slate-400">Coagulopatías, hemorragias</span>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="mono text-2xl font-bold text-violet-500 bar-value">0</span>
+                                <span class="mono text-sm text-violet-400">%</span>
+                                <span class="block text-xs text-slate-400 mono">n=72</span>
+                            </div>
+                        </div>
+                        <div class="h-3 health-bar-bg rounded-full overflow-hidden relative">
+                            <div class="bar-indicator absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-violet-500 to-violet-400 transition-transform"
+                                 style="width: 0%"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Respiratorio -->
+                    <div class="bar-item group cursor-pointer p-3 rounded-xl hover:bg-cyan-50 transition-all duration-300" 
+                         data-system="respiratorio" data-value="21.0">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-cyan-100 flex items-center justify-center">
+                                    <i class="fas fa-lungs text-cyan-500 text-lg"></i>
+                                </div>
+                                <div>
+                                    <span class="font-medium text-slate-700 group-hover:text-cyan-600 transition-colors">
+                                        Respiratorio
+                                    </span>
+                                    <span class="block text-xs text-slate-400">Disnea, hipoxemia</span>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="mono text-2xl font-bold text-cyan-500 bar-value">0</span>
+                                <span class="mono text-sm text-cyan-400">%</span>
+                                <span class="block text-xs text-slate-400 mono">n=61</span>
+                            </div>
+                        </div>
+                        <div class="h-3 health-bar-bg rounded-full overflow-hidden relative">
+                            <div class="bar-indicator absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-cyan-500 to-cyan-400 transition-transform"
+                                 style="width: 0%"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Neurológico -->
+                    <div class="bar-item group cursor-pointer p-3 rounded-xl hover:bg-blue-50 transition-all duration-300" 
+                         data-system="neurologico" data-value="10.7">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
+                                    <i class="fas fa-brain text-blue-500 text-lg"></i>
+                                </div>
+                                <div>
+                                    <span class="font-medium text-slate-700 group-hover:text-blue-600 transition-colors">
+                                        Neurológico
+                                    </span>
+                                    <span class="block text-xs text-slate-400">Eclampsia, convulsiones</span>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="mono text-2xl font-bold text-blue-500 bar-value">0</span>
+                                <span class="mono text-sm text-blue-400">%</span>
+                                <span class="block text-xs text-slate-400 mono">n=31</span>
+                            </div>
+                        </div>
+                        <div class="h-3 health-bar-bg rounded-full overflow-hidden relative">
+                            <div class="bar-indicator absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-blue-500 to-blue-400 transition-transform"
+                                 style="width: 0%"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Infeccioso/Sepsis -->
+                    <div class="bar-item group cursor-pointer p-3 rounded-xl hover:bg-emerald-50 transition-all duration-300" 
+                         data-system="infeccioso" data-value="10.0">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center">
+                                    <i class="fas fa-virus text-emerald-500 text-lg"></i>
+                                </div>
+                                <div>
+                                    <span class="font-medium text-slate-700 group-hover:text-emerald-600 transition-colors">
+                                        Infeccioso/Sepsis
+                                    </span>
+                                    <span class="block text-xs text-slate-400">Sepsis, corioamnionitis</span>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="mono text-2xl font-bold text-emerald-500 bar-value">0</span>
+                                <span class="mono text-sm text-emerald-400">%</span>
+                                <span class="block text-xs text-slate-400 mono">n=29</span>
+                            </div>
+                        </div>
+                        <div class="h-3 health-bar-bg rounded-full overflow-hidden relative">
+                            <div class="bar-indicator absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-emerald-500 to-emerald-400 transition-transform"
+                                 style="width: 0%"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Hepático/Renal -->
+                    <div class="bar-item group cursor-pointer p-3 rounded-xl hover:bg-orange-50 transition-all duration-300" 
+                         data-system="hepatorenal" data-value="4.8">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center">
+                                    <i class="fas fa-kidneys text-orange-500 text-lg"></i>
+                                </div>
+                                <div>
+                                    <span class="font-medium text-slate-700 group-hover:text-orange-600 transition-colors">
+                                        Hepático/Renal
+                                    </span>
+                                    <span class="block text-xs text-slate-400">HELLP, IRA</span>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="mono text-2xl font-bold text-orange-500 bar-value">0</span>
+                                <span class="mono text-sm text-orange-400">%</span>
+                                <span class="block text-xs text-slate-400 mono">n=14</span>
+                            </div>
+                        </div>
+                        <div class="h-3 health-bar-bg rounded-full overflow-hidden relative">
+                            <div class="bar-indicator absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-orange-500 to-orange-400 transition-transform"
+                                 style="width: 0%"></div>
+                        </div>
+                    </div>
+                    
+                </div>
+                
+                <!-- Footer Note -->
+                <div class="mt-6 pt-4 border-t border-slate-100">
+                    <p class="text-xs text-slate-400 flex items-center gap-2">
+                        <i class="fas fa-info-circle text-cyan-400"></i>
+                        El 2.8% presentó compromiso de múltiples sistemas (fallo multiorgánico)
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Right Panel - Body SVG (60%) -->
+            <div class="col-span-6 bg-white rounded-2xl shadow-lg border border-slate-200 p-6 relative overflow-hidden corner-bracket">
+                <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-500 via-red-500 to-violet-500 opacity-60"></div>
+                
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-semibold text-slate-700 flex items-center gap-2">
+                        <i class="fas fa-user-nurse text-cyan-500"></i>
+                        Mapeo Corporal
+                    </h2>
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-green-500 status-dot"></span>
+                        <span class="mono text-xs text-slate-400">SCAN ACTIVO</span>
+                    </div>
+                </div>
+                
+                <!-- SVG Body Container -->
+                <div class="relative h-[calc(100%-60px)] flex items-center justify-center" id="bodyContainer">
+                    
+                    <!-- Inline SVG -->
+                    <svg viewBox="0 0 400 600" class="w-full h-full max-w-md" id="bodySVG">
+                        <defs>
+                            <!-- Gradients -->
+                            <linearGradient id="heartGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#ef4444;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#dc2626;stop-opacity:1" />
+                            </linearGradient>
+                            <linearGradient id="lungGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#06b6d4;stop-opacity:0.8" />
+                                <stop offset="100%" style="stop-color:#0891b2;stop-opacity:0.8" />
+                            </linearGradient>
+                            <linearGradient id="liverGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:0.8" />
+                                <stop offset="100%" style="stop-color:#d97706;stop-opacity:0.8" />
+                            </linearGradient>
+                            <linearGradient id="brainGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:0.8" />
+                                <stop offset="100%" style="stop-color:#2563eb;stop-opacity:0.8" />
+                            </linearGradient>
+                            <linearGradient id="bloodGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:0.8" />
+                                <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:0.8" />
+                            </linearGradient>
+                            
+                            <!-- Glow Filter -->
+                            <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                                <feMerge>
+                                    <feMergeNode in="coloredBlur"/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
+                            
+                            <filter id="glowIntense" x="-50%" y="-50%" width="200%" height="200%">
+                                <feGaussianBlur stdDeviation="6" result="coloredBlur"/>
+                                <feMerge>
+                                    <feMergeNode in="coloredBlur"/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
+                        </defs>
+                        
+                        <!-- Background Grid -->
+                        <pattern id="smallGrid" width="20" height="20" patternUnits="userSpaceOnUse">
+                            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#e2e8f0" stroke-width="0.5"/>
+                        </pattern>
+                        <rect width="100%" height="100%" fill="url(#smallGrid)" opacity="0.5"/>
+                        
+                        <!-- Body Silhouette - Pregnant Woman -->
+                        <g id="bodySilhouette" class="body-silhouette">
+                            <!-- Head -->
+                            <ellipse cx="200" cy="60" rx="35" ry="45" />
+                            
+                            <!-- Neck -->
+                            <path d="M185 100 Q185 115 180 125 M215 100 Q215 115 220 125" />
+                            
+                            <!-- Shoulders -->
+                            <path d="M180 125 Q140 130 120 160 M220 125 Q260 130 280 160" />
+                            
+                            <!-- Arms -->
+                            <path d="M120 160 Q100 200 95 260 Q90 300 100 340" />
+                            <path d="M280 160 Q300 200 305 260 Q310 300 300 340" />
+                            
+                            <!-- Torso with pregnant belly -->
+                            <path d="M180 125 L175 180 Q170 220 165 260 Q155 320 160 380 Q165 440 180 480" />
+                            <path d="M220 125 L225 180 Q230 220 235 260 Q245 320 240 380 Q235 440 220 480" />
+                            
+                            <!-- Pregnant Belly Curve -->
+                            <path d="M165 260 Q150 320 155 380 Q160 420 175 450 
+                                     Q190 470 200 475 Q210 470 225 450 
+                                     Q240 420 245 380 Q250 320 235 260" 
+                                  stroke-width="2" />
+                            
+                            <!-- Legs -->
+                            <path d="M180 480 Q175 520 170 560 Q168 580 165 600" />
+                            <path d="M220 480 Q225 520 230 560 Q232 580 235 600" />
+                        </g>
+                        
+                        <!-- Organs Group -->
+                        <g id="organsGroup">
+                            
+                            <!-- Brain -->
+                            <g id="brain" class="organ-base" data-system="neurologico">
+                                <ellipse cx="200" cy="50" rx="25" ry="30" 
+                                         fill="url(#brainGradient)" opacity="0.7" filter="url(#glow)"/>
+                                <!-- Brain folds -->
+                                <path d="M180 45 Q190 40 200 45 Q210 40 220 45" 
+                                      stroke="#2563eb" stroke-width="1" fill="none" opacity="0.6"/>
+                                <path d="M182 55 Q195 50 200 55 Q205 50 218 55" 
+                                      stroke="#2563eb" stroke-width="1" fill="none" opacity="0.6"/>
+                                <circle cx="200" cy="50" r="3" fill="#1d4ed8" opacity="0.8"/>
+                            </g>
+                            
+                            <!-- Left Lung -->
+                            <g id="leftLung" class="organ-base breathing" data-system="respiratorio">
+                                <path d="M155 170 Q140 180 135 210 Q130 250 140 280 Q150 300 165 290 
+                                         Q175 280 175 250 Q175 210 170 180 Q165 165 155 170" 
+                                      fill="url(#lungGradient)" filter="url(#glow)"/>
+                                <!-- Bronchi lines -->
+                                <path d="M160 180 L155 200 L150 220" stroke="#0891b2" stroke-width="1" fill="none" opacity="0.6"/>
+                                <path d="M160 180 L165 200 L160 220" stroke="#0891b2" stroke-width="1" fill="none" opacity="0.6"/>
+                            </g>
+                            
+                            <!-- Right Lung -->
+                            <g id="rightLung" class="organ-base breathing" data-system="respiratorio">
+                                <path d="M245 170 Q260 180 265 210 Q270 250 260 280 Q250 300 235 290 
+                                         Q225 280 225 250 Q225 210 230 180 Q235 165 245 170" 
+                                      fill="url(#lungGradient)" filter="url(#glow)"/>
+                                <!-- Bronchi lines -->
+                                <path d="M240 180 L245 200 L250 220" stroke="#0891b2" stroke-width="1" fill="none" opacity="0.6"/>
+                                <path d="M240 180 L235 200 L240 220" stroke="#0891b2" stroke-width="1" fill="none" opacity="0.6"/>
+                            </g>
+                            
+                            <!-- Heart (Central and Prominent) -->
+                            <g id="heart" class="organ-base heartbeat" data-system="cardiovascular">
+                                <!-- Pulse Ring -->
+                                <circle cx="200" cy="220" r="30" fill="none" stroke="#ef4444" stroke-width="1" 
+                                        class="pulse-ring" opacity="0.5"/>
+                                
+                                <!-- Main Heart Shape -->
+                                <path d="M200 200 
+                                         C200 190 185 180 175 190 
+                                         C165 200 165 215 175 230 
+                                         L200 255 
+                                         L225 230 
+                                         C235 215 235 200 225 190 
+                                         C215 180 200 190 200 200" 
+                                      fill="url(#heartGradient)" filter="url(#glow)"/>
+                                
+                                <!-- Heart Details -->
+                                <path d="M190 210 Q195 205 200 210" stroke="#fff" stroke-width="1.5" fill="none" opacity="0.5"/>
+                                <circle cx="188" cy="205" r="3" fill="#fff" opacity="0.3"/>
+                                <circle cx="212" cy="205" r="3" fill="#fff" opacity="0.3"/>
+                                
+                                <!-- Aorta -->
+                                <path d="M200 195 Q200 175 195 165 M200 195 Q200 175 205 165" 
+                                      stroke="#dc2626" stroke-width="3" fill="none" opacity="0.7"/>
+                            </g>
+                            
+                            <!-- Blood Vessels (Hematological representation) -->
+                            <g id="bloodVessels" class="organ-base" data-system="hematologico">
+ 

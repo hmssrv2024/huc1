@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide 04 - Contexto Institucional HUC</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800&family=Open+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Anime.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'huc-blue': '#1e3a8a',
+                        'huc-blue-light': '#3b82f6',
+                        'crisis-amber': '#f59e0b',
+                        'crisis-red': '#ef4444',
+                        'crisis-orange': '#ea580c'
+                    },
+                    fontFamily: {
+                        'heading': ['Montserrat', 'sans-serif'],
+                        'body': ['Open Sans', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: #0f172a;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .font-heading {
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        /* Toggle Switch Styles */
+        .toggle-switch {
+            position: relative;
+            width: 280px;
+            height: 50px;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            border-radius: 25px;
+            padding: 4px;
+            cursor: pointer;
+            border: 2px solid #475569;
+            transition: all 0.5s ease;
+        }
+        
+        .toggle-switch.crisis-mode {
+            border-color: #f59e0b;
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            width: 134px;
+            height: 42px;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            border-radius: 21px;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .toggle-switch.crisis-mode .toggle-slider {
+            transform: translateX(134px);
+            background: linear-gradient(135deg, #ea580c 0%, #f59e0b 100%);
+        }
+        
+        .toggle-labels {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 100%;
+            padding: 0 20px;
+        }
+        
+        .toggle-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            z-index: 1;
+        }
+        
+        /* SVG Animation Styles */
+        .building-line {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+        }
+        
+        .building-line.animated {
+            animation: drawLine 2s ease forwards;
+        }
+        
+        @keyframes drawLine {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+        
+        /* Radar Effect */
+        .radar-circle {
+            fill: none;
+            stroke: #3b82f6;
+            stroke-width: 1;
+            opacity: 0;
+        }
+        
+        .crisis-mode .radar-circle {
+            stroke: #f59e0b;
+        }
+        
+        /* Hotspot Styles */
+        .hotspot {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .hotspot-pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(1.2);
+            }
+        }
+        
+        /* Tooltip Styles */
+        .tooltip {
+            position: absolute;
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid #3b82f6;
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: white;
+            font-size: 13px;
+            pointer-events: none;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            z-index: 100;
+            max-width: 200px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .tooltip.crisis-tooltip {
+            border-color: #f59e0b;
+        }
+        
+        .tooltip.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Glow Effects */
+        .blue-glow {
+            filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.5));
+        }
+        
+        .amber-glow {
+            filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.5));
+        }
+        
+        /* Info Panel */
+        .info-panel {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(51, 65, 85, 0.6) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(71, 85, 105, 0.5);
+            border-radius: 16px;
+        }
+        
+        .info-panel.crisis-panel {
+            border-color: rgba(245, 158, 11, 0.3);
+        }
+        
+        /* Feature Cards */
+        .feature-card {
+            background: rgba(30, 58, 138, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            border-color: rgba(59, 130, 246, 0.6);
+            transform: translateY(-2px);
+        }
+        
+        .crisis-card {
+            background: rgba(245, 158, 11, 0.1);
+            border-color: rgba(245, 158, 11, 0.3);
+        }
+        
+        .crisis-card:hover {
+            border-color: rgba(245, 158, 11, 0.6);
+        }
+        
+        /* Grid Pattern Background */
+        .grid-pattern {
+            background-image: 
+                linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+        
+        /* Slide Number */
+        .slide-number {
+            position: fixed;
+            bottom: 20px;
+            right: 30px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            color: #64748b;
+            letter-spacing: 2px;
+        }
+        
+        /* Animated Background Elements */
+        .bg-element {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.1;
+            filter: blur(60px);
+        }
+        
+        /* Alert Icon Animation */
+        .alert-bounce {
+            animation: alertBounce 0.5s ease infinite alternate;
+        }
+        
+        @keyframes alertBounce {
+            from { transform: scale(1); }
+            to { transform: scale(1.1); }
+        }
+    </style>
+</head>
+<body class="bg-slate-900 min-h-screen grid-pattern relative overflow-hidden">
+    
+    <!-- Animated Background Elements -->
+    <div class="bg-element w-96 h-96 bg-huc-blue top-0 left-0 -translate-x-1/2 -translate-y-1/2"></div>
+    <div class="bg-element w-80 h-80 bg-crisis-amber bottom-0 right-0 translate-x-1/3 translate-y-1/3 opacity-5"></div>
+    
+    <!-- Main Container -->
+    <div class="relative z-10 min-h-screen flex flex-col p-6 lg:p-8">
+        
+        <!-- Header Section -->
+        <header class="mb-6">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                <div>
+                    <p class="text-huc-blue-light font-body text-sm tracking-widest uppercase mb-2">
+                        <i class="fas fa-hospital-alt mr-2"></i>Slide 04 — Contexto Institucional
+                    </p>
+                    <h1 class="font-heading text-3xl lg:text-4xl font-bold text-white mb-2">
+                        El Escenario: <span class="text-transparent bg-clip-text bg-gradient-to-r from-huc-blue-light to-cyan-400">Un Gigante en la Tormenta</span>
+                    </h1>
+                    <p class="text-slate-400 font-body text-base lg:text-lg">
+                        Hospital Universitario de Caracas • Alta Complejidad en Tiempos de Crisis
+                    </p>
+                </div>
+                
+                <!-- Toggle Switch Control -->
+                <div class="flex flex-col items-center lg:items-end gap-2">
+                    <span class="text-slate-500 text-xs uppercase tracking-wider font-heading">
+                        <i class="fas fa-microscope mr-1"></i> Vista de Rayos X
+                    </span>
+                    <div class="toggle-switch" id="viewToggle" onclick="toggleView()">
+                        <div class="toggle-labels">
+                            <span class="toggle-label text-slate-400" id="labelStructural">
+                                <i class="fas fa-shield-alt mr-1"></i>Fortalezas
+                            </span>
+                            <span class="toggle-label text-slate-500" id="labelCrisis">
+                                <i class="fas fa-exclamation-triangle mr-1"></i>Crisis
+                            </span>
+                        </div>
+                        <div class="toggle-slider" id="slider">
+                            <span id="sliderText">FORTALEZAS</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Main Content Grid -->
+        <main class="flex-1 grid grid-cols-1 xl:grid-cols-3 gap-6">
+            
+            <!-- Left Info Panel -->
+            <div class="info-panel p-5 order-2 xl:order-1" id="infoPanel">
+                <div id="structuralInfo">
+                    <h3 class="font-heading text-lg font-semibold text-white mb-4 flex items-center">
+                        <span class="w-8 h-8 bg-huc-blue rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-university text-white text-sm"></i>
+                        </span>
+                        Perfil Institucional
+                    </h3>
+                    
+                    <div class="space-y-3">
+                        <div class="feature-card">
+                            <div class="flex items-start gap-3">
+                                <div class="w-10 h-10 bg-gradient-to-br from-huc-blue to-huc-blue-light rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-star text-white"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-heading text-white font-semibold text-sm">Hospital Tipo IV</h4>
+                                    <p class="text-slate-400 text-xs mt-1">Máxima complejidad del sistema nacional de salud</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-card">
+                            <div class="flex items-start gap-3">
+                                <div class="w-10 h-10 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-graduation-cap text-white"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-heading text-white font-semibold text-sm">Centro Académico UCV</h4>
+                                    <p class="text-slate-400 text-xs mt-1">Cuna de la medicina académica venezolana</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-card">
+                            <div class="flex items-start gap-3">
+                                <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-network-wired text-white"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-heading text-white font-semibold text-sm">Referencia Nacional</h4>
+                                    <p class="text-slate-400 text-xs mt-1">Recibe pacientes de todo el territorio</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-card">
+                            <div class="flex items-start gap-3">
+                                <div class="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-procedures text-white"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-heading text-white font-semibold text-sm">Capacidad Quirúrgica</h4>
+                                    <p class="text-slate-400 text-xs mt-1">Alta resolución en emergencias obstétricas</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Stats -->
+                    <div class="mt-5 pt-4 border-t border-slate-700/50">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="text-center p-3 bg-slate-800/50 rounded-lg">
+                                <p class="font-heading text-2xl font-bold text-huc-blue-light">290</p>
+                                <p class="text-slate-500 text-xs">Casos MMG (2011-2020)</p>
+                            </div>
+                            <div class="text-center p-3 bg-slate-800/50 rounded-lg">
+                                <p class="font-heading text-2xl font-bold text-emerald-400">100%</p>
+                                <p class="text-slate-500 text-xs">Supervivencia</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Crisis Info (Hidden by default) -->
+                <div id="crisisInfo" class="hidden">
+                    <h3 class="font-heading text-lg font-semibold text-white mb-4 flex items-center">
+                        <span class="w-8 h-8 bg-crisis-amber rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-exclamation-triangle text-white text-sm"></i>
+                        </span>
+                        Contexto de Crisis (2011-2020)
+                    </h3>
+                    
+                    <div class="space-y-3">
+                        <div class="feature-card crisis-card">
+                            <div class="flex items-start gap-3">
+                                <div class="w-10 h-10 bg-gradient-to-br from-red-500 to-orange-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-boxes text-white"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-heading text-white font-semibold text-sm">Escasez de Insumos</h4>
+                                    <p class="text-slate-400 text-xs mt-1">Déficit crítico de medicamentos y reactivos</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-card crisis-card">
+                            <div class="flex items-start gap-3">
+                                <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-yellow-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-user-minus text-white"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-heading text-white font-semibold text-sm">Fuga de Talento</h4>
+                                    <p class="text-slate-400 text-xs mt-1">Emigración masiva de personal calificado</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-card crisis-card">
+                            <div class="flex items-start gap-3">
+                                <div class="w-10 h-10 bg-gradient-to-br from-amber-500 to-orange-400 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-building text-white"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-heading text-white font-semibold text-sm">Infraestructura Deteriorada</h4>
+                                    <p class="text-slate-400 text-xs mt-1">Fallas en equipos y servicios básicos</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-card crisis-card">
+                            <div class="flex items-start gap-3">
+                                <div class="w-10 h-10 bg-gradient-to-br from-rose-500 to-red-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-dollar-sign text-white"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-heading text-white font-semibold text-sm">Déficit Presupuestario</h4>
+                                    <p class="text-slate-400 text-xs mt-1">Recursos insuficientes para operación</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Crisis Stats -->
+                    <div class="mt-5 pt-4 border-t border-amber-900/30">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="text-center p-3 bg-amber-900/20 rounded-lg border border-amber-700/30">
+                                <p class="font-heading text-2xl font-bold text-crisis-amber">86.9%</p>
+                                <p class="text-slate-500 text-xs">Control Prenatal Deficiente</p>
+                            </div>
+                            <div class="text-center p-3 bg-amber-900/20 rounded-lg border border-amber-700/30">
+                                <p class="font-heading text-2xl font-bold text-crisis-orange">31%</p>
+                                <p class="text-slate-500 text-xs">Sin Ningún Control</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Central SVG Building -->
+            <div class="xl:col-span-2 flex items-center justify-center relative order-1 xl:order-2" id="buildingContainer">
+                <div class="relative w-full max-w-3xl">
+                    <!-- Tooltip Container -->
+                    <div class="tooltip" id="tooltip"></div>
+                    
+                    <!-- SVG Hospital Building -->
+                    <svg viewBox="0 0 800 500" class="w-full h-auto" id="hospitalSVG">
+                        <defs>
+                            <!-- Gradients -->
+                            <linearGradient id="buildingGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:0.3" />
+                                <stop offset="100%" style="stop-color:#1e3a8a;stop-opacity:0.1" />
+                            </linearGradient>
+                            
+                            <linearGradient id="crisisGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:0.3" />
+                                <stop offset="100%" style="stop-color:#ea580c;stop-opacity:0.1" />
+                            </linearGradient>
+                            
+                            <linearGradient id="glassGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:0.4" />
+                                <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:0.1" />
+                            </linearGradient>
+                            
+                            <!-- Glow Filter -->
+                            <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                                <feMerge>
+                                    <feMergeNode in="coloredBlur"/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
+                            
+                            <filter id="glowAmber" x="-50%" y="-50%" width="200%" height="200%">
+                                <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                                <feMerge>
+                                    <feMergeNode in="coloredBlur"/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
+                        </defs>
+                        
+                        <!-- Radar Circles (Background Animation) -->
+                        <g id="radarGroup">
+                            <circle cx="400" cy="380" r="50" class="radar-circle" id="radar1"/>
+                            <circle cx="400" cy="380" r="100" class="radar-circle" id="radar2"/>
+                            <circle cx="400" cy="380" r="150" class="radar-circle" id="radar3"/>
+                            <circle cx="400" cy="380" r="200" class="radar-circle" id="radar4"/>
+                            <circle cx="400" cy="380" r="250" class="radar-circle" id="radar5"/>
+                        </g>
+                        
+                        <!-- Ground/Base -->
+                        <path d="M50 420 L750 420" stroke="#334155" stroke-width="2" class="building-line" id="ground"/>
+                        
+                        <!-- Main Building Structure -->
+                        <g id="buildingStructure" class="transition-all duration-500">
+                            
+                            <!-- Left Wing -->
+                            <g id="leftWing">
+                                <rect x="100" y="200" width="150" height="220" fill="url(#buildingGradient)" stroke="#3b82f6" stroke-width="2" class="building-line transition-all duration-500" id="leftWingRect"/>
+                                <!-- Windows Left Wing -->
+                                <g id="leftWindows" class="transition-all duration-500">
+                                    <rect x="115" y="220" width="30" height="40" fill="url(#glassGradient)" stroke="#60a5fa" stroke-width="1" opacity="0.7"/>
+                                    <rect x="155" y="220" width="30" height="40" fill="url(#glassGradient)" stroke="#60a5fa" stroke-width="1" opacity="0.7"/>
+                                    <rect x="195" y="220" width="30" height="40" fill="url(#glassGradient)" stroke="#60a5fa" stroke-width="1" opacity="0.7"/>
+                                    <rect x="115" y="280" width="30" height="40" fill="url(#glassGradient)" stroke="#60a5fa" stroke-width="1" opacity="0.7"/>
+                                    <rect x="155" y="280" width="30" height="40" fill="url(#glassGradient)" stroke="#60a5fa" stroke-width="1" opacity="0.7"/>
+                                    <rect x="195" y="280" width="30" height="40" fill="url(#glassGradient)" stroke="#60a5fa" stroke-width="1" opacity="0.7"/>
+                                    <rect x="115" y="340" width="30" height="40" fill="url(#glassGradient)" stroke="#60a5fa" stroke-width="1" opacity="0.7"/>
+                                    <rect x="155" y="340" width="30" height="40" fill="url(#glassGradient)" stroke="#60a5fa" stroke-width="1" opacity="0.7"/>
+                                    <rect x="195" y="340" width="30" height="40" fill="url(#glassGradient)" stroke="#60a5fa" stroke-width="1" opacity="0.7"/>
+                                </g>
+                            </g>
+                            
+                            <!-- Central Tower (Main Building) -->
+                            <g id="centralTower">
+                                <rect x="250" y="80" width="300" height="340" fill="url(#buildingGradient)" stroke="#3b82f6" stroke-width="2" class="building-line transition-all duration-500" id="centralRect"/>
+                                
+                                <!-- Hospital Cross -->
+                                <g id="hospitalCross" class="transition-all duration-500">
+                                    <rect x="375" y="100" width="50" height="15" fill="#3b82f6" filter="url(#glow)"/>
+                                    <rect x="392.5" y="85" width="15" height="45" fill="#3b82f6" filter="url(#glow)"/>
+                                </g>
+                                
+                                <!-- Central Windows -->
+                                <g id="centralWindows" class="transition-all duration-500">
+                                    <!-- Row 1 -->
+                                    <rect x="270" y="150" width="35" height="50" fill="url(#glassGradient)" stroke="#60a5fa" stroke-width="1" opacity="0.7"/>
+                                    <rect x="320" y="150" width="35" height="50" fill="url(#glassGradient)" stroke="#60a5fa" stroke-width="1" opacity="0.7"/>
+                                    <rect x="370" y="150" width="60" height="50" fill="url(#glassGradient)" stroke="#60a5fa" stroke-width="1" opacity="0.8"/>
+                                    <rect x="445" y="150" width="35" height="50" fill="url(#glassGradient)" stroke="#60a5fa" stroke-width="1" opacity="0.7"/>
+                                    <rect x="495" y="150" width="35" height="50" fill="url(#glassGradient)" stroke="#60a5fa" stroke-width="1" opacity="0.7"/>
+                                    
+                                    <!-- Row 2 -->
+                                    <rect x="270" y="220" width="35" height="50" fill="url(#glassGradient)" stroke="#60a5fa" stroke-width="1" opacity="0.7"/>
+                                    <rect x="320" y="220" width="35" height="50" fill="url(#glassGradient)" stroke="#60a5fa" stroke-width="1" opacity="0.7"/>
+                                    <rect x="370" y="220" width="60" height="50" fill="url(#glassGradient)" stroke="#60a5fa" stroke-width="1" opacity="0.8"/>
+                                    <rect x="445" y="220" width="35" height="50" fill="url(#glassGradient)" stroke="#60a5fa" stroke-width="1" opacity="0.7"/>
+                                    <rect x="495" y="220" width="35" height="50" fill="url(#glassGradient)" stroke="#60a5fa" stroke-width="1" opacity="0.7"/>
+                                    
+                                    <!-- Row 3 -->
+                                    <rect x="270" y="290" width="35" height="50" fill="url(#glassGradient)" stroke="#60a5fa" stroke-width="1" opacity="0.7"/>
+                                    <rect x="320" y="290" width="35" height="50" fill="url(#glassGradient)" stroke="#60a5fa" stroke-width="1" opacity="0.7"/>
+                                    <rect x="370" y="290" width="60" height="50" fill="url(#glassGradient)" stroke="#60a5fa" stroke-width="1" opacity="0.8"/>
+                                    <rect x="445" y="290" width="35" height="50" fill="url(#glassGradient)" stroke="#60a5fa" stroke-width="1" opacity="0.7"/>
+                                    <rect x="495" y="290" width="35" height="50" fill="url(#glassGradient)" stroke="#60a5fa" stroke-width="1" opacity="0.7"/>
+                                </g>
+                                
+                                <!-- Main Entrance -->
+                                <g id="entrance">
+                                    <rect x="360" y="360" width="80" height="60" fill="#1e293b" stroke="#3b82f6" stroke-width="2" class="transition-all duration-500"/>
+                                    <rect x="370" y="370" width="25" height="50" fill="url(#glassGradient)" stroke="#60a5fa" stroke-width="1"/>
+                                    <rect x="405" y="370" width="25" height="50" fill="url(#glassGradient)" stroke="#60a5fa" stroke-width="1"/>
+                                </g>
+                            </g>
+                            
+                            <!-- Right Wing -->
+                            <g id="rightWing">
+                                <rect x="550" y="200" width="150" height="220" fill="url(#buildingGradient)" stroke="#3b82f6" stroke-width="2" class="building-line transition-all duration-500" id="rightWingRect"/>
+                                <!-- Windows Right Wing -->
+                                <g id="rightWindows" class="transition-all duration-500">
+                                    <rect x="575" y="220" width="30" height="40" fill="url(#glassGradient)" stroke="#60a5fa" stroke-width="1" opacity="0.7"/>
+                                    <rect x="615" y="220" width="30" height="40" fill="url(#glassGradient)" stroke="#60a5fa" stroke-width="1" opacity="0.7"/>
+                                    <rect x="655" y="220" width="30" height="40" fill="url(#glassGradient)" stroke="#60a5fa" stroke-width="1" opacity="0.7"/>
+                                    <rect x="575" y="280" width="30" height="40" fill="url(#glassGradient)" stroke="#60a5fa" stroke-width="1" opacity="0.7"/>
+                                    <rect x="615" y="280" width="30" height="40" fill="url(#glassGradient)" stroke="#60a5fa" stroke-width="1" opacity="0.7"/>
+                                    <rect x="655" y="280" width="30" height="40" fill="url(#glassGradient)" stroke="#60a5fa" stroke-width="1" opacity="0.7"/>
+                                    <rect x="575" y="340" width="30" height="40" fill="url(#glassGradient)" stroke="#60a5fa" stroke-width="1" opacity="0.7"/>
+                                    <rect x="615" y="340" width="30" height="40" fill="url(#glassGradient)" stroke="#60a5fa" stroke-width="1" opacity="0.7"/>
+                                    <rect x="655" y="340" width="30" height="40" fill="url(#glassGradient)" stroke="#60a5fa" stroke-width="1" opacity="0.7"/>
+                                </g>
+                            </g>
+                            
+                            <!-- Roof Details -->
+                            <g id="roofDetails">
+                                <rect x="280" y="65" width="240" height="15" fill="#1e3a8a" stroke="#3b82f6" stroke-width="1" class="transition-all duration-500"/>
+                                <rect x="120" y="185" width="110" height="15" fill="#1e3a8a" stroke="#3b82f6" stroke-width="1" class="transition-all duration-500"/>
+                                <rect x="570" y="185" width="110" height="15" fill="#1e3a8a" stroke="#3b82f6" stroke-width="1" class="transition-all duration-500"/>
+                            </g>
+                        </g>
+                        
+                        <!-- Structural Hotspots (Blue) -->
+                        <g id="structuralHotspots" class="transition-all duration-500">
+                            <!-- UCI Hotspot -->
+                            <g class="hotspot" data-info="UCI - Unidad de Cuidados Intensivos" data-type="structural" 
+                               onmouseenter="showTooltip(event, this)" onmouseleave="hideTooltip()">
+                                <circle cx="175" cy="250" r="12" fill="#3b82f6" filter="url(#glow)" class="hotspot-pulse"/>
+                                <circle cx="175" cy="250" r="8" fill="#1e3a8a"/>
+                                <text x="175" y="254" text-anchor="middle" fill="white" font-size="10" font-weight="bold">UCI</text>
+                            </g>
+                            
+                            <!-- Surgery Hotspot -->
+                            <g class="hotspot" data-info="Quirófanos - Alta capacidad quirúrgica" data-type="structural"
+                               onmouseenter="showTooltip(event, this)" onmouseleave="hideTooltip()">
+                                <circle cx="400" cy="180" r="12" fill="#3b82f6" filter="url(#glow)" class="hotspot-pulse"/>
+                                <circle cx="400" cy="180" r="8" fill="#1e3a8a"/>
+                                <text x="400" y="184" text-anchor="middle" fill="white" font-size="8" font-weight="bold">QX</text>
+                            </g>
+                            
+                            <!-- Obstetrics Hotspot -->
+                            <g class="hotspot" data-info="Servicio de Obstetricia - Centro de referencia" data-type="structural"
+                               onmouseenter="showTooltip(event, this)" onmouseleave="hideTooltip()">
+                                <circle cx="625" cy="250" r="12" fill="#3b82f6" filter="url(#glow)" class="hotspot-pulse"/>
+                                <circle cx="625" cy="250" r="8" fill="#1e3a8a"/>
+                                <text x="625" y="254" text-anchor="middle" fill="white" font-size="8" font-weight="bold">OB</text>
+                            </g>
+                            
+                            <!-- Academic Hotspot -->
+                            <g class="hotspot" data-info="Centro Académico - Sede de Postgrado UCV" data-type="structural"
+                               onmouseenter="showTooltip(event, this)" onmouseleave="hideTooltip()">
+                                <circle cx="320" cy="310" r="12" fill="#3b82f6" filter="url(#glow)" class="hotspot-pulse"/>
+                                <circle cx="320" cy="310" r="8" fill="#1e3a8a"/>
+                                <i class="fas fa-graduation-cap"></i>
+                                <text x="320" y="314" text-anchor="middle" fill="white" font-size="8" font-weight="bold">📚</text>
+                            </g>
+                            
+                            <!-- Emergency Hotspot -->
+                            <g class="hotspot" data-info="Emergencia - Atención 24/7" data-type="structural"
+                               onmouseenter="showTooltip(event, this)" onmouseleave="hideTooltip()">
+                                <circle cx="400" cy="390" r="12" fill="#10b981" filter="url(#glow)" class="hotspot-pulse"/>
+                                <circle cx="400" cy="390" r="8" fill="#065f46"/>
+                                <text x="400" y="394" text-anchor="middle" fill="white" font-size="8" font-weight="bold">ER</text>
+                            </g>
+                        </g>
+                        
+                        <!-- Crisis Hotspots (Amber/Orange) - Hidden by default -->
+                        <g id="crisisHotspots" class="transition-all duration-500 hidden">
+                            <!-- Infrastructure Crisis -->
+                            <g class="hotspot" data-info="⚠️ Falla de Ascensores - Infraestructura deteriorada" data-type="crisis"
+                               onmouseenter="showTooltip(event, this)" onmouseleave="hideTooltip()">
+                                <circle cx="175" cy="320" r="14" fill="#f59e0b" filter="url(#glowAmber)" class="alert-bounce"/>
+                                <text x="175" y="325" text-anchor="middle" fill="#1e293b" font-size="14" font-weight="bold">⚠</text>
+                            </g>
+                            
+                            <!-- Supplies Crisis -->
+                            <g class="hotspot" data-info="⚠️ Déficit de Reactivos - Laboratorio limitado" data-type="crisis"
+                               onmouseenter="showTooltip(event, this)" onmouseleave="hideTooltip()">
+                                <circle cx="480" cy="180" r="14" fill="#ea580c" filter="url(#glowAmber)" class="alert-bounce"/>
+                                <text x="480" y="185" text-anchor="middle" fill="#1e293b" font-size="14" font-weight="bold">⚠</text>
+                            </g>
+                            
+                            <!-- Staff Crisis -->
+                            <g class="hotspot" data-info="⚠️ Renuncia de Personal - Emigración masiva" data-type="crisis"
+                               onmouseenter="showTooltip(event, this)" onmouseleave="hideTooltip()">
+                                <circle cx="625" cy="320" r="14" fill="#ef4444" filter="url(#glowAmber)" class="alert-bounce"/>
+                                <text x="625" y="325" text-anchor="middle" fill="#1e293b" font-size="14" font-weight="bold">⚠</text>
+                            </g>
+                            
+                            <!-- Budget Crisis -->
+                            <g class="hotspot" data-info="⚠️ Déficit Presupuestario - Recursos insuficientes" data-type="crisis"
+                               onmouseenter="showTooltip(event, this)" onmouseleave="hideTooltip()">
+                                <circle cx="320" cy="250" r="14" fill="#f59e0b" filter="url(#glowAmber)" class="alert-bounce"/>
+                                <text x="320" y="255" text-anchor="middle" fill="#1e293b" font-size="14" font-weight="bold">⚠</text>
+                            </g>
+                            
+                            <!-- Medicine Shortage -->
+                            <g class="hotspot" data-info="⚠️ Escasez de Medicamentos - Suministros críticos" data-type="crisis"
+                               onmouseenter="showTooltip(event, this)" onmouseleave="hideTooltip()">
+                                <circle cx="400" cy="310" r="14" fill="#ea580c" filter="url(#glowAmber)" class="alert-bounce"/>
+                                <text x="400" y="315" text-anchor="middle" fill="#1e293b" font-size="14" font-weight="bold">⚠</text>
+                            </g>
+                        </g>
+                        
+                        <!-- Building Label -->
+                        <g id="buildingLabel">
+                            <text x="400" y="460" text-anchor="middle" fill="#64748b" font-family="Montserrat" font-size="14" font-weight="600" letter-spacing="3">
+                                HOSPITAL UNIVERSITARIO DE CARACAS
+                            </text>
+                            <text x="400" y="480" text-anchor="middle" fill="#475569" font-family="Open Sans" font-size="11">
+                                Ciudad Universitaria • Caracas, Venezuela
+                            </text>
+                        </g>
+                    </svg>
+                    
+                    <!-- Legend -->
+                    <div class="flex justify-center gap-6 mt-4" id="legend">
+                        <div class="flex items-center gap-2 text-sm text-slate-400" id="legendStructural">
+                            <span class="w-3 h-3 rounded-full bg-huc-blue-light"></span>
+                            <span>Áreas Estratégicas</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-sm text-slate-400 hidden" id="legendCrisis">
+                            <span class="w-3 h-3 rounded-full bg-crisis-amber"></span>
+                            <span>Puntos de Crisis</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Bottom Info Bar -->
+        <footer class="mt-6 pt-4 border-t border-slate-800/50">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex items-center gap-6 text-sm">
+                    <div class="flex items-center gap-2 text-slate-400">
+                        <i class="fas fa-calendar-alt text-huc-blue-light"></i>
+                        <span>Período: 2011 - 2020</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-slate-400">
+                        <i class="fas fa-map-marker-alt text-huc-blue-light"></i>
+                        <span>Distrito Capital, Venezuela</span>
+                    </div>
+                </div>
+                <div class="text-slate-500 text-xs">
+                    <span id="currentMode" class="font-heading font-semibold text-huc-blue-light">
+                        <i class="fas fa-eye mr-1"></i>Vista Estructural
+                    </span>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    <!-- Slide Number -->
+    <div class="slide-number">
+        04 / 12
+    </div>
+    
+    <script>
+        // State Management
+        let isCrisisMode = false;
+        
+        // DOM Elements
+        const viewToggle = document.getElementById('viewToggle');
+        const slider = document.getElementById('slider');
+        const sliderText = document.getElementById('sliderText');
+        const labelStructural = document.getElementById('labelStructural');
+        const labelCrisis = document.getElementById('labelCrisis');
+        const structuralInfo = document.getElementById('structuralInfo');
+        const crisisInfo = document.getElementById('crisisInfo');
+        const infoPanel = document.getElementById('infoPanel');
+        const structuralHotspots = document.getElementById('structuralHotspots');
+        const crisisHotspots = document.getElementById('crisisHotspots');
+        const currentMode = document.getElementById('currentMode');
+        const legendStructural = document.getElementById('legendStructural');
+        const legendCrisis = document.getElementById('legendCrisis');
+        const tooltip = document.getElementById('tooltip');
+        
+        // Building elements for color transition
+        const buildingRects = document.querySelectorAll('#leftWingRect, #centralRect, #rightWingRect');
+        const hospitalCross = document.getElementById('hospitalCross');
+        
+        // Initialize animations on load
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeAnimations();
+            startRadarAnimation();
+        });
+        
+        // Initialize building draw animation
+        function initializeAnimations() {
+            // Animate building lines drawing
+            anime({
+                targets: '.building-line',
+                strokeDashoffset: [anime.setDashoffset, 0],
+                easing: 'easeInOutSine',
+                duration: 2000,
+                delay: function(el, i) { return i * 100 },
+            });
+            
+            // Fade in windows
+            anime({
+                targets: '#leftWindows rect, #centralWindows rect, #rightWindows rect',
+                opacity: [0, 0.7],
+                duration: 500,
+                delay: anime.stagger(50, {start: 2000}),
+                easing: 'easeOutQuad'
+            });
+            
+            // Animate hotspots appearing
+            anime({
+                targets: '#structuralHotspots .hotspot',
+                scale: [0, 1],
+                opacity: [0, 1],
+                duration: 600,
+                delay: anime.stagger(150, {start: 2500}),
+                easing: 'easeOutElastic(1, .5)'
+            });
+            
+            // Animate info panel
+            anime({
+                targets: '.feature-card',
+                translateX: [-30, 0],
+                opacity: [0, 1],
+                duration: 500,
+                delay: anime.stagger(100, {start: 1000}),
+                easing: 'easeOutQuad'
+            });
+        }
+        
+        // Radar animation
+        function startRadarAnimation() {
+            const radarCircles = document.querySelectorAll('.radar-circle');
+            
+            radarCircles.forEach((circle, index) => {
+                anime({
+                    targets: circle,
+                    r: [50 + (index * 50), 250],
+                    opacity: [0.5, 0],
+                    easing: 'easeOutSine',
+                    duration: 3000,
+                    delay: index * 400,
+                    loop: true
+                });
+            });
+        }
+        
+        // Toggle View Function
+        function toggleView() {
+            isCrisisMode = !isCrisisMode;
+            
+            if (isCrisisMode) {
+                switchToCrisisMode();
+            } else {
+                switchToStructuralMode();
+            }
+        }
+        
+        function switchToCrisisMode() {
+            // Update toggle switch
+            viewToggle.classList.add('crisis-mode');
+            sliderText.textContent = 'CRISIS';
+            labelStructural.classList.remove('text-slate-400');
+            labelStructural.classList.add('text-slate-600');
+            labelCrisis.classList.remove('text-slate-500');
+            labelCrisis.classList.add('text-crisis-amber');
+            
+            // Update info panel
+            infoPanel.classList.add('crisis-panel');
+            
+            // Animate out structural info
+            anime({
+                targets: structuralInfo,
+                opacity: [1, 0],
+                translateX: [0, -20],
+                duration: 300,
+                easing: 'easeInQuad',
+                complete: () => {
+                    structuralInfo.classList.add('hidden');
+                    crisisInfo.classList.remove('hidden');
+                    
+                    // Animate in crisis info
+                    anime({
+                        targets: crisisInfo,
+                        opacity: [0, 1],
+                        translateX: [20, 0],
+                        duration: 400,
+                        easing: 'easeOutQuad'
+                    });
+                    
+                    // Animate crisis cards
+                    anime({
+                        targets: '#crisisInfo .feature-card',
+                        translateX: [-20, 0],
+                        opacity: [0, 1],
+                        duration: 400,
+                        delay: anime.stagger(80),
+                        easing: 'easeOutQuad'
+                    });
+                }
+            });
+            
+            // Switch hotspots
+            anime({
+                targets: structuralHotspots,
+                opacity: [1, 0],
+                scale: [1, 0.8],
+                duration: 300,
+                easing: 'easeInQuad',
+                complete: () => {
+                    structuralHotspots.classList.add('hidden');
+                    crisisHotspots.classList.remove('hidden');
+                    
+                    anime({
+                        targets: '#crisisHotspots .hotspot',
+                        opacity: [0, 1],
+                        scale: [0, 1],
+                        duration: 500,
+                        delay: anime.stagger(100),
+                        easing: 'easeOutElastic(1, .6)'
+                    });
+                }
+            });
+            
+            // Change building colors to crisis mode
+            changeBuildingColors('crisis');
+            
+            // Update legend
+            legendStructural.classList.add('hidden');
+            legendCrisis.classList.remove('hidden');
+            
+            // Update current mode indicator
+            currentMode.innerHTML = '<i class="fas fa-exclamation-triangle mr-1"></i>Vista Crisis';
+            currentMode.classList.remove('text-huc-blue-light');
+            currentMode.classList.add('text-crisis-amber');
+            
+            // Change radar color
+            document.querySelectorAll('.radar-circle').forEach(circle => {
+                circle.style.stroke = '#f59e0b';
+            });
+        }
+        
+        function switchToStructuralMode() {
+            // Update toggle switch
+            viewToggle.classList.remove('crisis-mode');
+            sliderText.textContent = 'FORTALEZAS';
+            labelStructural.classList.add('text-slate-400');
+            labelStructural.classList.remove('text-slate-600');
+            labelCrisis.classList.add('text-slate-500');
+            labelCrisis.classList.remove('text-crisis-amber');
+            
+            // Update info panel
+            infoPanel.classList.remove('crisis-panel');
+            
+            // Animate out crisis info
+            anime({
+                targets: crisisInfo,
+                opacity: [1, 0],
+                translateX: [0, 20],
+                duration: 300,
+                easing: 'easeInQuad',
+                complete: () => {
+                    crisisInfo.classList.add('hidden');
+                    structuralInfo.classList.remove('hidden');
+                    
+                    // Animate in structural info
+                    anime({
+                        targets: structuralInfo,
+                        opacity: [0, 1],
+                        translateX: [-20, 0],
+                        duration: 400,
+                        easing: 'easeOutQuad'
+                    });
+                    
+                    // Animate structural cards
+                    anime({
+                        targets: '#structuralInfo .feature-card',
+                        translateX: [-20, 0],
+                        opacity: [0, 1],
+                        duration: 400,
+                        delay: anime.stagger(80),
+                        easing: 'easeOutQuad'
+                    });
+                }
+            });
+            
+            // Switch hotspots
+            anime({
+                targets: crisisHotspots,
+                opacity: [1, 0],
+                scale: [1, 0.8],
+                duration: 300,
+                easing: 'easeInQuad',
+                complete: () => {
+                    crisisHotspots.classList.add('hidden');
+                    structuralHotspots.classList.remove('hidden');
+                    
+                    anime({
+                        targets: '#structuralHotspots .hotspot',
+                        opacity: [0, 1],
+                        scale: [0, 1],
+                        duration: 500,
+                        delay: anime.stagger(100),
+                        easing: 'easeOutElastic(1, .6)'
+                    });
+                }
+            });
+            
+            // Change building colors back to structural
+            changeBuildingColors('structural');
+            
+            // Update legend
+            legendStructural.classList.remove('hidden');
+            legendCrisis.classList.add('hidden');
+            
+            // Update current mode indicator
+            currentMode.innerHTML = '<i class="fas fa-eye mr-1"></i>Vista Estructural';
+            currentMode.classList.add('text-huc-blue-light');
+            currentMode.classList.remove('text-crisis-amber');
+            
+            // Change radar color back
+            document.querySelectorAll('.radar-circle').forEach(circle => {
+                circle.style.stroke = '#3b82f6';
+            });
+        }
+        
+        function changeBuildingColors(mode) {
+            const isСrisis = mode === 'crisis';
+            
+            // Animate building stroke colors
+            const strokeColor = isСrisis ? '#f59e0b' : '#3b82f6';
+            const fillGradient = isСrisis ? 'url(#crisisGradient)' : 'url(#buildingGradient)';
+            
+            // Update building rectangles
+            buildingRects.forEach(rect => {
+                anime({
+                    targets: rect,
+                    stroke: strokeColor,
+                    duration: 500,
+                    easing: 'easeInOutQuad'
+                });
+                rect.setAttribute('fill', fillGradient);
+            });
+            
+            // Update hospital cross
+            const crossElements = hospitalCross.querySelectorAll('rect');
+            crossElements.forEach(el => {
+                anime({
+                    targets: el,
+                    fill: isСrisis ? '#f59e0b' : '#3b82f6',
+                    duration: 500,
+                    easing: 'easeInOutQuad'
+                });
+            });
+            
+            // Update roof details
+            document.querySelectorAll('#roofDetails rect').forEach(rect => {
+                anime({
+                    targets: rect,
+                    fill: isСrisis ? '#92400e' : '#1e3a8a',
+                    stroke: strokeColor,
+                    duration: 500,
+                    easing: 'easeInOutQuad'
+                });
+            });
+            
+            // Update window strokes
+            const windowGroups = ['#leftWindows rect', '#centralWindows rect', '#rightWindows rect'];
+            windowGroups.forEach(selector => {
+                document.querySelectorAll(selector).forEach(rect => {
+                    anime({
+                        targets: rect,
+                        stroke: isСrisis ? '#fbbf24' : '#60a5fa',
+                        duration: 500,
+                        easing: 'easeInOutQuad'
+                    });
+                });
+            });
+            
+            // Update entrance
+            const entranceRect = document.querySelector('#entrance rect:first-child');
+            if (entranceRect) {
+                anime({
+                    targets: entranceRect,
+                    stroke: strokeColor,
+                    duration: 500,
+                    easing: 'easeInOutQuad'
+                });
+            }
+        }
+        
+        // Tooltip Functions
+        function showTooltip(event, element) {
+            const info = element.getAttribute('data-info');
+            const type = element.getAttribute('data-type');
+            
+            tooltip.textContent = info;
+            tooltip.classList.remove('crisis-tooltip');
+            
+            if (type === 'crisis') {
+                tooltip.classList.add('crisis-tooltip');
+            }
+            
+            // Position tooltip
+            const rect = element.getBoundingClientRect();
+            const containerRect = document.getElementById('buildingContainer').getBoundingClientRect();
+            
+            tooltip.style.left = (rect.left - containerRect.left + rect.width / 2 - 100) + 'px';
+            tooltip.style.top = (rect.top - containerRect.top - 60) + 'px';
+            
+            tooltip.classList.add('visible');
+            
+            // Animate tooltip
+            anime({
+                targets: tooltip,
+                opacity: [0, 1],
+                translateY: [10, 0],
+                duration: 200,
+                easing: 'easeOutQuad'
+            });
+        }
+        
+        function hideTooltip() {
+            anime({
+                targets: tooltip,
+                opacity: [1, 0],
+                translateY: [0, 10],
+                duration: 150,
+                easing: 'easeInQuad',
+                complete: () => {
+                    tooltip.classList.remove('visible');
+                }
+            });
+        }
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' || e.code === 'Enter') {
+                e.preventDefault();
+                toggleView();
+            }
+        });
+        
+        // Add subtle parallax effect on mouse move
+        document.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth - 0.5) * 10;
+            const y = (e.clientY / window.innerHeight - 0.5) * 10;
+            
+            anime({
+                targets: '#hospitalSVG',
+                translateX: x,
+                translateY: y,
+                duration: 1000,
+                easing: 'easeOutQuad'
+            });
+        });
+    </script>
+</body>
+</html>

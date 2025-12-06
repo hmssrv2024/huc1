@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide 19 - Los Otros Frentes: Hemorragia y Sepsis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Custom shadow utilities */
+        .shadow-hemorrhage {
+            box-shadow: 0 0 40px rgba(239, 68, 68, 0.3),
+                        0 0 80px rgba(239, 68, 68, 0.15),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .shadow-hemorrhage-intense {
+            box-shadow: 0 0 60px rgba(239, 68, 68, 0.5),
+                        0 0 100px rgba(239, 68, 68, 0.25),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+
+        .shadow-infection {
+            box-shadow: 0 0 40px rgba(16, 185, 129, 0.3),
+                        0 0 80px rgba(16, 185, 129, 0.15),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .shadow-infection-intense {
+            box-shadow: 0 0 60px rgba(16, 185, 129, 0.5),
+                        0 0 100px rgba(16, 185, 129, 0.25),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+
+        /* Card transitions */
+        .diagnostic-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .diagnostic-card:hover {
+            transform: scale(1.03);
+        }
+
+        /* Blood drop glow */
+        .blood-glow {
+            filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.6))
+                    drop-shadow(0 0 16px rgba(239, 68, 68, 0.4));
+        }
+
+        .blood-glow-intense {
+            filter: drop-shadow(0 0 12px rgba(239, 68, 68, 0.8))
+                    drop-shadow(0 0 24px rgba(239, 68, 68, 0.5));
+        }
+
+        /* Bacteria glow */
+        .bacteria-glow {
+            filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.6))
+                    drop-shadow(0 0 16px rgba(16, 185, 129, 0.4));
+        }
+
+        .bacteria-glow-intense {
+            filter: drop-shadow(0 0 12px rgba(16, 185, 129, 0.8))
+                    drop-shadow(0 0 24px rgba(16, 185, 129, 0.5));
+        }
+
+        /* Progress bar styling */
+        .progress-bar {
+            background: linear-gradient(90deg, 
+                rgba(239, 68, 68, 0.2) 0%, 
+                rgba(239, 68, 68, 0.1) 100%);
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill-red {
+            background: linear-gradient(90deg, #ef4444, #dc2626);
+            border-radius: 9999px;
+            height: 100%;
+            transition: width 0.8s ease-out;
+        }
+
+        .progress-bar-green {
+            background: linear-gradient(90deg, 
+                rgba(16, 185, 129, 0.2) 0%, 
+                rgba(16, 185, 129, 0.1) 100%);
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill-green {
+            background: linear-gradient(90deg, #10b981, #059669);
+            border-radius: 9999px;
+            height: 100%;
+            transition: width 0.8s ease-out;
+        }
+
+        /* Detail panel animation */
+        .detail-panel {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .detail-panel.expanded {
+            max-height: 500px;
+            opacity: 1;
+        }
+
+        /* Badge styling */
+        .comparison-badge {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(245, 158, 11, 0.1));
+            border: 1px solid rgba(251, 191, 36, 0.4);
+            backdrop-filter: blur(4px);
+        }
+
+        /* Liquid ripple effect */
+        .ripple-container {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            transform: scale(0);
+            animation: ripple-animation 0.6s linear;
+            pointer-events: none;
+        }
+
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        /* Floating animation for bacteria */
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-5px) rotate(2deg); }
+            50% { transform: translateY(0) rotate(0deg); }
+            75% { transform: translateY(5px) rotate(-2deg); }
+        }
+
+        .floating {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        /* Pulse animation for indicators */
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        .pulse-indicator {
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        /* Header gradient */
+        .header-gradient {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        }
+
+        /* Subtitle badge */
+        .subtitle-badge {
+            background: linear-gradient(135deg, rgba(148, 163, 184, 0.1), rgba(100, 116, 139, 0.05));
+            border: 1px solid rgba(148, 163, 184, 0.2);
+        }
+
+        /* Card inner glow on hover */
+        .card-inner-glow-red::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 30%, rgba(239, 68, 68, 0.1), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+            border-radius: inherit;
+        }
+
+        .card-inner-glow-red:hover::before {
+            opacity: 1;
+        }
+
+        .card-inner-glow-green::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 30%, rgba(16, 185, 129, 0.1), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+            border-radius: inherit;
+        }
+
+        .card-inner-glow-green:hover::before {
+            opacity: 1;
+        }
+
+        /* Etiology list item */
+        .etiology-item {
+            transition: all 0.3s ease;
+        }
+
+        .etiology-item:hover {
+            transform: translateX(8px);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen">
+    <!-- Main Container -->
+    <div class="container mx-auto px-6 py-8 max-w-7xl">
+        
+        <!-- Header Section -->
+        <header class="mb-10">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="flex items-center justify-center w-12 h-12 rounded-xl header-gradient shadow-lg">
+                    <span class="text-white font-bold text-lg">19</span>
+                </div>
+                <div>
+                    <h1 class="text-3xl md:text-4xl font-bold text-slate-800 tracking-tight">
+                        Segunda y Tercera Causa
+                    </h1>
+                    <div class="subtitle-badge inline-flex items-center gap-2 px-4 py-2 rounded-full mt-2">
+                        <i class="fas fa-microscope text-slate-500 text-sm"></i>
+                        <span class="text-slate-600 text-sm font-medium">
+                            Etiología detallada de complicaciones hemorrágicas e infecciosas
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Context bar -->
+            <div class="flex flex-wrap gap-3 mt-4">
+                <div class="flex items-center gap-2 bg-red-50 px-4 py-2 rounded-lg border border-red-200">
+                    <div class="w-3 h-3 rounded-full bg-red-500 pulse-indicator"></div>
+                    <span class="text-red-700 font-medium text-sm">Hemorragia: 20.0%</span>
+                </div>
+                <div class="flex items-center gap-2 bg-emerald-50 px-4 py-2 rounded-lg border border-emerald-200">
+                    <div class="w-3 h-3 rounded-full bg-emerald-500 pulse-indicator"></div>
+                    <span class="text-emerald-700 font-medium text-sm">Infección/Sepsis: 10.0%</span>
+                </div>
+                <div class="flex items-center gap-2 bg-slate-100 px-4 py-2 rounded-lg border border-slate-200">
+                    <i class="fas fa-hospital text-slate-500 text-sm"></i>
+                    <span class="text-slate-600 font-medium text-sm">Hospital Universitario de Caracas</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Grid - Two Diagnostic Cards -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            
+            <!-- ==================== HEMORRHAGE CARD ==================== -->
+            <div id="hemorrhageCard" 
+                 class="diagnostic-card bg-white rounded-3xl shadow-hemorrhage cursor-pointer relative overflow-hidden card-inner-glow-red"
+                 onclick="toggleDetail('hemorrhage')">
+                
+                <!-- Top Badge -->
+                <div class="absolute top-4 right-4 z-10">
+                    <div class="flex items-center gap-2 bg-red-500/10 backdrop-blur-sm px-3 py-1.5 rounded-full border border-red-500/20">
+                        <i class="fas fa-tint text-red-500 text-xs"></i>
+                        <span class="text-red-600 font-semibold text-sm">20.0%</span>
+                    </div>
+                </div>
+
+                <!-- Card Content -->
+                <div class="p-8">
+                    <!-- Title Section -->
+                    <div class="text-center mb-6">
+                        <h2 class="text-2xl font-bold text-slate-800 mb-1">Hemorragia Obstétrica</h2>
+                        <p class="text-slate-500 text-sm">58 casos identificados</p>
+                    </div>
+
+                    <!-- SVG Blood Drop Container -->
+                    <div class="flex justify-center items-center h-64 relative">
+                        <!-- Background pulse rings -->
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div id="pulseRing1" class="absolute w-32 h-32 rounded-full border-2 border-red-200 opacity-0"></div>
+                            <div id="pulseRing2" class="absolute w-48 h-48 rounded-full border border-red-100 opacity-0"></div>
+                            <div id="pulseRing3" class="absolute w-64 h-64 rounded-full border border-red-50 opacity-0"></div>
+                        </div>
+
+                        <!-- Main Blood Drop SVG -->
+                        <svg id="bloodDropSvg" 
+                             viewBox="0 0 200 280" 
+                             class="w-40 h-56 blood-glow transition-all duration-300"
+                             xmlns="http://www.w3.org/2000/svg">
+                            
+                            <!-- Definitions for gradients and filters -->
+                            <defs>
+                                <!-- Main blood gradient -->
+                                <linearGradient id="bloodGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#f87171;stop-opacity:1" />
+                                    <stop offset="40%" style="stop-color:#ef4444;stop-opacity:1" />
+                                    <stop offset="70%" style="stop-color:#dc2626;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#b91c1c;stop-opacity:1" />
+                                </linearGradient>
+
+                                <!-- Highlight gradient -->
+                                <radialGradient id="bloodHighlight" cx="30%" cy="30%" r="50%">
+                                    <stop offset="0%" style="stop-color:#fca5a5;stop-opacity:0.8" />
+                                    <stop offset="100%" style="stop-color:#ef4444;stop-opacity:0" />
+                                </radialGradient>
+
+                                <!-- Inner shadow gradient -->
+                                <radialGradient id="bloodInnerShadow" cx="70%" cy="70%" r="60%">
+                                    <stop offset="0%" style="stop-color:#7f1d1d;stop-opacity:0" />
+                                    <stop offset="100%" style="stop-color:#7f1d1d;stop-opacity:0.4" />
+                                </radialGradient>
+
+                                <!-- Gooey filter for liquid effect -->
+                                <filter id="gooey" x="-50%" y="-50%" width="200%" height="200%">
+                                    <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur" />
+                                    <feColorMatrix in="blur" mode="matrix" 
+                                        values="1 0 0 0 0  
+                                                0 1 0 0 0  
+                                                0 0 1 0 0  
+                                                0 0 0 18 -7" result="gooey" />
+                                    <feComposite in="SourceGraphic" in2="gooey" operator="atop" />
+                                </filter>
+                            </defs>
+
+                            <!-- Main drop body - morphing path -->
+                            <g filter="url(#gooey)">
+                                <path id="bloodDropMain"
+                                      d="M100,20 
+                                         C100,20 45,100 45,160 
+                                         C45,200 68,240 100,240 
+                                         C132,240 155,200 155,160 
+                                         C155,100 100,20 100,20 Z"
+                                      fill="url(#bloodGradient)"
+                                      class="transition-all duration-500"/>
+                                
+                                <!-- Highlight overlay -->
+                                <ellipse cx="75" cy="130" rx="25" ry="35" 
+                                         fill="url(#bloodHighlight)" 
+                                         opacity="0.7"/>
+                                
+                                <!-- Inner shadow -->
+                                <path d="M100,20 
+                                         C100,20 45,100 45,160 
+                                         C45,200 68,240 100,240 
+                                         C132,240 155,200 155,160 
+                                         C155,100 100,20 100,20 Z"
+                                      fill="url(#bloodInnerShadow)"/>
+                            </g>
+
+                            <!-- Small dripping drops -->
+                            <g id="drippingDrops">
+                                <ellipse id="drip1" cx="100" cy="255" rx="8" ry="6" 
+                                         fill="#ef4444" opacity="0"/>
+                                <ellipse id="drip2" cx="85" cy="265" rx="5" ry="4" 
+                                         fill="#dc2626" opacity="0"/>
+                                <ellipse id="drip3" cx="115" cy="262" rx="6" ry="5" 
+                                         fill="#f87171" opacity="0"/>
+                            </g>
+
+                            <!-- Surface tension ripples -->
+                            <g id="surfaceRipples">
+                                <ellipse id="ripple1" cx="100" cy="200" rx="30" ry="10" 
+                                         fill="none" stroke="#fca5a5" stroke-width="1" opacity="0"/>
+                                <ellipse id="ripple2" cx="100" cy="200" rx="40" ry="12" 
+                                         fill="none" stroke="#fecaca" stroke-width="0.5" opacity="0"/>
+                            </g>
+                        </svg>
+
+                        <!-- Floating particles -->
+                        <div id="bloodParticles" class="absolute inset-0 pointer-events-none overflow-hidden">
+                            <!-- Generated by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Call to action -->
+                    <div class="text-center mt-4">
+                        <div class="inline-flex items-center gap-2 text-slate-400 text-sm">
+                            <span>Click para ver etiologías</span>
+                            <i id="hemorrhageChevron" class="fas fa-chevron-down transition-transform duration-300"></i>
+                        </div>
+                    </div>
+
+                    <!-- Expandable Detail Panel -->
+                    <div id="hemorrhageDetail" class="detail-panel mt-6">
+                        <div class="border-t border-red-100 pt-6">
+                            <h3 class="text-lg font-semibold text-slate-700 mb-4 flex items-center gap-2">
+                                <i class="fas fa-list-ul text-red-500"></i>
+                                Causas Específicas de Hemorragia
+                            </h3>
+
+                            <!-- Etiology List with Progress Bars -->
+                            <div class="space-y-4">
+                                <!-- Atonia Uterina -->
+                                <div class="etiology-item bg-red-50/50 rounded-xl p-4 border border-red-100">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center">
+                                                <i class="fas fa-heartbeat text-red-600 text-sm"></i>
+                                            </div>
+                                            <div>
+                                                <span class="font-medium text-slate-700">Atonía Uterina</span>
+                                                <span class="ml-2 text-xs text-red-600 bg-red-100 px-2 py-0.5 rounded-full">Más frecuente</span>
+                                            </div>
+                                        </div>
+                                        <span class="text-red-600 font-bold">45%</span>
+                                    </div>
+                                    <div class="progress-bar h-2">
+                                        <div class="progress-bar-fill-red" style="width: 0%;" data-width="45%"></div>
+                                    </div>
+                                    <p class="text-xs text-slate-500 mt-2">Incapacidad del útero para contraerse tras el parto</p>
+                                </div>
+
+                                <!-- Desgarros -->
+                                <div class="etiology-item bg-red-50/30 rounded-xl p-4 border border-red-100/50">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-lg bg-red-100/50 flex items-center justify-center">
+                                                <i class="fas fa-cut text-red-500 text-sm"></i>
+                                            </div>
+                                            <span class="font-medium text-slate-700">Desgarros del Canal de Parto</span>
+                                        </div>
+                                        <span class="text-red-500 font-bold">25%</span>
+                                    </div>
+                                    <div class="progress-bar h-2">
+                                        <div class="progress-bar-fill-red" style="width: 0%;" data-width="25%"></div>
+                                    </div>
+                                    <p class="text-xs text-slate-500 mt-2">Laceraciones vaginales y cervicales</p>
+                                </div>
+
+                                <!-- Placenta Previa/DPP -->
+                                <div class="etiology-item bg-red-50/30 rounded-xl p-4 border border-red-100/50">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-lg bg-red-100/50 flex items-center justify-center">
+                                                <i class="fas fa-layer-group text-red-500 text-sm"></i>
+                                            </div>
+                                            <span class="font-medium text-slate-700">Placenta Previa / DPP</span>
+                                        </div>
+                                        <span class="text-red-500 font-bold">18%</span>
+                                    </div>
+                                    <div class="progress-bar h-2">
+                                        <div class="progress-bar-fill-red" style="width: 0%;" data-width="18%"></div>
+                                    </div>
+                                    <p class="text-xs text-slate-500 mt-2">Desprendimiento prematuro de placenta</p>
+                                </div>
+
+                                <!-- Otras -->
+                                <div class="etiology-item bg-red-50/20 rounded-xl p-4 border border-red-100/30">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-lg bg-red-100/30 flex items-center justify-center">
+                                                <i class="fas fa-ellipsis-h text-red-400 text-sm"></i>
+                                            </div>
+                                            <span class="font-medium text-slate-600">Otras causas</span>
+                                        </div>
+                                        <span class="text-red-400 font-bold">12%</span>
+                                    </div>
+                                    <div class="progress-bar h-2">
+                                        <div class="progress-bar-fill-red" style="width: 0%;" data-width="12%"></div>
+                                    </div>
+                                    <p class="text-xs text-slate-500 mt-2">Ruptura uterina, inversión, coagulopatías</p>
+                                </div>
+                            </div>
+
+                            <!-- Comparison Badge -->
+                            <div class="comparison-badge rounded-xl p-4 mt-6">
+                                <div class="flex items-start gap-3">
+                                    <div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-chart-line text-amber-600"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-amber-800 text-sm">Nota Comparativa</h4>
+                                        <p class="text-amber-700 text-xs mt-1">
+                                            Menor incidencia que en <strong>Hosp. Miguel Pérez Carreño (45.7%)</strong>. 
+                                            Esta diferencia puede reflejar el perfil de referencia del HUC hacia patología médica compleja (THE).
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== INFECTION/SEPSIS CARD ==================== -->
+            <div id="infectionCard" 
+                 class="diagnostic-card bg-white rounded-3xl shadow-infection cursor-pointer relative overflow-hidden card-inner-glow-green"
+                 onclick="toggleDetail('infection')">
+                
+                <!-- Top Badge -->
+                <div class="absolute top-4 right-4 z-10">
+                    <div class="flex items-center gap-2 bg-emerald-500/10 backdrop-blur-sm px-3 py-1.5 rounded-full border border-emerald-500/20">
+                        <i class="fas fa-virus text-emerald-500 text-xs"></i>
+                        <span class="text-emerald-600 font-semibold text-sm">10.0%</span>
+                    </div>
+                </div>
+
+                <!-- Card Content -->
+                <div class="p-8">
+                    <!-- Title Section -->
+                    <div class="text-center mb-6">
+                        <h2 class="text-2xl font-bold text-slate-800 mb-1">Infecciones / Sepsis</h2>
+                        <p class="text-slate-500 text-sm">29 casos identificados</p>
+                    </div>
+
+                    <!-- SVG Bacteria Container -->
+                    <div class="flex justify-center items-center h-64 relative">
+                        <!-- Background organic patterns -->
+                        <div class="absolute inset-0 flex items-center justify-center overflow-hidden">
+                            <div id="bioPattern1" class="absolute w-full h-full opacity-10">
+                                <!-- Organic background shapes -->
+                            </div>
+                        </div>
+
+                        <!-- Main Bacteria/Microbe SVG -->
+                        <svg id="bacteriaSvg" 
+                             viewBox="0 0 200 200" 
+                             class="w-48 h-48 bacteria-glow floating transition-all duration-300"
+                             xmlns="http://www.w3.org/2000/svg">
+                            
+                            <defs>
+                                <!-- Main bacteria gradient -->
+                                <radialGradient id="bacteriaGradient" cx="40%" cy="40%" r="60%">
+                                    <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+                                    <stop offset="50%" style="stop-color:#10b981;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+                                </radialGradient>
+
+                                <!-- Nucleus gradient -->
+                                <radialGradient id="nucleusGradient" cx="50%" cy="50%" r="50%">
+                                    <stop offset="0%" style="stop-color:#065f46;stop-opacity:0.6" />
+                                    <stop offset="100%" style="stop-color:#064e3b;stop-opacity:0.9" />
+                                </radialGradient>
+
+                                <!-- Highlight for 3D effect -->
+                                <radialGradient id="bacteriaHighlight" cx="30%" cy="30%" r="40%">
+                                    <stop offset="0%" style="stop-color:#6ee7b7;stop-opacity:0.8" />
+                                    <stop offset="100%" style="stop-color:#10b981;stop-opacity:0" />
+                                </radialGradient>
+
+                                <!-- Flagella gradient -->
+                                <linearGradient id="flagellaGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#10b981;stop-opacity:0.3" />
+                                </linearGradient>
+                            </defs>
+
+                            <!-- Main bacteria body - organic blob shape -->
+                            <g id="mainBacteria">
+                                <!-- Primary cell body -->
+                                <path id="bacteriaBody"
+                                      d="M100,35 
+                                         C135,35 160,55 165,85 
+                                         C170,115 155,145 130,160 
+                                         C105,175 75,175 50,155 
+                                         C25,135 25,100 35,70 
+                                         C45,40 70,35 100,35 Z"
+                                      fill="url(#bacteriaGradient)"/>
+                                
+                                <!-- Highlight -->
+                                <ellipse cx="70" cy="70" rx="25" ry="20" 
+                                         fill="url(#bacteriaHighlight)" opacity="0.8"/>
+                                
+                                <!-- Cell membrane texture -->
+                                <path d="M100,40 
+                                         C130,40 155,58 160,85 
+                                         C165,112 150,140 128,155 
+                                         C106,170 78,170 55,152 
+                                         C32,134 30,102 40,73 
+                                         C50,44 72,40 100,40 Z"
+                                      fill="none" 
+                                      stroke="#059669" 
+                                      stroke-width="2"
+                                      stroke-dasharray="4,3"
+                                      opacity="0.4"/>
+                            </g>
+
+                            <!-- Nucleus/organelles -->
+                            <g id="organelles">
+                                <ellipse id="nucleus1" cx="95" cy="95" rx="20" ry="18" 
+                                         fill="url(#nucleusGradient)" opacity="0.7"/>
+                                <ellipse id="nucleus2" cx="115" cy="115" rx="12" ry="10" 
+                                         fill="url(#nucleusGradient)" opacity="0.5"/>
+                                <ellipse id="nucleus3" cx="75" cy="110" rx="10" ry="12" 
+                                         fill="url(#nucleusGradient)" opacity="0.5"/>
+                                
+                                <!-- Ribosomes (small dots) -->
+                                <circle cx="60" cy="80" r="3" fill="#065f46" opacity="0.4"/>
+                                <circle cx="130" cy="90" r="2.5" fill="#065f46" opacity="0.4"/>
+                                <circle cx="85" cy="130" r="2" fill="#065f46" opacity="0.4"/>
+                                <circle cx="120" cy="140" r="2.5" fill="#065f46" opacity="0.3"/>
+                            </g>
+
+                            <!-- Pili/Flagella - animated appendages -->
+                            <g id="flagella">
+                                <!-- Top flagella -->
+                                <path id="flagella1"
+                                      d="M90,35 Q85,15 75,5 Q70,0 60,5"
+                                      fill="none" 
+                                      stroke="url(#flagellaGradient)" 
+                                      stroke-width="3"
+                                      stroke-linecap="round"/>
+                                
+                                <path id="flagella2"
+                                      d="M110,38 Q115,20 125,10 Q130,5 140,8"
+                                      fill="none" 
+                                      stroke="url(#flagellaGradient)" 
+                                      stroke-width="2.5"
+                                      stroke-linecap="round"/>
+                                
+                                <!-- Side pili -->
+                                <path id="pili1"
+                                      d="M165,85 Q180,82 190,75"
+                                      fill="none" 
+                                      stroke="#10b981" 
+                                      stroke-width="2"
+                                      stroke-linecap="round"
+                                      opacity="0.7"/>
+                                
+                                <path id="pili2"
+                                      d="M168,100 Q185,100 195,95"
+                                      fill="none" 
+                                      stroke="#10b981" 
+                                      stroke-width="1.5"
+                                      stroke-linecap="round"
+                                      opacity="0.6"/>
+                                
+                                <path id="pili3"
+                                      d="M35,75 Q20,70 10,65"
+                                      fill="none" 
+                                      stroke="#10b981" 
+                                      stroke-width="2"
+                                      stroke-linecap="round"
+                                      opacity="0.7"/>
+                                
+                                <path id="pili4"
+                                      d="M32,100 Q15,98 5,95"
+                                      fill="none" 
+                                      stroke="#10b981" 
+                                      stroke-width="1.5"
+                                      stroke-linecap="round"
+                                      opacity="0.6"/>
+                                
+                                <!-- Bottom flagella -->
+                                <path id="flagella3"
+                                      d="M70,168 Q65,185 55,195 Q50,200 45,195"
+                                      fill="none" 
+                                      stroke="url(#flagellaGradient)" 
+                                      stroke-width="2"
+                                      stroke-linecap="round"/>
+                                
+                                <path id="flagella4"
+                                      d="M130,160 Q140,180 150,190 Q155,195 160,190"
+                                      fill="none" 
+                                      stroke="url(#flagellaGradient)" 
+                                      stroke-width="2"
+                                      stroke-linecap="round"/>
+                            </g>
+
+                            <!-- Division indicator (mitosis hint) -->
+                            <g id="divisionIndicator" opacity="0">
+                                <line x1="100" y1="50" x2="100" y2="150" 
+                                      stroke="#065f46" 
+                                      stroke-width="1" 
+                                      stroke-dasharray="5,5"/>
+                            </g>
+                        </svg>
+
+                        <!-- Small floating bacteria -->
+                        <div id="floatingBacteria" class="absolute inset-0 pointer-events-none">
+                            <!-- Generated by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Call to action -->
+                    <div class="text-center mt-4">
+                        <div class="inline-flex items-center gap-2 text-slate-400 text-sm">
+                            <span>Click para ver focos infecciosos</span>
+                            <i id="infectionChevron" class="fas fa-chevron-down transition-transform duration-300"></i>
+                        </div>
+                    </div>
+
+                    <!-- Expandable Detail Panel -->
+                    <div id="infectionDetail" class="detail-panel mt-6">
+                        <div class="border-t border-emerald-100 pt-6">
+                            <h3 class="text-lg font-semibold text-slate-700 mb-4 flex items-center gap-2">
+                                <i class="fas fa-bacteria text-emerald-500"></i>
+                                Focos Infecciosos Identificados
+                            </h3>
+
+                            <!-- Etiology List -->
+                            <div class="space-y-4">
+                                <!-- Corioamnionitis -->
+                                <div class="etiology-item bg-emerald-50/50 rounded-xl p-4 border border-emerald-100">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center">
+                                                <i class="fas fa-water text-emerald-600 text-sm"></i>
+                                            </div>
+                                            <div>
+                                                <span class="font-medium text-slate-700">Corioamnionitis</span>
+                                                <span class="ml-2 text-xs text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full">Más frecuente</span>
+                                            </div>
+                                        </div>
+                                        <span class="text-emerald-600 font-bold">40%</span>
+                                    </div>
+                                    <div class="progress-bar-green h-2">
+                                        <div class="progress-bar-fill-green" style="width: 0%;" data-width="40%"></div>
+                                    </div>
+                                    <p class="text-xs text-slate-500 mt-2">Infección del líquido amniótico y membranas</p>
+                                </div>
+
+                                <!-- Endometritis -->
+                                <div class="etiology-item bg-emerald-50/30 rounded-xl p-4 border border-emerald-100/50">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-lg bg-emerald-100/50 flex items-center justify-center">
+                                                <i class="fas fa-female text-emerald-500 text-sm"></i>
+                                            </div>
+                                            <span class="font-medium text-slate-700">Endometritis</span>
+                                        </div>
+                                        <span class="text-emerald-500 font-bold">35%</span>
+                                    </div>
+                                    <div class="progress-bar-green h-2">
+                                        <div class="progress-bar-fill-green" style="width: 0%;" data-width="35%"></div>
+                                    </div>
+                                    <p class="text-xs text-slate-500 mt-2">Infección postparto del revestimiento uterino</p>
+                                </div>
+
+                                <!-- Sepsis Puerperal -->
+                                <div class="etiology-item bg-emerald-50/30 rounded-xl p-4 border border-emerald-100/50">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-lg bg-emerald-100/50 flex items-center justify-center">
+                                                <i class="fas fa-exclamation-triangle text-emerald-500 text-sm"></i>
+                                            </div>
+                                            <div>
+                                                <span class="font-medium text-slate-700">Sepsis Puerperal</span>
+                                                <span class="ml-2 text-xs text-amber-600 bg-amber-100 px-2 py-0.5 rounded-full">Crítico</span>
+                                            </div>
+                                        </div>
+                                        <span class="text-emerald-500 font-bold">18%</span>
+                                    </div>
+                                    <div class="progress-bar-green h-2">
+                                        <div class="progress-bar-fill-green" style="width: 0%;" data-width="18%"></div>
+                                    </div>
+                                    <p class="text-xs text-slate-500 mt-2">Respuesta sistémica a infección con disfunción orgánica</p>
+                                </div>
+
+                                <!-- Otras infecciones -->
+                                <div class="etiology-item bg-emerald-50/20 rounded-xl p-4 border border-emerald-100/30">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-lg bg-emerald-100/30 flex items-center justify-center">
+                                                <i class="fas fa-ellipsis-h text-emerald-400 text-sm"></i>
+                                            </div>
+                                            <span class="font-medium text-slate-600">Otros focos</span>
+                                        </div>
+                                        <span class="text-emerald-400 font-bold">7%</span>
+                                    </div>
+                                    <div class="progress-bar-green h-2">
+                                        <div class="progress-bar-fill-green" style="width: 0%;" data-width="7%"></div>
+                                    </div>
+                                    <p class="text-xs text-slate-500 mt-2">Pielonefritis, neumonía, infección de sitio quirúrgico</p>
+                                </div>
+                            </div>
+
+                            <!-- Clinical Note -->
+                            <div class="bg-emerald-50/50 border border-emerald-200 rounded-xl p-4 mt-6">
+                                <div class="flex items-start gap-3">
+                                    <div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-stethoscope text-emerald-600"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-emerald-800 text-sm">Nota Clínica</h4>
+                                        <p class="text-emerald-700 text-xs mt-1">
+                                            Incidencia superior al <strong>3.8%</strong> de la Maternidad Concepción Palacios. 
+                                            Estos casos pueden estar exacerbados por las barreras de acceso y demoras en la atención descritas en el estudio.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Summary -->
+        <footer class="mt-10 pt-6 border-t border-slate-200">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-slate-100 rounded-xl p-4 flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-red-100 flex items-center justify-center">
+                        <i class="fas fa-tint text-red-500 text-lg"></i>
+                    </div>
+                    <div>
+                        <p class="text-slate-500 text-xs uppercase tracking-wide">Hemorragia</p>
+                        <p class="text-xl font-bold text-slate-800">58 <span class="text-sm font-normal text-slate-500">casos</span></p>
+                    </div>
+                </div>
+                
+                <div class="bg-slate-100 rounded-xl p-4 flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center">
+                        <i class="fas fa-virus text-emerald-500 text-lg"></i>
+                    </div>
+                    <div>
+                        <p class="text-slate-500 text-xs uppercase tracking-wide">Infecciones</p>
+                        <p class="text-xl font-bold text-slate-800">29 <span class="text-sm font-normal text-slate-500">casos</span></p>
+                    </div>
+                </div>
+                
+                <div class="bg-slate-100 rounded-xl p-4 flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center">
+                        <i class="fas fa-percentage text-blue-500 text-lg"></i>
+                    </div>
+                    <div>
+                        <p class="text-slate-500 text-xs uppercase tracking-wide">Combinado</p>
+                        <p class="text-xl font-bold text-slate-800">30% <span class="text-sm font-normal text-slate-500">de MMG</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-6 text-slate-400 text-xs">
+                <p>Fuente: Medina Ron & Moreno Contreras (2025) • Hospital Universitario de Caracas • 2011-2020</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // ==================== INITIALIZATION ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            initBloodDropAnimation();
+            initBacteriaAnimation();
+            initPulseRings();
+            createBloodParticles();
+            createFloatingBacteria();
+        });
+
+        // ==================== BLOOD DROP ANIMATIONS ====================
+        function initBloodDropAnimation() {
+            const bloodDrop = document.getElementById('bloodDropMain');
+            
+            // Define morphing shapes for liquid effect
+            const shapes = {
+                normal: `M100,20 
+                         C100,20 45,100 45,160 
+                         C45,200 68,240 100,240 
+                         C132,240 155,200 155,160 
+                         C155,100 100,20 100,20 Z`,
+                
+                morph1: `M100,22 
+                         C100,22 42,98 42,158 
+                         C42,198 66,242 100,242 
+                         C134,242 158,198 158,158 
+                         C158,98 100,22 100,22 Z`,
+                
+                morph2: `M100,18 
+                         C100,18 48,102 48,162 
+                         C48,202 70,238 100,238 
+                         C130,238 152,202 152,162 
+                         C152,102 100,18 100,18 Z`,
+                
+                dripping: `M100,25 
+                           C100,25 50,105 50,165 
+                           C50,205 72,250 100,250 
+                           C128,250 150,205 150,165 
+                           C150,105 100,25 100,25 Z`
+            };
+
+            // Continuous liquid morphing animation
+            anime({
+                targets: '#bloodDropMain',
+                d: [
+                    { value: shapes.normal },
+                    { value: shapes.morph1 },
+                    { value: shapes.normal },
+                    { value: shapes.morph2 },
+                    { value: shapes.normal }
+                ],
+                duration: 4000,
+                easing: 'easeInOutSine',
+                loop: true
+            });
+
+            // Subtle floating animation
+            anime({
+                targets: '#bloodDropSvg',
+                translateY: [-3, 3],
+                duration: 2000,
+                easing: 'easeInOutQuad',
+                direction: 'alternate',
+                loop: true
+            });
+
+            // Dripping animation
+            animateDrips();
+        }
+
+        function animateDrips() {
+            const drips = ['#drip1', '#drip2', '#drip3'];
+            
+            drips.forEach((drip, index) => {
+                anime({
+                    targets: drip,
+                    opacity: [0, 1, 1, 0],
+                    translateY: [0, 30],
+                    scaleX: [1, 0.8, 0.6],
+                    scaleY: [1, 1.2, 0.4],
+                    duration: 2500,
+                    delay: index * 800 + Math.random() * 1000,
+                    easing: 'easeInQuad',
+                    loop: true
+                });
+            });
+        }
+
+        function initPulseRings() {
+            anime({
+                targets: '#pulseRing1',
+                scale: [0.5, 1.5],
+                opacity: [0.6, 0],
+                duration: 3000,
+                easing: 'easeOutQuad',
+                loop: true
+            });
+
+            anime({
+                targets: '#pulseRing2',
+                scale: [0.5, 1.3],
+                opacity: [0.4, 0],
+                duration: 3500,
+                delay: 500,
+                easing: 'easeOutQuad',
+                loop: true
+            });
+
+            anime({
+                targets: '#pulseRing3',
+                scale: [0.5, 1.2],
+                opacity: [0.3, 0],
+                duration: 4000,
+                delay: 1000,
+                easing: 'easeOutQuad',
+                loop: true
+            });
+        }
+
+        function createBloodParticles() {
+            const container = document.getElementById('bloodParticles');
+            const colors = ['#ef4444', '#dc2626', '#f87171', '#fca5a5'];
+            
+            for (let i = 0; i < 8; i++) {
+                const particle = document.createElement('div');
+            

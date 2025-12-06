@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide 07 - Las Barreras Invisibles: Modelo de las Demoras</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .node-circle {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+        }
+        
+        .node-circle:hover {
+            filter: drop-shadow(0 8px 15px rgba(0, 0, 0, 0.5));
+        }
+        
+        .node-unlocked {
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse-glow {
+            0%, 100% { filter: drop-shadow(0 0 10px rgba(34, 197, 94, 0.5)); }
+            50% { filter: drop-shadow(0 0 20px rgba(34, 197, 94, 0.8)); }
+        }
+        
+        .patient-dot {
+            filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.8));
+        }
+        
+        .info-panel {
+            backdrop-filter: blur(20px);
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+        }
+        
+        .barrier-line {
+            stroke-dasharray: 10, 5;
+            animation: barrier-dash 0.5s linear infinite;
+        }
+        
+        @keyframes barrier-dash {
+            to { stroke-dashoffset: -15; }
+        }
+        
+        .gradient-text {
+            background: linear-gradient(90deg, #f59e0b, #ef4444);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .shake-animation {
+            animation: shake 0.5s ease-in-out infinite;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-3px); }
+            75% { transform: translateX(3px); }
+        }
+        
+        .progress-indicator {
+            transition: all 0.5s ease;
+        }
+        
+        .node-label {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .node-group:hover .node-label {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .locked-overlay {
+            fill: rgba(0, 0, 0, 0.3);
+        }
+        
+        .unlocked-check {
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.3s ease;
+        }
+        
+        .node-unlocked .unlocked-check {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .crisis-pulse {
+            animation: crisis-pulse 1s ease-in-out infinite;
+        }
+        
+        @keyframes crisis-pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.7; }
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(245, 158, 11, 0.1));
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        
+        .timeline-marker {
+            position: relative;
+        }
+        
+        .timeline-marker::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid rgba(148, 163, 184, 0.3);
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <!-- Header Section -->
+    <header class="text-center mb-8 md:mb-12">
+        <div class="inline-flex items-center gap-2 px-4 py-2 bg-orange-500/20 rounded-full mb-4">
+            <i class="fas fa-exclamation-triangle text-orange-400"></i>
+            <span class="text-orange-300 text-sm font-medium">Análisis de Barreras Asistenciales</span>
+        </div>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-3">
+            Las <span class="gradient-text">Barreras Invisibles</span>
+        </h1>
+        <p class="text-slate-400 text-lg md:text-xl max-w-3xl mx-auto">
+            Modelo de Thaddeus y Maine (1994) + Adaptación Local de Rondón (2023)
+        </p>
+        
+        <!-- Progress Counter -->
+        <div class="mt-6 flex justify-center items-center gap-4">
+            <span class="text-slate-500 text-sm">Demoras Exploradas:</span>
+            <div class="flex items-center gap-2">
+                <span id="unlocked-count" class="text-2xl font-bold text-green-400">0</span>
+                <span class="text-slate-500">/</span>
+                <span class="text-2xl font-bold text-slate-400">5</span>
+            </div>
+            <div class="w-32 h-2 bg-slate-700 rounded-full overflow-hidden">
+                <div id="progress-bar" class="h-full bg-gradient-to-r from-green-500 to-emerald-400 rounded-full progress-indicator" style="width: 0%"></div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main SVG Journey Map -->
+    <div class="relative w-full max-w-6xl mx-auto mb-8">
+        <svg id="journey-map" viewBox="0 0 1200 350" class="w-full h-auto" preserveAspectRatio="xMidYMid meet">
+            <!-- Definitions for gradients and filters -->
+            <defs>
+                <!-- Path Gradient (Blue to Red - Increasing Severity) -->
+                <linearGradient id="pathGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                    <stop offset="25%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                    <stop offset="50%" style="stop-color:#f59e0b;stop-opacity:1" />
+                    <stop offset="75%" style="stop-color:#ef4444;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#dc2626;stop-opacity:1" />
+                </linearGradient>
+                
+                <!-- Node Gradients -->
+                <linearGradient id="node0Gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#3b82f6" />
+                    <stop offset="100%" style="stop-color:#1d4ed8" />
+                </linearGradient>
+                
+                <linearGradient id="node1Gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#8b5cf6" />
+                    <stop offset="100%" style="stop-color:#6d28d9" />
+                </linearGradient>
+                
+                <linearGradient id="node2Gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#f59e0b" />
+                    <stop offset="100%" style="stop-color:#d97706" />
+                </linearGradient>
+                
+                <linearGradient id="node3Gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#f97316" />
+                    <stop offset="100%" style="stop-color:#ea580c" />
+                </linearGradient>
+                
+                <linearGradient id="node5Gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#ef4444" />
+                    <stop offset="100%" style="stop-color:#b91c1c" />
+                </linearGradient>
+                
+                <!-- Glow Filters -->
+                <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                    <feMerge>
+                        <feMergeNode in="coloredBlur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                </filter>
+                
+                <filter id="strongGlow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
+                    <feMerge>
+                        <feMergeNode in="coloredBlur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                </filter>
+                
+                <!-- Patient Dot Glow -->
+                <filter id="patientGlow" x="-100%" y="-100%" width="300%" height="300%">
+                    <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                    <feMerge>
+                        <feMergeNode in="coloredBlur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                </filter>
+                
+                <!-- Crisis Pattern -->
+                <pattern id="crisisPattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+                    <line x1="0" y1="0" x2="20" y2="20" stroke="#ef4444" stroke-width="2" opacity="0.3"/>
+                    <line x1="20" y1="0" x2="0" y2="20" stroke="#ef4444" stroke-width="2" opacity="0.3"/>
+                </pattern>
+            </defs>
+            
+            <!-- Background Grid Pattern -->
+            <g opacity="0.1">
+                <line x1="0" y1="175" x2="1200" y2="175" stroke="#64748b" stroke-width="1" stroke-dasharray="5,5"/>
+                <line x1="100" y1="50" x2="100" y2="300" stroke="#64748b" stroke-width="1" stroke-dasharray="5,5"/>
+                <line x1="320" y1="50" x2="320" y2="300" stroke="#64748b" stroke-width="1" stroke-dasharray="5,5"/>
+                <line x1="540" y1="50" x2="540" y2="300" stroke="#64748b" stroke-width="1" stroke-dasharray="5,5"/>
+                <line x1="760" y1="50" x2="760" y2="300" stroke="#64748b" stroke-width="1" stroke-dasharray="5,5"/>
+                <line x1="1020" y1="50" x2="1020" y2="300" stroke="#64748b" stroke-width="1" stroke-dasharray="5,5"/>
+            </g>
+            
+            <!-- Start Point -->
+            <g id="start-point" transform="translate(50, 175)">
+                <circle r="15" fill="#22c55e" opacity="0.3"/>
+                <circle r="10" fill="#22c55e"/>
+                <text x="0" y="40" text-anchor="middle" fill="#94a3b8" font-size="12" font-weight="500">INICIO</text>
+                <text x="0" y="55" text-anchor="middle" fill="#64748b" font-size="10">Embarazo</text>
+            </g>
+            
+            <!-- Main Path (Sinuous Route) -->
+            <path id="main-path" 
+                  d="M 65 175 
+                     Q 120 175, 150 140 
+                     Q 180 105, 230 105 
+                     L 280 105
+                     Q 350 105, 380 145
+                     Q 410 185, 460 185
+                     L 500 185
+                     Q 560 185, 600 220
+                     Q 640 255, 700 255
+                     L 740 255
+                     Q 820 255, 860 200
+                     Q 900 145, 960 145
+                     L 1020 145
+                     Q 1080 145, 1100 175
+                     L 1150 175"
+                  fill="none" 
+                  stroke="url(#pathGradient)" 
+                  stroke-width="8" 
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  opacity="0.3"/>
+            
+            <!-- Animated Path Overlay -->
+            <path id="animated-path" 
+                  d="M 65 175 
+                     Q 120 175, 150 140 
+                     Q 180 105, 230 105 
+                     L 280 105
+                     Q 350 105, 380 145
+                     Q 410 185, 460 185
+                     L 500 185
+                     Q 560 185, 600 220
+                     Q 640 255, 700 255
+                     L 740 255
+                     Q 820 255, 860 200
+                     Q 900 145, 960 145
+                     L 1020 145
+                     Q 1080 145, 1100 175
+                     L 1150 175"
+                  fill="none" 
+                  stroke="url(#pathGradient)" 
+                  stroke-width="8" 
+                  stroke-linecap="round"
+                  stroke-linejoin="round"/>
+            
+            <!-- Barrier Lines (Hidden by default, shown on node 5 click) -->
+            <g id="barrier-group" opacity="0">
+                <line class="barrier-line" x1="980" y1="100" x2="980" y2="190" stroke="#ef4444" stroke-width="4"/>
+                <line class="barrier-line" x1="1000" y1="100" x2="1000" y2="190" stroke="#ef4444" stroke-width="4"/>
+                <line class="barrier-line" x1="1020" y1="100" x2="1020" y2="190" stroke="#ef4444" stroke-width="4"/>
+                <rect x="960" y="95" width="80" height="100" fill="url(#crisisPattern)" class="crisis-pulse"/>
+                <text x="1000" y="85" text-anchor="middle" fill="#ef4444" font-size="14" font-weight="bold">BLOQUEO</text>
+            </g>
+            
+            <!-- Node 0: Planificación Familiar -->
+            <g id="node-0" class="node-group" transform="translate(150, 105)" data-node="0">
+                <circle class="node-circle" r="35" fill="url(#node0Gradient)" filter="url(#glow)"/>
+                <circle class="locked-overlay" r="35" id="lock-0"/>
+                <text x="0" y="8" text-anchor="middle" fill="white" font-size="20" class="fas">&#xf484;</text>
+                <circle class="unlocked-check" cx="25" cy="-25" r="12" fill="#22c55e"/>
+                <text class="unlocked-check" x="25" y="-20" text-anchor="middle" fill="white" font-size="12">✓</text>
+                <g class="node-label">
+                    <rect x="-60" y="45" width="120" height="50" rx="8" fill="rgba(30, 41, 59, 0.9)" stroke="#3b82f6" stroke-width="1"/>
+                    <text x="0" y="65" text-anchor="middle" fill="#93c5fd" font-size="11" font-weight="600">DEMORA 0</text>
+                    <text x="0" y="82" text-anchor="middle" fill="#e2e8f0" font-size="10">Planificación</text>
+                </g>
+            </g>
+            
+            <!-- Node 1: Decisión -->
+            <g id="node-1" class="node-group" transform="translate(380, 165)" data-node="1">
+                <circle class="node-circle" r="35" fill="url(#node1Gradient)" filter="url(#glow)"/>
+                <circle class="locked-overlay" r="35" id="lock-1"/>
+                <text x="0" y="8" text-anchor="middle" fill="white" font-size="20" class="fas">&#xf059;</text>
+                <circle class="unlocked-check" cx="25" cy="-25" r="12" fill="#22c55e"/>
+                <text class="unlocked-check" x="25" y="-20" text-anchor="middle" fill="white" font-size="12">✓</text>
+                <g class="node-label">
+                    <rect x="-60" y="45" width="120" height="50" rx="8" fill="rgba(30, 41, 59, 0.9)" stroke="#8b5cf6" stroke-width="1"/>
+                    <text x="0" y="65" text-anchor="middle" fill="#c4b5fd" font-size="11" font-weight="600">DEMORA 1</text>
+                    <text x="0" y="82" text-anchor="middle" fill="#e2e8f0" font-size="10">Decisión</text>
+                </g>
+            </g>
+            
+            <!-- Node 2: Acceso -->
+            <g id="node-2" class="node-group" transform="translate(600, 235)" data-node="2">
+                <circle class="node-circle" r="35" fill="url(#node2Gradient)" filter="url(#glow)"/>
+                <circle class="locked-overlay" r="35" id="lock-2"/>
+                <text x="0" y="8" text-anchor="middle" fill="white" font-size="20" class="fas">&#xf0f9;</text>
+                <circle class="unlocked-check" cx="25" cy="-25" r="12" fill="#22c55e"/>
+                <text class="unlocked-check" x="25" y="-20" text-anchor="middle" fill="white" font-size="12">✓</text>
+                <g class="node-label">
+                    <rect x="-60" y="45" width="120" height="50" rx="8" fill="rgba(30, 41, 59, 0.9)" stroke="#f59e0b" stroke-width="1"/>
+                    <text x="0" y="65" text-anchor="middle" fill="#fcd34d" font-size="11" font-weight="600">DEMORA 2</text>
+                    <text x="0" y="82" text-anchor="middle" fill="#e2e8f0" font-size="10">Acceso</text>
+                </g>
+            </g>
+            
+            <!-- Node 3: Atención -->
+            <g id="node-3" class="node-group" transform="translate(820, 175)" data-node="3">
+                <circle class="node-circle" r="35" fill="url(#node3Gradient)" filter="url(#glow)"/>
+                <circle class="locked-overlay" r="35" id="lock-3"/>
+                <text x="0" y="8" text-anchor="middle" fill="white" font-size="20" class="fas">&#xf017;</text>
+                <circle class="unlocked-check" cx="25" cy="-25" r="12" fill="#22c55e"/>
+                <text class="unlocked-check" x="25" y="-20" text-anchor="middle" fill="white" font-size="12">✓</text>
+                <g class="node-label">
+                    <rect x="-60" y="45" width="120" height="50" rx="8" fill="rgba(30, 41, 59, 0.9)" stroke="#f97316" stroke-width="1"/>
+                    <text x="0" y="65" text-anchor="middle" fill="#fdba74" font-size="11" font-weight="600">DEMORA 3</text>
+                    <text x="0" y="82" text-anchor="middle" fill="#e2e8f0" font-size="10">Atención</text>
+                </g>
+            </g>
+            
+            <!-- Node 5: Sistémica (CRITICAL - Larger) -->
+            <g id="node-5" class="node-group" transform="translate(1020, 145)" data-node="5">
+                <!-- Outer warning ring -->
+                <circle r="55" fill="none" stroke="#ef4444" stroke-width="3" stroke-dasharray="8,4" opacity="0.5">
+                    <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="10s" repeatCount="indefinite"/>
+                </circle>
+                <circle class="node-circle" id="critical-node" r="45" fill="url(#node5Gradient)" filter="url(#strongGlow)"/>
+                <circle class="locked-overlay" r="45" id="lock-5"/>
+                <text x="0" y="8" text-anchor="middle" fill="white" font-size="24" class="fas">&#xf071;</text>
+                <circle class="unlocked-check" cx="32" cy="-32" r="14" fill="#22c55e"/>
+                <text class="unlocked-check" x="32" y="-27" text-anchor="middle" fill="white" font-size="14">✓</text>
+                <g class="node-label">
+                    <rect x="-70" y="55" width="140" height="55" rx="8" fill="rgba(30, 41, 59, 0.9)" stroke="#ef4444" stroke-width="2"/>
+                    <text x="0" y="75" text-anchor="middle" fill="#fca5a5" font-size="11" font-weight="600">DEMORA 5</text>
+                    <text x="0" y="92" text-anchor="middle" fill="#e2e8f0" font-size="10">Fallas Sistémicas</text>
+                    <text x="0" y="105" text-anchor="middle" fill="#ef4444" font-size="9" font-weight="bold">⚠ CRÍTICO</text>
+                </g>
+            </g>
+            
+            <!-- End Point -->
+            <g id="end-point" transform="translate(1150, 175)">
+                <circle r="20" fill="none" stroke="#22c55e" stroke-width="3" stroke-dasharray="5,3"/>
+                <circle r="12" fill="#22c55e"/>
+                <text x="0" y="5" text-anchor="middle" fill="white" font-size="14" class="fas">&#xf004;</text>
+                <text x="0" y="45" text-anchor="middle" fill="#22c55e" font-size="12" font-weight="600">SOBREVIDA</text>
+                <text x="0" y="60" text-anchor="middle" fill="#64748b" font-size="10">100% HUC</text>
+            </g>
+            
+            <!-- Patient Dot (Animated) -->
+            <g id="patient-container">
+                <circle id="patient-dot" class="patient-dot" cx="65" cy="175" r="10" fill="#3b82f6" filter="url(#patientGlow)"/>
+                <circle cx="65" cy="175" r="6" fill="#93c5fd" id="patient-inner"/>
+            </g>
+            
+            <!-- Legend -->
+            <g transform="translate(50, 320)">
+                <text fill="#94a3b8" font-size="11" font-weight="500">LEYENDA:</text>
+                <circle cx="120" cy="-4" r="6" fill="#3b82f6"/>
+                <text x="135" fill="#94a3b8" font-size="10">Bajo Riesgo</text>
+                <circle cx="220" cy="-4" r="6" fill="#f59e0b"/>
+                <text x="235" fill="#94a3b8" font-size="10">Riesgo Moderado</text>
+                <circle cx="350" cy="-4" r="6" fill="#ef4444"/>
+                <text x="365" fill="#94a3b8" font-size="10">Riesgo Crítico</text>
+                <rect x="460" y="-10" width="20" height="12" fill="#22c55e" rx="3"/>
+                <text x="490" fill="#94a3b8" font-size="10">Desbloqueado</text>
+            </g>
+        </svg>
+    </div>
+
+    <!-- Information Panel -->
+    <div id="info-panel" class="info-panel max-w-4xl mx-auto rounded-2xl p-6 md:p-8 transition-all duration-500">
+        <!-- Default State -->
+        <div id="default-info" class="text-center">
+            <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-slate-700/50 flex items-center justify-center">
+                <i class="fas fa-hand-pointer text-3xl text-slate-400 animate-bounce"></i>
+            </div>
+            <h3 class="text-xl md:text-2xl font-bold text-white mb-2">Explora las Barreras</h3>
+            <p class="text-slate-400 max-w-lg mx-auto">
+                Haz clic en cada nodo del camino para descubrir las demoras que enfrentan las pacientes 
+                antes de recibir atención médica adecuada.
+            </p>
+            <div class="mt-6 flex flex-wrap justify-center gap-3">
+                <span class="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm">
+                    <i class="fas fa-info-circle mr-1"></i> 5 demoras identificadas
+                </span>
+                <span class="px-3 py-1 bg-orange-500/20 text-orange-300 rounded-full text-sm">
+                    <i class="fas fa-clock mr-1"></i> Tiempo crítico
+                </span>
+                <span class="px-3 py-1 bg-red-500/20 text-red-300 rounded-full text-sm">
+                    <i class="fas fa-exclamation-triangle mr-1"></i> Barreras sistémicas
+                </span>
+            </div>
+        </div>
+        
+        <!-- Node 0 Info -->
+        <div id="info-0" class="hidden">
+            <div class="flex items-start gap-4 md:gap-6">
+                <div class="flex-shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center shadow-lg shadow-blue-500/30">
+                    <i class="fas fa-pills text-2xl md:text-3xl text-white"></i>
+                </div>
+                <div class="flex-1">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="px-2 py-1 bg-blue-500/20 text-blue-300 rounded text-xs font-semibold">DEMORA 0</span>
+                        <span class="text-slate-500 text-sm">Rondón, 2023</span>
+                    </div>
+                    <h3 class="text-xl md:text-2xl font-bold text-white mb-3">Falla en Anticoncepción / Planificación Familiar</h3>
+                    <p class="text-slate-300 mb-4">
+                        El problema comienza <span class="text-blue-400 font-semibold">antes del embarazo</span>. 
+                        La falta de acceso a métodos anticonceptivos efectivos y educación sexual resulta en 
+                        embarazos no planificados, especialmente en poblaciones vulnerables.
+                    </p>
+                    <div class="stat-card rounded-xl p-4 mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="text-3xl md:text-4xl font-bold text-orange-400">56.1%</div>
+                            <div class="text-slate-400 text-sm">
+                                de los casos de morbilidad extrema presentaron<br>
+                                <span class="text-orange-300 font-medium">falla en anticoncepción</span> (Pérez Carreño)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 bg-slate-700 text-slate-300 rounded-full text-sm">
+                            <i class="fas fa-graduation-cap mr-1"></i> Educación sexual
+                        </span>
+                        <span class="px-3 py-1 bg-slate-700 text-slate-300 rounded-full text-sm">
+                            <i class="fas fa-clinic-medical mr-1"></i> Acceso a anticonceptivos
+                        </span>
+                        <span class="px-3 py-1 bg-slate-700 text-slate-300 rounded-full text-sm">
+                            <i class="fas fa-users mr-1"></i> Adolescentes en riesgo
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Node 1 Info -->
+        <div id="info-1" class="hidden">
+            <div class="flex items-start gap-4 md:gap-6">
+                <div class="flex-shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center shadow-lg shadow-purple-500/30">
+                    <i class="fas fa-brain text-2xl md:text-3xl text-white"></i>
+                </div>
+                <div class="flex-1">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="px-2 py-1 bg-purple-500/20 text-purple-300 rounded text-xs font-semibold">DEMORA 1</span>
+                        <span class="text-slate-500 text-sm">Thaddeus & Maine, 1994</span>
+                    </div>
+                    <h3 class="text-xl md:text-2xl font-bold text-white mb-3">Reconocimiento del Problema</h3>
+                    <p class="text-slate-300 mb-4">
+                        La paciente <span class="text-purple-400 font-semibold">tarda en decidir buscar ayuda médica</span>. 
+                        El desconocimiento de los signos de alarma durante el embarazo lleva a subestimar 
+                        síntomas que pueden ser indicadores de complicaciones graves.
+                    </p>
+                    <div class="stat-card rounded-xl p-4 mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="text-3xl md:text-4xl font-bold text-orange-400">82%</div>
+                            <div class="text-slate-400 text-sm">
+                                de las pacientes presentaron esta demora<br>
+                                <span class="text-purple-300 font-medium">en Maternidad Concepción Palacios</span> (Chirinos, 2019)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 bg-slate-700 text-slate-300 rounded-full text-sm">
+                            <i class="fas fa-eye-slash mr-1"></i> Desconocimiento de signos
+                        </span>
+                        <span class="px-3 py-1 bg-slate-700 text-slate-300 rounded-full text-sm">
+                            <i class="fas fa-clock mr-1"></i> Retraso en la decisión
+                        </span>
+                        <span class="px-3 py-1 bg-slate-700 text-slate-300 rounded-full text-sm">
+                            <i class="fas fa-book-medical mr-1"></i> Falta de educación prenatal
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Node 2 Info -->
+        <div id="info-2" class="hidden">
+            <div class="flex items-start gap-4 md:gap-6">
+                <div class="flex-shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center shadow-lg shadow-amber-500/30">
+                    <i class="fas fa-ambulance text-2xl md:text-3xl text-white"></i>
+                </div>
+                <div class="flex-1">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="px-2 py-1 bg-amber-500/20 text-amber-300 rounded text-xs font-semibold">DEMORA 2</span>
+                        <span class="text-slate-500 text-sm">Thaddeus & Maine, 1994</span>
+                    </div>
+                    <h3 class="text-xl md:text-2xl font-bold text-white mb-3">Llegar al Centro de Salud</h3>
+                    <p class="text-slate-300 mb-4">
+                        Barreras <span class="text-amber-400 font-semibold">geográficas y de transporte</span> 
+                        dificultan el acceso oportuno. Las distancias, la falta de vehículos, el costo del 
+                        transporte y la infraestructura vial deficiente son factores determinantes.
+                    </p>
+                    <div class="stat-card rounded-xl p-4 mb-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <div class="text-2xl md:text-3xl font-bold text-amber-400">67.9%</div>
+                                <div class="text-slate-400 text-sm">
+                                    procedían del <span class="text-amber-300">Distrito Capital</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="text-2xl md:text-3xl font-bold text-amber-400">32%</div>
+                                <div class="text-slate-400 text-sm">
+                                    enfrentaron barreras <span class="text-amber-300">geográficas</span> (Colombia)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 bg-slate-700 text-slate-300 rounded-full text-sm">
+                            <i class="fas fa-map-marked-alt mr-1"></i> Distancias
+                        </span>
+                        <span class="px-3 py-1 bg-slate-700 text-slate-300 rounded-full text-sm">
+                            <i class="fas fa-dollar-sign mr-1"></i> Costos de transporte
+                        </span>
+                        <span class="px-3 py-1 bg-slate-700 text-slate-300 rounded-full text-sm">
+                            <i class="fas fa-road mr-1"></i> Infraestructura vial
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Node 3 Info -->
+        <div id="info-3" class="hidden">
+            <div class="flex items-start gap-4 md:gap-6">
+                <div class="flex-shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-gradient-to-br from-orange-500 to-orange-700 flex items-center justify-center shadow-lg shadow-orange-500/30">
+                    <i class="fas fa-hospital-alt text-2xl md:text-3xl text-white"></i>
+                </div>
+                <div class="flex-1">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="px-2 py-1 bg-orange-500/20 text-orange-300 rounded text-xs font-semibold">DEMORA 3</span>
+                        <span class="text-slate-500 text-sm">Thaddeus & Maine, 1994</span>
+                    </div>
+                    <h3 class="text-xl md:text-2xl font-bold text-white mb-3">Recibir Tratamiento Oportuno</h3>
+                    <p class="text-slate-300 mb-4">
+                        Una vez en el centro de salud, la paciente enfrenta 
+                        <span class="text-orange-400 font-semibold">tiempos de espera prolongados</span> 
+                        en triaje, admisión y atención. La saturación de servicios y la burocracia 
+                        hospitalaria retrasan la intervención médica crítica.
+                    </p>
+                    <div class="stat-card rounded-xl p-4 mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="text-3xl md:text-4xl font-bold text-orange-400">77.2%</div>
+                            <div class="text-slate-400 text-sm">
+                                experimentaron esta demora, principalmente por<br>
+                                <span class="text-orange-300 font-medium">necesidad de referencia a otros centros</span> (MCP)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 bg-slate-700 text-slate-300 rounded-full text-sm">
+                            <i class="fas fa-hourglass-half mr-1"></i> Tiempos de espera
+                        </span>
+                        <span class="px-3 py-1 bg-slate-700 text-slate-300 rounded-full text-sm">
+                            <i class="fas fa-file-alt mr-1"></i> Burocracia
+                        </span>
+                        <span class="px-3 py-1 bg-slate-700 text-slate-300 rounded-full text-sm">
+                            <i class="fas fa-exchange-alt mr-1"></i> Referencias
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Node 5 Info (Critical) -->
+        <div id="info-5" class="hidden">
+            <div class="flex items-start gap-4 md:gap-6">
+                <div class="flex-shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center shadow-lg shadow-red-500/30 shake-animation">
+                    <i class="fas fa-exclamation-triangle text-2xl md:text-3xl text-white"></i>
+                </div>
+                <div class="flex-1">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="px-2 py-1 bg-red-500/20 text-red-300 rounded text-xs font-semibold animate-pulse">DEMORA 5 - CRÍTICA</span>
+                        <span class="text-slate-500 text-sm">Rondón, 2023 | Chirinos, 2019</span>
+                    </div>
+                    <h3 class="text-xl md:text-2xl font-bold text-white mb-3">Fallas Sistémicas / Carencia de Insumos</h3>
+                    <p class="text-slate-300 mb-4">
+                        La realidad del <span class="text-red-400 font-semibold">Hospital Universitario de Caracas</span>: 
+                        falta de recursos, escasez de medicamentos, quirófanos no disponibles, 
+                        ausencia de especialistas (anestesiólogos), y equipos dañados. 
+                        El personal médico trabaja en condiciones de crisis permanente.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div class="stat-card rounded-xl p-4">
+                            <div class="text-2xl md:text-3xl font-bold text-red-400">56.7%</div>
+                            <div class="text-slate-400 text-sm">
+                                Demora 3 por falta de <span class="text-red-300 font-medium">anestesiólogos</span>
+                            </div>
+                        </div>
+                        <div class="stat-card rounded-xl p-4">
+                            <div class="text-2xl md:text-3xl font-bold text-red-400">86.9%</div>
+                            <div class="text-slate-400 text-sm">
+                                Control prenatal <span class="text-red-300 font-medium">inadecuado o nulo</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-red-500/10 border border-red-500/30 rounded-xl p-4 mb-4">
+                        <div class="flex items-center gap-2 mb-2">
+                            <i class="fas fa-heartbeat text-red-400"></i>
+                            <span class="text-red-300 font-semibold">Paradoja del HUC</span>
+                        </div>
+                        <p class="text-slate-300 text-sm">
+                            A pesar de las fallas sistémicas, el equipo médico logró una 
+                            <span class="text-green-400 font-bold">supervivencia del 100%</span> mediante 
+                            "manejo de rescate" y resiliencia institucional.
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 bg-red-900/50 text-red-300 rounded-full text-sm">
+                            <i class="fas fa-box-open mr-1"></i> Falta de insumos
+                        </span>
+                        <span class="px-3 py-1 bg-red-900/50 text-red-300 rounded-full text-sm">
+                            <i class="fas fa-user-md mr-1"></i> Escasez de personal
+                        </span>
+                        <span class="px-3 py-1 bg-red-900/50 text-red-300 rounded-full text-sm">
+                            <i class="fas fa-procedures mr-1"></i> Quirófanos limitados
+                        </span>
+                        <span class="px-3 py-1 bg-red-900/50 text-red-300 rounded-full text-sm">
+                            <i class="fas fa-syringe mr-1"></i> Medicamentos agotados
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Stats -->
+    <div class="max-w-4xl mx-auto mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-slate-800/50 rounded-xl p-4 text-center border border-slate-700">
+            <div class="text-2xl md:text-3xl font-bold text-blue-400">290</div>
+            <div class="text-slate-400 text-sm">Casos Analizados</div>
+        </div>
+        <div class="bg-slate-800/50 rounded-xl p-4 text-center border border-slate-700">
+            <div class="text-2xl md:text-3xl font-bold text-orange-400">68.3%</div>
+            <div class="text-slate-400 text-sm">Trastornos Hipertensivos</div>
+        </div>
+        <div class="bg-slate-800/50 rounded-xl p-4 text-center border border-slate-700">
+            <div class="text-2xl md:text-3xl font-bold text-purple-400">6.5%</div>
+            <div class="text-slate-400 text-sm">Requirieron UCI</div>
+        </div>
+        <div class="bg-slate-800/50 rounded-xl p-4 text-center border border-slate-700">
+            <div class="text-2xl md:text-3xl font-bold text-green-400">100%</div>
+            <div class="text-slate-400 text-sm">Supervivencia</div>
+        </div>
+    </div>
+
+    <!-- Source Attribution -->
+    <div class="text-center mt-8 text-slate-500 text-sm">
+        <p>
+            <i class="fas fa-book-open mr-1"></i>
+            Fuente: Medina & Moreno (2025). Morbilidad Materna Grave. Hospital Universitario de Caracas, 2011-2020.
+        </p>
+    </div>
+
+    <script>
+        // State management
+        const state = {
+            unlockedNodes: new Set(),
+            currentNode: null,
+            patientPosition: 0,
+            pathLength: 0,
+            nodePositions: [0.12, 0.32, 0.52, 0.72, 0.92]
+        };
+
+        // Node data for path positions
+        const nodeData = {
+            0: { x: 150, y: 105, pathPercent: 0.12 },
+            1: { x: 380, y: 165, pathPercent: 0.32 },
+            2: { x: 600, y: 235, pathPercent: 0.52 },
+            3: { x: 820, y: 175, pathPercent: 0.72 },
+            5: { x: 1020, y: 145, pathPercent: 0.92 }
+        };
+
+        // Initialize on DOM load
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeAnimations();
+            setupNodeInteractions();
+        });
+
+        function initializeAnimations() {
+            const path = document.getElementById('animated-path');
+            state.pathLength = path.getTotalLength();
+            
+            // Set initial path state (hidden)
+            path.style.strokeDasharray = state.pathLength;
+            path.style.strokeDashoffset = state.pathLength;
+            
+            // Animate path drawing
+            anime({
+                targets: '#animated-path',
+                strokeDashoffset: [state.pathLength, 0],
+                easing: 'easeInOutQuad',
+                duration: 3000,
+                delay: 500,
+                complete: () => {
+                    animatePatientToFirstNode();
+                }
+            });
+
+            // Animate nodes appearing
+            anime({
+                targets: '.node-group',
+                scale: [0, 1],
+                opacity: [0, 1],
+                delay: anime.stagger(200, { start: 1000 }),
+                duration: 600,
+                easing: 'easeOutElastic(1, 0.5)'
+            });
+
+            // Start point pulse
+            anime({
+                targets: '#start-point circle:first-child',
+                scale: [1, 1.5],
+                opacity: [0.3, 0],
+                duration: 1500,
+                easing: 'easeOutQuad',
+                loop: true
+            });
+
+            // Critical node shake effect
+            anime({
+                targets: '#critical-node',
+                translateX: [-2, 2],
+                duration: 100,
+                direction: 'alternate',
+                loop: true,
+                easing: 'easeInOutSine'
+            });
+
+            // End point pulse
+            anime({
+                targets: '#end-point circle:first-child',
+                scale: [1, 1.3],
+                opacity: [1, 0.3],
+                duration: 1000,
+                easing: 'easeInOutSine',
+                direction: 'alternate',
+                loop: true
+            });
+        }
+
+        function animatePatientToFirstNode() {
+            const path = document.getElementById('animated-path');
+            const patientDot = document.getElementById('patient-dot');
+            const patientInner = document.getElementById('patient-inner');
+            
+            // Animate patient along path segments
+            animatePatientToNode(0);
+        }
+
+        function animatePatientToNode(nodeIndex) {
+            const path = document.getElementById('animated-path');
+            const patientDot = document.getElementById('patient-dot');
+            const patientInner = document.getElementById('patient-inner');
+            const nodeKeys = Object.keys(nodeData).map(Number);
+            
+            if (nodeIndex >= nodeKeys.length) return;
+            
+            const targetNode = nodeData[nodeKeys[nodeIndex]];
+            const startPercent = nodeIndex === 0 ? 0 : nodeData[nodeKeys[nodeIndex - 1]].pathPercent;
+            const endPercent = targetNode.pathPercent;
+            
+            anime({
+                targets: { percent: startPercent },
+                percent: endPercent,
+                duration: 1500,
+                easing: 'easeInOutQuad',
+                update: function(anim) {
+                    const progress = anim.animations[0].currentValue;
+                    const point = path.getPointAtLength(progress * state.pathLength);
+                    patientDot.setAttribute('cx', point.x);
+                    patientDot.setAttribute('cy', point.y);
+                    patientInner.setAttribute('cx', point.x);
+                    patientInner.setAttribute('cy', point.y);
+                },
+                complete: () => {
+                    // Bounce effect at node
+                    anime({
+                        targets: [`#node-${nodeKeys[nodeIndex]} .node-circle`],
+                        scale: [1, 1.15, 1],
+                        duration: 400,
+                        easing: 'easeOutElastic(1, 0.5)'
+                    });
+                    
+                    // Continue to next node after delay
+                    setTimeout(() => {
+                        animatePatientToNode(nodeIndex + 1);
+                    }, 800);
+                }
+            });
+        }
+
+        function setupNodeInteractions() {
+            const nodes = document.querySelectorAll('.node-group');
+            
+            nodes.forEach(node => {
+                const nodeId = node.getAttribute('data-node');
+                
+                // Hover effects
+                node.addEventListener('mouseenter', () => {
+                    if (!state.unlockedNodes.has(nodeId)) {
+                        anime({
+                            targets: node.querySelector('.node-circle'),
+                            scale: 1.1,
+                            duration: 200,
+                            easing: 'easeOutQuad'
+                        });
+                    }
+                });
+                
+                node.addEventListener('mouseleave', () => {
+                    if (!state.unlockedNodes.has(nodeId)) {
+                        anime({
+                            targets: node.querySelector('.node-circle'),
+                            scale: 1,
+                            duration: 200,
+                            easing: 'easeOutQuad'
+                        });
+                    }
+                });
+                
+                // Click to unlock
+                node.addEventListener('click', () => {
+                    unlockNode(nodeId);
+                });
+            });
+        }
+
+        function unlockNode(nodeId) {
+            if (state.unlockedNodes.has(nodeId)) {
+                // Just show info if already unlocked
+                showNodeInfo(nodeId);
+                return;
+            }
+            
+            state.unlockedNodes.add(nodeId);
+            const node = document.getElementById(`node-${nodeId}`);
+            
+            // Remove lock overlay
+            const lock = document.getElementById(`lock-${nodeId}`);
+            anime({
+                targets: lock,
+                opacity: 0,
+                duration: 300,
+                easing: 'easeOutQuad'
+            });
+            
+            // Show unlock check
+            node.classList.add('node-unlocked');
+            anime({
+                targets: node.querySelectorAll('.unlocked-check'),
+                scale: [0, 1],
+                opacity: [0, 1],
+                duration: 400,
+                easing: 'easeOutElastic(1, 0.5)'
+            });
+            
+            // Celebration effect
+            anime({
+                targets: node.querySelector('.node-circle'),
+                scale: [1, 1.3, 1],
+                duration: 500,
+                easing: 'easeOutElastic(1, 0.5)'
+            });
+            
+            // Update progress
+            updateProgress();
+            
+            // Show info panel
+            showNodeInfo(nodeId);
+            
+            // Special effect for node 5 (barrier)
+            if (nodeId === '5') {
+                showBarrierEffect();
+            }
+        }
+
+        function showNodeInfo(nodeId) {
+            // Hide all info panels
+            document.querySelectorAll('[id^="info-"]').forEach(panel => {
+                panel.classList.add('hidden');
+            });
+            
+            // Show selected info
+            const infoPanel = document.getElementById(`info-${nodeId}`);
+            if (infoPanel) {
+                infoPanel.classList.remove('hidden');
+                
+                // Animate in
+                anime({
+                    targets: infoPanel,
+                    opacity: [0, 1],
+                    translateY: [20, 0],
+                    duration: 400,
+                    easing: 'easeOutQuad'
+                });
+            }
+            
+            state.currentNode = nodeId;
+        }
+
+        function updateProgress() {
+            const count = state.unlockedNodes.size;
+            const percentage = (count / 5) * 100;
+            
+            // Update counter
+            document.getElementById('unlocked-count').textContent = count;
+            
+            // Animate progress bar
+            anime({
+                targets: '#progress-bar',
+                width: `${percentage}%`,
+                duration: 500,
+                easing: 'easeOutQuad'
+            });
+            
+            // Counter animation
+            anime({
+                targets: '#unlocked-count',
+                scale: [1, 1.3, 1],
+                duration: 400,
+                easing: 'easeOutElastic(1, 0.5)'
+            });
+        }
+
+        function showBarrierEffect() {
+            const barrierGroup = document.getElementById('barrier-group');
+            
+            // Show barrier
+            anime({
+                targets: barrierGroup,
+                opacity: [0, 1],
+                duration: 500,
+                easing: 'easeOutQuad'
+            });
+            
+            // Screen shake effect
+            anime({
+                targets: '#journey-map',
+                translateX: [-5, 5, -5, 5, 0],
+                duration: 500,
+                easing: 'easeInOutSine'
+            });
+            
+            // Pulse the info panel border
+            anime({
+                targets: '#info-panel',
+                borderColor: ['rgba(148, 163, 184, 0.2)', 'rgba(239, 68, 68, 0.5)', 'rgba(148, 163, 184, 0.2)'],
+                duration: 1000,
+                easing: 'easeInOutSine'
+            });
+        }
+
+        // Add keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            const nodeKeys = ['0', '1', '2', '3', '5'];
+            const keyMap = {
+                '1': '0',
+                '2': '1', 
+                '3': '2',
+                '4': '3',
+                '5': '5'
+            };
+            
+            if (keyMap[e.key]) {
+                unlockNode(keyMap[e.key]);
+            }
+        });
+
+        // Touch support for mobile
+        document.querySelectorAll('.node-group').forEach(node => {
+            node.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                const nodeId = node.getAttribute('data-node');
+                unlockNode(nodeId);
+            }, { passive: false });
+        });
+    </script>
+</body>
+</html>

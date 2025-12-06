@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide 02 - Marco Conceptual: Definiendo la Gravedad</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Open+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Anime.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'montserrat': ['Montserrat', 'sans-serif'],
+                        'opensans': ['Open Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        'primary': '#1e3a8a',
+                        'secondary': '#3b82f6',
+                        'healthy': '#10b981',
+                        'complication': '#f59e0b',
+                        'critical': '#ef4444',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .font-montserrat {
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        /* Glassmorphism Panel */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+        }
+        
+        /* SVG Path Animation */
+        .path-line {
+            stroke-dasharray: 2000;
+            stroke-dashoffset: 2000;
+        }
+        
+        .path-animated {
+            animation: drawPath 3s ease forwards;
+        }
+        
+        @keyframes drawPath {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+        
+        /* Pulse Animation for Critical Node */
+        .pulse-critical {
+            animation: pulseCritical 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes pulseCritical {
+            0%, 100% {
+                transform: scale(1);
+                filter: drop-shadow(0 0 5px rgba(239, 68, 68, 0.5));
+            }
+            50% {
+                transform: scale(1.1);
+                filter: drop-shadow(0 0 20px rgba(239, 68, 68, 0.8));
+            }
+        }
+        
+        /* Node Hover Effects */
+        .node-interactive {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .node-interactive:hover {
+            filter: brightness(1.2) drop-shadow(0 0 10px currentColor);
+            transform: scale(1.15);
+        }
+        
+        /* Tooltip Styles */
+        .tooltip {
+            position: absolute;
+            background: rgba(30, 58, 138, 0.95);
+            color: white;
+            padding: 10px 16px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 500;
+            pointer-events: none;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            max-width: 250px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 8px 8px 0 8px;
+            border-style: solid;
+            border-color: rgba(30, 58, 138, 0.95) transparent transparent transparent;
+        }
+        
+        .tooltip.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Panel Content Transitions */
+        .panel-content {
+            opacity: 0;
+            transform: translateX(20px);
+            transition: all 0.5s ease;
+        }
+        
+        .panel-content.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        /* Progress Ring */
+        .progress-ring-circle {
+            transition: stroke-dashoffset 1s ease;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+        
+        /* Criterion Card */
+        .criterion-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.9) 100%);
+            border-left: 4px solid;
+            transition: all 0.3s ease;
+        }
+        
+        .criterion-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        /* Branch Path Styles */
+        .branch-death {
+            stroke: #1f2937;
+            opacity: 0.4;
+        }
+        
+        .branch-survival {
+            stroke: #10b981;
+        }
+        
+        /* Slide Counter */
+        .slide-counter {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+        }
+        
+        /* Header Gradient Line */
+        .header-accent {
+            background: linear-gradient(90deg, #10b981 0%, #f59e0b 40%, #ef4444 70%, #1e3a8a 100%);
+            height: 4px;
+            border-radius: 2px;
+        }
+        
+        /* Legend Items */
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: #64748b;
+        }
+        
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        /* Decorative Elements */
+        .deco-circle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+        
+        /* Active Node State */
+        .node-active {
+            stroke-width: 4px !important;
+            filter: drop-shadow(0 0 15px currentColor);
+        }
+        
+        /* Info Badge */
+        .info-badge {
+            background: linear-gradient(135deg, #3b82f6 0%, #1e3a8a 100%);
+            color: white;
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        
+        /* Scroll indicator */
+        .scroll-hint {
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50">
+    <!-- Decorative Background Elements -->
+    <div class="deco-circle w-96 h-96 bg-primary -top-48 -left-48 fixed"></div>
+    <div class="deco-circle w-64 h-64 bg-secondary bottom-20 -right-32 fixed"></div>
+    <div class="deco-circle w-48 h-48 bg-healthy top-1/2 -left-24 fixed"></div>
+    
+    <!-- Main Container -->
+    <div class="min-h-screen p-6 relative">
+        <!-- Slide Counter -->
+        <div class="slide-counter fixed top-6 right-6 text-white px-4 py-2 rounded-full font-montserrat font-bold text-sm shadow-lg z-50">
+            <i class="fas fa-presentation-screen mr-2"></i>02 / 15
+        </div>
+        
+        <!-- Header Section -->
+        <header class="max-w-7xl mx-auto mb-8">
+            <div class="glass-panel rounded-2xl p-8 relative overflow-hidden">
+                <!-- Header Accent Line -->
+                <div class="header-accent w-32 mb-6"></div>
+                
+                <!-- Title -->
+                <h1 class="font-montserrat text-4xl md:text-5xl font-bold text-primary mb-4 leading-tight">
+                    Marco Conceptual
+                    <span class="block text-2xl md:text-3xl font-medium text-slate-600 mt-2">
+                        Definiendo la Gravedad Obstétrica
+                    </span>
+                </h1>
+                
+                <!-- Subtitle -->
+                <p class="text-slate-500 text-lg max-w-3xl leading-relaxed">
+                    <i class="fas fa-quote-left text-secondary mr-2 opacity-50"></i>
+                    La OMS define la <strong class="text-critical">Morbilidad Materna Grave (Near Miss)</strong> como aquella mujer que 
+                    <em>casi muere pero sobrevive</em> a una complicación severa durante el embarazo, parto o puerperio.
+                    <i class="fas fa-quote-right text-secondary ml-2 opacity-50"></i>
+                </p>
+                
+                <!-- Legend -->
+                <div class="flex flex-wrap gap-6 mt-6 pt-6 border-t border-slate-200">
+                    <div class="legend-item">
+                        <div class="legend-dot bg-healthy"></div>
+                        <span>Embarazo Normal / Sobrevida</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-dot bg-complication"></div>
+                        <span>Complicación Obstétrica</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-dot bg-critical"></div>
+                        <span>Near Miss / Falla Orgánica</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-dot bg-slate-800"></div>
+                        <span>Muerte Materna (Evitada)</span>
+                    </div>
+                </div>
+                
+                <!-- Decorative Badge -->
+                <div class="absolute top-6 right-6 info-badge hidden md:block">
+                    <i class="fas fa-heartbeat mr-1"></i> Criterios OMS 2011
+                </div>
+            </div>
+        </header>
+        
+        <!-- Main Content: Split Screen -->
+        <main class="max-w-7xl mx-auto">
+            <div class="flex flex-col lg:flex-row gap-6">
+                
+                <!-- Left Panel: Interactive SVG (70%) -->
+                <div class="lg:w-[70%] glass-panel rounded-2xl p-6 relative" id="svg-container">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="font-montserrat text-xl font-semibold text-primary">
+                            <i class="fas fa-route mr-2 text-secondary"></i>
+                            Historia Natural de la Enfermedad
+                        </h2>
+                        <span class="text-xs text-slate-400 bg-slate-100 px-3 py-1 rounded-full">
+                            <i class="fas fa-mouse-pointer mr-1"></i> Clic en los nodos para explorar
+                        </span>
+                    </div>
+                    
+                    <!-- SVG Diagram -->
+                    <svg id="flowchart" viewBox="0 0 900 450" class="w-full h-auto" preserveAspectRatio="xMidYMid meet">
+                        <defs>
+                            <!-- Gradients -->
+                            <linearGradient id="gradHealthy" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#34d399;stop-opacity:1" />
+                            </linearGradient>
+                            <linearGradient id="gradComplication" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#fbbf24;stop-opacity:1" />
+                            </linearGradient>
+                            <linearGradient id="gradCritical" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#ef4444;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#f87171;stop-opacity:1" />
+                            </linearGradient>
+                            <linearGradient id="gradSurvival" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#6ee7b7;stop-opacity:1" />
+                            </linearGradient>
+                            
+                            <!-- Glow Filters -->
+                            <filter id="glowGreen" x="-50%" y="-50%" width="200%" height="200%">
+                                <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                                <feMerge>
+                                    <feMergeNode in="coloredBlur"/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
+                            <filter id="glowYellow" x="-50%" y="-50%" width="200%" height="200%">
+                                <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                                <feMerge>
+                                    <feMergeNode in="coloredBlur"/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
+                            <filter id="glowRed" x="-50%" y="-50%" width="200%" height="200%">
+                                <feGaussianBlur stdDeviation="6" result="coloredBlur"/>
+                                <feMerge>
+                                    <feMergeNode in="coloredBlur"/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
+                            
+                            <!-- Arrow Marker -->
+                            <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                                <path d="M0,0 L0,6 L9,3 z" fill="#10b981" />
+                            </marker>
+                            <marker id="arrowYellow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                                <path d="M0,0 L0,6 L9,3 z" fill="#f59e0b" />
+                            </marker>
+                            <marker id="arrowRed" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                                <path d="M0,0 L0,6 L9,3 z" fill="#ef4444" />
+                            </marker>
+                            <marker id="arrowDark" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                                <path d="M0,0 L0,6 L9,3 z" fill="#374151" />
+                            </marker>
+                        </defs>
+                        
+                        <!-- Background Grid (subtle) -->
+                        <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#e2e8f0" stroke-width="0.5"/>
+                        </pattern>
+                        <rect width="100%" height="100%" fill="url(#grid)" opacity="0.5"/>
+                        
+                        <!-- Main Flow Path -->
+                        <g id="paths-group">
+                            <!-- Path: Start to Healthy -->
+                            <path id="path1" class="path-line" d="M 80 225 L 200 225" 
+                                  stroke="url(#gradHealthy)" stroke-width="6" fill="none" 
+                                  stroke-linecap="round"/>
+                            
+                            <!-- Path: Healthy to Complication -->
+                            <path id="path2" class="path-line" d="M 240 225 L 380 225" 
+                                  stroke="url(#gradComplication)" stroke-width="6" fill="none" 
+                                  stroke-linecap="round"/>
+                            
+                            <!-- Path: Complication to Near Miss -->
+                            <path id="path3" class="path-line" d="M 420 225 L 560 225" 
+                                  stroke="url(#gradCritical)" stroke-width="6" fill="none" 
+                                  stroke-linecap="round"/>
+                            
+                            <!-- Branch: Near Miss to Death (upper path - avoided) -->
+                            <path id="path-death" class="path-line branch-death" 
+                                  d="M 600 200 Q 680 120 780 120" 
+                                  stroke-width="4" fill="none" stroke-linecap="round"
+                                  stroke-dasharray="8,8"/>
+                            
+                            <!-- Branch: Near Miss to Survival (lower path - HUC success) -->
+                            <path id="path-survival" class="path-line branch-survival" 
+                                  d="M 600 250 Q 680 330 780 330" 
+                                  stroke-width="6" fill="none" stroke-linecap="round"/>
+                        </g>
+                        
+                        <!-- Nodes Group -->
+                        <g id="nodes-group">
+                            
+                            <!-- Start Node: Pregnancy -->
+                            <g id="node-start" class="node-interactive" data-node="start" transform="translate(80, 225)">
+                                <circle r="30" fill="white" stroke="#10b981" stroke-width="4" filter="url(#glowGreen)"/>
+                                <circle r="20" fill="#10b981"/>
+                                <text x="0" y="5" text-anchor="middle" fill="white" font-size="14" font-weight="bold">
+                                    <tspan font-family="Font Awesome 6 Free">&#xf004;</tspan>
+                                </text>
+                                <text x="0" y="55" text-anchor="middle" fill="#374151" font-size="12" font-weight="600">
+                                    Embarazo
+                                </text>
+                                <text x="0" y="70" text-anchor="middle" fill="#64748b" font-size="10">
+                                    Normal
+                                </text>
+                            </g>
+                            
+                            <!-- Node 2: Healthy Pregnancy -->
+                            <g id="node-healthy" class="node-interactive" data-node="healthy" transform="translate(220, 225)">
+                                <circle r="35" fill="white" stroke="#10b981" stroke-width="4"/>
+                                <circle r="25" fill="#10b981"/>
+                                <text x="0" y="6" text-anchor="middle" fill="white" font-size="16" font-weight="bold">
+                                    <tspan font-family="Font Awesome 6 Free">&#xf21e;</tspan>
+                                </text>
+                                <text x="0" y="58" text-anchor="middle" fill="#374151" font-size="12" font-weight="600">
+                                    Gestación
+                                </text>
+                                <text x="0" y="73" text-anchor="middle" fill="#64748b" font-size="10">
+                                    Sin riesgo
+                                </text>
+                            </g>
+                            
+                            <!-- Node 3: Complication -->
+                            <g id="node-complication" class="node-interactive" data-node="complication" transform="translate(400, 225)">
+                                <circle r="40" fill="white" stroke="#f59e0b" stroke-width="4" filter="url(#glowYellow)"/>
+                                <circle r="28" fill="#f59e0b"/>
+                                <text x="0" y="6" text-anchor="middle" fill="white" font-size="18" font-weight="bold">
+                                    <tspan font-family="Font Awesome 6 Free">&#xf071;</tspan>
+                                </text>
+                                <text x="0" y="65" text-anchor="middle" fill="#374151" font-size="12" font-weight="600">
+                                    Complicación
+                                </text>
+                                <text x="0" y="80" text-anchor="middle" fill="#64748b" font-size="10">
+                                    THE / Hemorragia / Sepsis
+                                </text>
+                            </g>
+                            
+                            <!-- Node 4: NEAR MISS (Critical - Pulsating) -->
+                            <g id="node-nearmiss" class="node-interactive pulse-critical" data-node="nearmiss" transform="translate(580, 225)">
+                                <circle r="50" fill="white" stroke="#ef4444" stroke-width="5" filter="url(#glowRed)"/>
+                                <circle r="38" fill="#ef4444"/>
+                                <text x="0" y="-5" text-anchor="middle" fill="white" font-size="20" font-weight="bold">
+                                    <tspan font-family="Font Awesome 6 Free">&#xf0fa;</tspan>
+                                </text>
+                                <text x="0" y="15" text-anchor="middle" fill="white" font-size="11" font-weight="bold">
+                                    NEAR MISS
+                                </text>
+                                <text x="0" y="78" text-anchor="middle" fill="#ef4444" font-size="12" font-weight="700">
+                                    FALLA ORGÁNICA
+                                </text>
+                                <text x="0" y="93" text-anchor="middle" fill="#64748b" font-size="10">
+                                    Criterios OMS
+                                </text>
+                                
+                                <!-- Danger Badges -->
+                                <circle cx="35" cy="-30" r="12" fill="#1e3a8a"/>
+                                <text x="35" y="-26" text-anchor="middle" fill="white" font-size="10" font-weight="bold">!</text>
+                            </g>
+                            
+                            <!-- Node 5: Death (Avoided) -->
+                            <g id="node-death" class="node-interactive" data-node="death" transform="translate(800, 120)" opacity="0.5">
+                                <circle r="30" fill="white" stroke="#374151" stroke-width="3" stroke-dasharray="4,4"/>
+                                <circle r="20" fill="#374151"/>
+                                <text x="0" y="5" text-anchor="middle" fill="white" font-size="14">
+                                    <tspan font-family="Font Awesome 6 Free">&#xf714;</tspan>
+                                </text>
+                                <text x="0" y="50" text-anchor="middle" fill="#374151" font-size="11" font-weight="600">
+                                    Muerte
+                                </text>
+                                <text x="0" y="65" text-anchor="middle" fill="#94a3b8" font-size="9">
+                                    (Ruta evitada)
+                                </text>
+                                
+                                <!-- X Mark -->
+                                <line x1="-40" y1="-40" x2="40" y2="40" stroke="#ef4444" stroke-width="3" opacity="0.6"/>
+                                <line x1="40" y1="-40" x2="-40" y2="40" stroke="#ef4444" stroke-width="3" opacity="0.6"/>
+                            </g>
+                            
+                            <!-- Node 6: Survival (HUC Success) -->
+                            <g id="node-survival" class="node-interactive" data-node="survival" transform="translate(800, 330)">
+                                <circle r="45" fill="white" stroke="#10b981" stroke-width="5" filter="url(#glowGreen)"/>
+                                <circle r="33" fill="#10b981"/>
+                                <text x="0" y="-3" text-anchor="middle" fill="white" font-size="22" font-weight="bold">
+                                    <tspan font-family="Font Awesome 6 Free">&#xf058;</tspan>
+                                </text>
+                                <text x="0" y="15" text-anchor="middle" fill="white" font-size="10" font-weight="bold">
+                                    100%
+                                </text>
+                                <text x="0" y="65" text-anchor="middle" fill="#10b981" font-size="12" font-weight="700">
+                                    SOBREVIDA
+                                </text>
+                                <text x="0" y="80" text-anchor="middle" fill="#64748b" font-size="10">
+                                    Éxito HUC
+                                </text>
+                                
+                                <!-- Success Badge -->
+                                <circle cx="30" cy="-30" r="14" fill="#1e3a8a"/>
+                                <text x="30" y="-25" text-anchor="middle" fill="white" font-size="10">
+                                    <tspan font-family="Font Awesome 6 Free">&#xf005;</tspan>
+                                </text>
+                            </g>
+                        </g>
+                        
+                        <!-- Flow Arrows / Direction Indicators -->
+                        <g id="arrows-group" opacity="0">
+                            <polygon points="185,218 200,225 185,232" fill="#10b981"/>
+                            <polygon points="365,218 380,225 365,232" fill="#f59e0b"/>
+                            <polygon points="545,218 560,225 545,232" fill="#ef4444"/>
+                        </g>
+                        
+                        <!-- Timeline Labels -->
+                        <g id="timeline-labels" opacity="0">
+                            <text x="150" y="400" text-anchor="middle" fill="#94a3b8" font-size="10">
+                                1er Trimestre
+                            </text>
+                            <text x="310" y="400" text-anchor="middle" fill="#94a3b8" font-size="10">
+                                2do Trimestre
+                            </text>
+                            <text x="490" y="400" text-anchor="middle" fill="#94a3b8" font-size="10">
+                                3er Trimestre
+                            </text>
+                            <text x="690" y="400" text-anchor="middle" fill="#94a3b8" font-size="10">
+                                Parto / Puerperio
+                            </text>
+                        </g>
+                        
+                        <!-- HUC Intervention Arrow -->
+                        <g id="huc-intervention" opacity="0">
+                            <rect x="640" y="260" width="100" height="30" rx="15" fill="#1e3a8a"/>
+                            <text x="690" y="280" text-anchor="middle" fill="white" font-size="10" font-weight="bold">
+                                Intervención HUC
+                            </text>
+                        </g>
+                    </svg>
+                    
+                    <!-- Instruction Hint -->
+                    <div class="mt-4 flex items-center justify-center text-slate-400 text-sm scroll-hint">
+                        <i class="fas fa-hand-pointer mr-2"></i>
+                        Selecciona un nodo para ver detalles en el panel lateral
+                    </div>
+                </div>
+                
+                <!-- Right Panel: Dynamic Information (30%) -->
+                <div class="lg:w-[30%] glass-panel rounded-2xl p-6 relative overflow-hidden min-h-[500px]" id="info-panel">
+                    
+                    <!-- Panel Header -->
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="font-montserrat text-lg font-semibold text-primary">
+                            <i class="fas fa-info-circle mr-2 text-secondary"></i>
+                            Información
+                        </h3>
+                        <span id="panel-badge" class="text-xs px-2 py-1 rounded-full bg-slate-100 text-slate-500">
+                            Esperando selección...
+                        </span>
+                    </div>
+                    
+                    <!-- Default Content (Empty State) -->
+                    <div id="content-default" class="panel-content active flex flex-col items-center justify-center h-80 text-center">
+                        <div class="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center mb-4">
+                            <i class="fas fa-hand-pointer text-3xl text-slate-300"></i>
+                        </div>
+                        <p class="text-slate-400 text-sm">
+                            Haz clic en cualquier nodo del diagrama para explorar información detallada.
+                        </p>
+                    </div>
+                    
+                    <!-- Near Miss Content -->
+                    <div id="content-nearmiss" class="panel-content hidden">
+                        <div class="bg-red-50 border-l-4 border-critical rounded-r-lg p-4 mb-4">
+                            <h4 class="font-montserrat font-bold text-critical text-lg mb-2">
+                                <i class="fas fa-exclamation-triangle mr-2"></i>Near Miss Materno
+                            </h4>
+                            <p class="text-slate-600 text-sm leading-relaxed">
+                                Mujer que <strong>casi muere pero sobrevive</strong> a una complicación grave durante el embarazo, parto o dentro de los 42 días posteriores al término.
+                            </p>
+                        </div>
+                        
+                        <h5 class="font-montserrat font-semibold text-primary text-sm mb-3 flex items-center">
+                            <i class="fas fa-clipboard-list mr-2 text-secondary"></i>
+                            Criterios de Falla Orgánica (OMS)
+                        </h5>
+                        
+                        <div class="space-y-3">
+                            <div class="criterion-card border-critical rounded-lg p-3">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center mr-3">
+                                        <i class="fas fa-heartbeat text-critical"></i>
+                                    </div>
+                                    <div>
+                                        <span class="font-semibold text-slate-700 text-sm">Cardiovascular</span>
+                                        <p class="text-xs text-slate-500">Shock, paro cardíaco, uso de vasopresores</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="criterion-card border-blue-500 rounded-lg p-3">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                                        <i class="fas fa-lungs text-blue-500"></i>
+                                    </div>
+                                    <div>
+                                        <span class="font-semibold text-slate-700 text-sm">Respiratoria</span>
+                                        <p class="text-xs text-slate-500">Intubación, ventilación mecánica</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="criterion-card border-amber-500 rounded-lg p-3">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center mr-3">
+                                        <i class="fas fa-kidneys text-amber-600"></i>
+                                    </div>
+                                    <div>
+                                        <span class="font-semibold text-slate-700 text-sm">Renal</span>
+                                        <p class="text-xs text-slate-500">Oliguria severa, diálisis</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="criterion-card border-purple-500 rounded-lg p-3">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center mr-3">
+                                        <i class="fas fa-tint text-purple-500"></i>
+                                    </div>
+                                    <div>
+                                        <span class="font-semibold text-slate-700 text-sm">Coagulación</span>
+                                        <p class="text-xs text-slate-500">Plaquetas &lt;50,000/μL, CID</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="criterion-card border-pink-500 rounded-lg p-3">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 rounded-full bg-pink-100 flex items-center justify-center mr-3">
+                                        <i class="fas fa-brain text-pink-500"></i>
+                                    </div>
+                                    <div>
+                                        <span class="font-semibold text-slate-700 text-sm">Neurológica</span>
+                                        <p class="text-xs text-slate-500">Coma, convulsiones prolongadas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 p-3 bg-slate-100 rounded-lg text-center">
+                            <span class="text-xs text-slate-500">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                Estudio basado en criterios OMS/FLASOG 2011
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Survival Content -->
+                    <div id="content-survival" class="panel-content hidden">
+                        <div class="bg-green-50 border-l-4 border-healthy rounded-r-lg p-4 mb-6">
+                            <h4 class="font-montserrat font-bold text-healthy text-lg mb-2">
+                                <i class="fas fa-trophy mr-2"></i>¡Éxito del HUC!
+                            </h4>
+                            <p class="text-slate-600 text-sm leading-relaxed">
+                                El Hospital Universitario de Caracas logró una tasa de sobrevida del <strong>100%</strong> en todos los casos de morbilidad materna grave durante el período estudiado.
+                            </p>
+                        </div>
+                        
+                        <!-- Success Ring Chart -->
+                        <div class="flex flex-col items-center mb-6">
+                            <div class="relative">
+                                <svg class="w-40 h-40" viewBox="0 0 120 120">
+                                    <!-- Background Circle -->
+                                    <circle cx="60" cy="60" r="50" fill="none" stroke="#e2e8f0" stroke-width="12"/>
+                                    <!-- Progress Circle -->
+                                    <circle id="progress-ring" class="progress-ring-circle" cx="60" cy="60" r="50" fill="none" 
+                                            stroke="#10b981" stroke-width="12" stroke-linecap="round"
+                                            stroke-dasharray="314" stroke-dashoffset="314"/>
+                                </svg>
+                                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                    <span class="text-3xl font-montserrat font-bold text-healthy">100%</span>
+                                    <span class="text-xs text-slate-500">Sobrevida</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Stats Grid -->
+                        <div class="grid grid-cols-2 gap-3 mb-4">
+                            <div class="bg-white rounded-xl p-4 text-center shadow-sm">
+                                <span class="text-2xl font-bold text-primary">290</span>
+                                <p class="text-xs text-slate-500 mt-1">Casos Near Miss</p>
+                            </div>
+                            <div class="bg-white rounded-xl p-4 text-center shadow-sm">
+                                <span class="text-2xl font-bold text-healthy">290</span>
+                                <p class="text-xs text-slate-500 mt-1">Sobrevivientes</p>
+                            </div>
+                            <div class="bg-white rounded-xl p-4 text-center shadow-sm">
+                                <span class="text-2xl font-bold text-secondary">0</span>
+                                <p class="text-xs text-slate-500 mt-1">Muertes</p>
+                            </div>
+                            <div class="bg-white rounded-xl p-4 text-center shadow-sm">
+                                <span class="text-2xl font-bold text-complication">6.5%</span>
+                                <p class="text-xs text-slate-500 mt-1">Ingreso UCI</p>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-primary/10 rounded-xl p-4 text-center">
+                            <i class="fas fa-hospital text-primary text-2xl mb-2"></i>
+                            <p class="text-sm text-primary font-semibold">
+                                "Alta capacidad de rescate" del HUC
+                            </p>
+                            <p class="text-xs text-slate-500 mt-1">
+                                A pesar del 86.9% con control prenatal inadecuado
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Complication Content -->
+                    <div id="content-complication" class="panel-content hidden">
+                        <div class="bg-amber-50 border-l-4 border-complication rounded-r-lg p-4 mb-4">
+                            <h4 class="font-montserrat font-bold text-amber-700 text-lg mb-2">
+                                <i class="fas fa-exclamation-circle mr-2"></i>Complicaciones Obstétricas
+                            </h4>
+                            <p class="text-slate-600 text-sm leading-relaxed">
+                                Condiciones patológicas que amenazan la vida durante el embarazo, parto o puerperio.
+                            </p>
+                        </div>
+                        
+                        <h5 class="font-montserrat font-semibold text-primary text-sm mb-3">
+                            <i class="fas fa-chart-pie mr-2 text-secondary"></i>
+                            Distribución en el HUC (n=290)
+                        </h5>
+                        
+                        <div class="space-y-3">
+                            <div class="bg-white rounded-lg p-3 shadow-sm">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-sm font-medium text-slate-700">Trastornos Hipertensivos</span>
+                                    <span class="text-sm font-bold text-primary">68.3%</span>
+                                </div>
+                                <div class="w-full bg-slate-200 rounded-full h-2">
+                                    <div class="bg-primary h-2 rounded-full" style="width: 68.3%"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-white rounded-lg p-3 shadow-sm">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-sm font-medium text-slate-700">Hemorragia Obstétrica</span>
+                                    <span class="text-sm font-bold text-critical">20.0%</span>
+                                </div>
+                                <div class="w-full bg-slate-200 rounded-full h-2">
+                                    <div class="bg-critical h-2 rounded-full" style="width: 20%"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-white rounded-lg p-3 shadow-sm">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-sm font-medium text-slate-700">Infecciones / Sepsis</span>
+                                    <span class="text-sm font-bold text-complication">10.0%</span>
+                                </div>
+                                <div class="w-full bg-slate-200 rounded-full h-2">
+                                    <div class="bg-complication h-2 rounded-full" style="width: 10%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 p-3 bg-slate-50 rounded-lg">
+                            <p class="text-xs text-slate-500 text-center">
+                                <i class="fas fa-lightbulb text-complication mr-1"></i>
+                                El 90.3% fueron causas obstétricas directas
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Healthy Content -->
+                    <div id="content-healthy" class="panel-content hidden">
+                        <div class="bg-emerald-50 border-l-4 border-healthy rounded-r-lg p-4 mb-4">
+                            <h4 class="font-montserrat font-bold text-healthy text-lg mb-2">
+                                <i class="fas fa-baby mr-2"></i>Gestación Normal
+                            </h4>
+                            <p class="text-slate-600 text-sm leading-relaxed">
+                                Embarazo sin factores de riesgo identificados que evoluciona de manera fisiológica.
+                            </p>
+                        </div>
+                        
+                        <div class="bg-white rounded-xl p-4 shadow-sm mb-4">
+                            <h5 class="font-semibold text-slate-700 text-sm mb-3">
+                                <i class="fas fa-shield-alt text-healthy mr-2"></i>
+                                Factores Protectores
+                            </h5>
+                            <ul class="space-y-2 text-sm text-slate-600">
+                                <li class="flex items-center">
+                                    <i class="fas fa-check-circle text-healthy mr-2"></i>
+                                    Control prenatal adecuado (≥8 consultas)
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-check-circle text-healthy mr-2"></i>
+                                    Edad materna 20-34 años
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-check-circle text-healthy mr-2"></i>
+                                    Sin antecedentes patológicos
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-check-circle text-healthy mr-2"></i>
+                                    Acceso oportuno a servicios de salud
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-red-50 rounded-xl p-4">
+                            <h5 class="font-semibold text-critical text-sm mb-2">
+                                <i class="fas fa-exclamation-triangle mr-2"></i>
+                                Hallazgo Crítico en el HUC
+                            </h5>
+                            <p class="text-xs text-slate-600">
+                                Solo el <strong class="text-critical">13.1%</strong> de las pacientes con MMG tuvieron control prenatal adecuado. El <strong class="text-critical">31%</strong> no tuvo ningún control.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Start Content -->
+                    <div id="content-start" class="panel-content hidden">
+                        <div class="bg-emerald-50 border-l-4 border-healthy rounded-r-lg p-4 mb-4">
+                            <h4 class="font-montserrat font-bold text-healthy text-lg mb-2">
+                                <i class="fas fa-heart mr-2"></i>Inicio del Embarazo
+                            </h4>
+                            <p class="text-slate-600 text-sm leading-relaxed">
+                                Momento de la concepción y primeras semanas de gestación. Punto de partida para el control prenatal.
+                            </p>
+                        </div>
+                        
+                        <div class="bg-white rounded-xl p-4 shadow-sm mb-4">
+                            <h5 class="font-semibold text-slate-700 text-sm mb-3">
+                                <i class="fas fa-users text-primary mr-2"></i>
+                                Perfil Demográfico HUC
+                            </h5>
+                            <div class="space-y-3">
+                                <div class="flex justify-between">
+                                    <span class="text-sm text-slate-500">Edad promedio</span>
+                                    <span class="text-sm font-semibold text-primary">25.2 años</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-sm text-slate-500">Grupo etario principal</span>
+                                    <span class="text-sm font-semibold text-primary">20-34 años (60%)</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-sm text-slate-500">Adolescentes (&lt;20)</span>
+                                    <span class="text-sm font-semibold text-critical">24.5%</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-sm text-slate-500">Procedencia</span>
+                                    <span class="text-sm font-semibold text-primary">Distrito Capital (67.9%)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Death Content -->
+                    <div id="content-death" class="panel-content hidden">
+                        <div class="bg-slate-100 border-l-4 border-slate-600 rounded-r-lg p-4 mb-4">
+                            <h4 class="font-montserrat font-bold text-slate-700 text-lg mb-2">
+                                <i class="fas fa-times-circle mr-2"></i>Muerte Materna
+                            </h4>
+                            <p class="text-slate-600 text-sm leading-relaxed">
+                                Desenlace fatal que se logró evitar en el 100% de los casos de Near Miss del HUC.
+                            </p>
+                        </div>
+                        
+                        <div class="bg-green-100 rounded-xl p-4 text-center mb-4">
+                            <i class="fas fa-shield-alt text-healthy text-4xl mb-3"></i>
+                            <h5 class="font-bold text-healthy text-xl mb-2">¡Ruta Evitada!</h5>
+                            <p class="text-sm text-slate-600">
+                                Gracias a la intervención oportuna del equipo médico del HUC
+                            </p>
+                        </div>
+                        
+                        <div class="bg-white rounded-xl p-4 shadow-sm">
+                            <h5 class="font-semibold text-slate-700 text-sm mb-3">
+                                <i class="fas fa-hand-holding-medical text-secondary mr-2"></i>
+                                Intervenciones Clave
+                            </h5>
+                            <ul class="space-y-2 text-sm text-slate-600">
+                                <li class="flex items-start">
+                                    <i class="fas fa-syringe text-primary mr-2 mt-1"></i>
+                                    <span>Sulfato de Magnesio (63.8%)</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-procedures text-primary mr-2 mt-1"></i>
+                                    <span>Cesárea de emergencia (68.3%)</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-tint text-primary mr-2 mt-1"></i>
+                                    <span>Transfusiones (24.8%)</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-pills text-primary mr-2 mt-1"></i>
+                                    <span>Antibioticoterapia IV (30%)</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Footer -->
+        <footer class="max-w-7xl mx-auto mt-8 text-center text-slate-400 text-xs">
+            <p>
+                <i class="fas fa-university mr-1"></i>
+                Universidad Central de Venezuela • Hospital Universitario de Caracas • 2011-2020
+            </p>
+            <p class="mt-1">
+                Medina Ron & Moreno Contreras • Tutor: Dr. Pedro Gutiérrez Sucre
+            </p>
+        </footer>
+    </div>
+    
+    <!-- Tooltip Element -->
+    <div id="tooltip" class="tooltip"></div>
+    
+    <script>
+        // ==========================================
+        // INITIALIZATION & ANIMATIONS
+        // ==========================================
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize animations
+            initPathAnimations();
+            initNodeAnimations();
+            initInteractivity();
+        });
+        
+        // ==========================================
+        // PATH DRAWING ANIMATIONS (Anime.js)
+        // ==========================================
+        
+        function initPathAnimations() {
+            // Animate paths sequentially
+            const paths = ['#path1', '#path2', '#path3', '#path-survival', '#path-death'];
+            
+            paths.forEach((path, index) => {
+                const pathElement = document.querySelector(path);
+                if (pathElement) {
+                    const length = pathElement.getTotalLength();
+                    pathElement.style.strokeDasharray = length;
+                    pathElement.style.strokeDashoffset = length;
+                    
+                    anime({
+                        targets: path,
+                        strokeDashoffset: [length, 0],
+                        easing: 'easeInOutQuad',
+                        duration: 1500,
+                        delay: 500 + (index * 400)
+                    });
+                }
+            });
+            
+            // Animate arrows
+            anime({
+                targets: '#arrows-group',
+                opacity: [0, 1],
+                easing: 'easeOutQuad',
+                duration: 500,
+                delay: 3000
+            });
+            
+            // Animate timeline labels
+            anime({
+                targets: '#timeline-labels',
+                opacity: [0, 0.7],
+                easing: 'easeOutQuad',
+                duration: 800,
+                delay: 3500
+            });
+            
+            // Animate HUC intervention badge
+            anime({
+                targets: '#huc-intervention',
+                opacity: [0, 1],
+                translateY: [20, 0],
+                easing: 'easeOutBack',
+                duration: 800,
+                delay: 4000
+            });
+        }
+        
+        // ==========================================
+        // NODE ENTRANCE ANIMATIONS
+        // ==========================================
+        
+        function initNodeAnimations() {
+            const nodes = [
+                '#node-start',
+                '#node-healthy', 
+                '#node-complication',
+                '#node-nearmiss',
+                '#node-death',
+                '#node-survival'
+            ];
+            
+            nodes.forEach((node, index) => {
+                anime({
+                    targets: node,
+                    opacity: [0, 1],
+                    scale: [0, 1],
+                    easing: 'easeOutBack',
+                    duration: 800,
+                    delay: 800 + (index * 300)
+                });
+            });
+        }
+        
+        // ==========================================
+        // INTERACTIVITY
+        // ==========================================
+        
+        function initInteractivity() {
+            const nodes = document.querySelectorAll('.node-interactive');
+            const tooltip = document.getElementById('tooltip');
+            const panelBadge = document.getElementById('panel-badge');
+            
+            // Tooltip data
+            const tooltipData = {
+                'start': 'Inicio del embarazo - Punto de partida',
+                'healthy': 'Gestación sin complicaciones identificadas',
+                'complication': 'THE, Hemorragia, Sepsis - Requiere vigilancia',
+                'nearmiss': '¡CRÍTICO! Falla orgánica - Criterios OMS',
+                'death': 'Desenlace fatal (evitado en HUC)',
+                'survival': '100% de sobrevida en el estudio'
+            };
+            
+            // Badge colors
+            const badgeColors = {
+                'start': 'bg-healthy text-white',
+                'healthy': 'bg-healthy text-white',
+                'complication': 'bg-complication text-white',
+                'nearmiss': 'bg-critical text-white',
+                'death': 'bg-slate-600 text-white',
+                'survival': 'bg-healthy text-white'
+            };
+            
+            // Badge labels
+            const badgeLabels = {
+                'start': 'Embarazo',
+                'healthy': 'Gestación Normal',
+                'complication': 'Complicación',
+                'nearmiss': 'Near Miss',
+                'death': 'Muerte (Evitada)',
+                'survival': 'Sobrevida'
+            };
+            
+            nodes.forEach(node => {
+                const nodeType = node.dataset.node;
+                
+                // Hover: Show tooltip
+                node.addEventListener('mouseenter', function(e) {
+                    const rect = node.getBoundingClientRect();
+                    const svgContainer = document.getElementById('svg-container');
+                    const containerRect = svgContainer.getBoundingClientRect();
+                    
+                    tooltip.textContent = tooltipData[nodeType];
+                    tooltip.classList.add('visible');
+                    
+                    // Position tooltip
+                    const tooltipX = rect.left + rect.width/2 - tooltip.offsetWidth/2;
+                    const tooltipY = rect.top - tooltip.offsetHeight - 15;
+                    
+                    tooltip.style.left = tooltipX + 'px';
+                    tooltip.style.top = tooltipY + 'px';
+                });
+                
+                node.addEventListener('mouseleave', function() {
+                    tooltip.classList.remove('visible');
+                });
+                
+                // Click: Update panel
+                node.addEventListener('click', function() {
+                    updatePanel(nodeType);
+                    updateBadge(nodeType);
+                    highlightNode(node);
+                    
+                    // Animate panel update
+                    anime({
+                        targets: '#info-panel',
+                        scale: [1, 1.02, 1],
+                        duration: 300,
+                        easing: 'easeOutQuad'
+                    });
+                });
+            });
+            
+            function updatePanel(nodeType) {
+                // Hide all content
+                document.querySelectorAll('.panel-content').forEach(content => {
+                    content.classList.remove('active');
+                    content.classList.add('hidden');
+                });
+                
+                // Show selected content
+                const targetContent = document.getElementById(`content-${nodeType}`);
+                if (targetContent) {
+                    targetContent.classList.remove('hidden');
+                    
+                    // Animate content entrance
+                    setTimeout(() => {
+                        targetContent.classList.add('active');
+                    }, 50);
+                    
+                    // Special animation for survival ring
+                    if (nodeType === 'survival') {
+                        animateSurvivalRing();
+                    }
+                }
+            }
+            
+            function updateBadge(nodeType) {
+                panelBadge.className = `text-xs px-3 py-1 rounded-full font-semibold ${badgeColors[nodeType]}`;
+                panelBadge.textContent = badgeLabels[nodeType];
+                
+                anime({
+                    targets: panelBadge,
+                    scale: [0.8, 1],
+                    duration: 300,
+                    easing: 'easeOutBack'
+                });
+            }
+            
+            function highlightNode(activeNode) {
+                // Remove highlight from all nodes
+                nodes.forEach(node => {
+                    const circles = node.querySelectorAll('circle');
+                    circles.forEach(circle => {
+                        circle.classList.remove('node-active');
+                    });
+                });
+                
+                // Add highlight to active node
+                const activeCircles = activeNode.querySelectorAll('circle');
+                activeCircles.forEach(circle => {
+                    circle.classList.add('node-active');
+                });
+            }
+        }
+        
+        // ==========================================
+        // SURVIVAL RING ANIMATION
+        // ==========================================
+        
+        function animateSurvivalRing() {
+            const progressRing = document.getElementById('progress-ring');
+            if (progressRing) {
+                const circumference = 2 * Math.PI * 50; // radius = 50
+                
+                anime({
+                    targets: progressRing,
+                    strokeDashoffset: [circumference, 0],
+                    easing: 'easeOutQuad',
+                    duration: 1500,
+                    delay: 300
+                });
+            }
+        }
+        
+        // ==========================================
+        // HEADER ANIMATION ON LOAD
+        // ==========================================
+        
+        anime({
+            targets: 'header',
+            opacity: [0, 1],
+            translateY: [-30, 0],
+            easing: 'easeOutQuad',
+            duration: 1000,
+            delay: 200
+        });
+        
+        anime({
+            targets: '#svg-container',
+            opacity: [0, 1],
+            translateX: [-50, 0],
+            easing: 'easeOutQuad',
+            duration: 1000,
+            delay: 400
+        });
+        
+        anime({
+            targets: '#info-panel',
+            opacity: [0, 1],
+            translateX: [50, 0],
+            easing: 'easeOutQuad',
+            duration: 1000,
+            delay: 600
+        });
+        
+        // ==========================================
+        // DECORATIVE ELEMENTS ANIMATION
+        // ==========================================
+        
+        anime({
+            targets: '.deco-circle',
+            scale: [0.8, 1.1, 1],
+            opacity: [0, 0.1],
+            duration: 3000,
+            easing: 'easeInOutQuad',
+            delay: anime.stagger(200)
+        });
+        
+        // ==========================================
+        // CONTINUOUS PULSE FOR NEAR MISS NODE
+        // ==========================================
+        
+        // Additional pulse effect using Anime.js for more control
+        anime({
+            targets: '#node-nearmiss circle:first-child',
+            strokeWidth: [5, 8, 5],
+            easing: 'easeInOutSine',
+            duration: 1500,
+            loop: true
+        });
+        
+        // ==========================================
+        // RESPONSIVE HANDLING
+        // ==========================================
+        
+        window.addEventListener('resize', function() {
+            // Reposition tooltip if visible
+            const tooltip = document.getElementById('tooltip');
+            if (tooltip.classList.contains('visible')) {
+                tooltip.classList.remove('visible');
+            }
+        });
+        
+        // ==========================================
+        // KEYBOARD NAVIGATION (Accessibility)
+        // ==========================================
+        
+        document.addEventListener('keydown', function(e) {
+            const nodes = ['start', 'healthy', 'complication', 'nearmiss', 'death', 'survival'];
+            const currentIndex = nodes.indexOf(document.activeElement?.dataset?.node);
+            
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                e.preventDefault();
+                const nextIndex = (currentIndex + 1) % nodes.length;
+                const nextNode = document.querySelector(`[data-node="${nodes[nextIndex]}"]`);
+                if (nextNode) {
+                    nextNode.focus();
+                    nextNode.click();
+                }
+            }
+            
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                e.preventDefault();
+                const prevIndex = (currentIndex - 1 + nodes.length) % nodes.length;
+                const prevNode = document.querySelector(`[data-node="${nodes[prevIndex]}"]`);
+                if (prevNode) {
+                    prevNode.focus();
+                    prevNode.click();
+                }
+            }
+        });
+        
+        // Make nodes focusable
+        document.querySelectorAll('.node-interactive').forEach(node => {
+            node.setAttribute('tabindex', '0');
+            node.setAttribute('role', 'button');
+            node.setAttribute('aria-label', `Nodo: ${node.dataset.node}`);
+        });
+    </script>
+</body>
+</html>

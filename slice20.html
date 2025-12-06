@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide 20 - Patologías Obstétricas Indirectas | Morbilidad Materna Grave</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+        
+        :root {
+            --color-cardiopatias: #ec4899;
+            --color-infecciones: #8b5cf6;
+            --color-endocrino: #06b6d4;
+            --color-hemoglobinopatias: #b91c1c;
+            --color-neurologico: #94a3b8;
+            --color-otros: #f97316;
+            --bg-dark: #0f172a;
+            --bg-panel: #1e293b;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* Fondo con efecto de microscopio */
+        .microscope-bg {
+            position: fixed;
+            inset: 0;
+            background: 
+                radial-gradient(ellipse at 20% 30%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 70%, rgba(236, 72, 153, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(6, 182, 212, 0.05) 0%, transparent 60%),
+                radial-gradient(circle at 50% 50%, #0f172a 0%, #020617 100%);
+            z-index: 0;
+        }
+        
+        /* Grid de referencia tipo microscopio */
+        .grid-overlay {
+            position: fixed;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(148, 163, 184, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(148, 163, 184, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        /* Partículas flotantes de fondo */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            pointer-events: none;
+            z-index: 2;
+        }
+        
+        /* Contenedor principal */
+        .main-container {
+            position: relative;
+            z-index: 10;
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 2rem;
+            height: 100vh;
+            padding: 2rem;
+        }
+        
+        /* Área de burbujas */
+        .bubble-arena {
+            position: relative;
+            overflow: hidden;
+            border-radius: 1.5rem;
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        /* Burbujas */
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 20;
+            opacity: 0;
+            transform: scale(0);
+        }
+        
+        .bubble::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: inherit;
+            filter: blur(20px);
+            opacity: 0.4;
+            z-index: -1;
+            transition: opacity 0.3s ease;
+        }
+        
+        .bubble::after {
+            content: '';
+            position: absolute;
+            top: 10%;
+            left: 15%;
+            width: 30%;
+            height: 30%;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            filter: blur(8px);
+        }
+        
+        .bubble:hover {
+            transform: scale(1.15) !important;
+            z-index: 100;
+        }
+        
+        .bubble:hover::before {
+            opacity: 0.7;
+        }
+        
+        .bubble-inner {
+            position: relative;
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+        
+        .bubble-icon {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.4));
+        }
+        
+        .bubble-count {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.4rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+        
+        .bubble-label {
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            opacity: 0.9;
+            margin-top: 0.25rem;
+            max-width: 90%;
+        }
+        
+        /* Colores específicos de burbujas */
+        .bubble-cardiopatias {
+            background: radial-gradient(circle at 30% 30%, 
+                rgba(236, 72, 153, 0.9) 0%, 
+                rgba(219, 39, 119, 0.95) 50%, 
+                rgba(190, 24, 93, 1) 100%);
+            box-shadow: 
+                0 0 40px rgba(236, 72, 153, 0.5),
+                inset 0 0 30px rgba(255, 255, 255, 0.1);
+        }
+        
+        .bubble-infecciones {
+            background: radial-gradient(circle at 30% 30%, 
+                rgba(139, 92, 246, 0.9) 0%, 
+                rgba(124, 58, 237, 0.95) 50%, 
+                rgba(109, 40, 217, 1) 100%);
+            box-shadow: 
+                0 0 40px rgba(139, 92, 246, 0.5),
+                inset 0 0 30px rgba(255, 255, 255, 0.1);
+        }
+        
+        .bubble-endocrino {
+            background: radial-gradient(circle at 30% 30%, 
+                rgba(6, 182, 212, 0.9) 0%, 
+                rgba(8, 145, 178, 0.95) 50%, 
+                rgba(14, 116, 144, 1) 100%);
+            box-shadow: 
+                0 0 40px rgba(6, 182, 212, 0.5),
+                inset 0 0 30px rgba(255, 255, 255, 0.1);
+        }
+        
+        .bubble-hemoglobinopatias {
+            background: radial-gradient(circle at 30% 30%, 
+                rgba(185, 28, 28, 0.9) 0%, 
+                rgba(153, 27, 27, 0.95) 50%, 
+                rgba(127, 29, 29, 1) 100%);
+            box-shadow: 
+                0 0 40px rgba(185, 28, 28, 0.5),
+                inset 0 0 30px rgba(255, 255, 255, 0.1);
+        }
+        
+        .bubble-neurologico {
+            background: radial-gradient(circle at 30% 30%, 
+                rgba(148, 163, 184, 0.9) 0%, 
+                rgba(100, 116, 139, 0.95) 50%, 
+                rgba(71, 85, 105, 1) 100%);
+            box-shadow: 
+                0 0 40px rgba(148, 163, 184, 0.5),
+                inset 0 0 30px rgba(255, 255, 255, 0.1);
+        }
+        
+        .bubble-otros {
+            background: radial-gradient(circle at 30% 30%, 
+                rgba(249, 115, 22, 0.9) 0%, 
+                rgba(234, 88, 12, 0.95) 50%, 
+                rgba(194, 65, 12, 1) 100%);
+            box-shadow: 
+                0 0 40px rgba(249, 115, 22, 0.5),
+                inset 0 0 30px rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Panel lateral */
+        .info-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        /* Header del panel */
+        .panel-header {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%);
+            border: 1px solid rgba(148, 163, 184, 0.15);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+        }
+        
+        .panel-header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            line-height: 1.3;
+            margin-bottom: 0.5rem;
+        }
+        
+        .panel-header p {
+            font-size: 0.85rem;
+            color: rgba(148, 163, 184, 0.9);
+            line-height: 1.5;
+        }
+        
+        .stat-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(139, 92, 246, 0.2);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            margin-top: 1rem;
+        }
+        
+        .stat-badge span {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #a78bfa;
+        }
+        
+        .stat-badge small {
+            font-size: 0.75rem;
+            color: rgba(148, 163, 184, 0.8);
+        }
+        
+        /* Historia clínica */
+        .clinical-card {
+            flex: 1;
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%);
+            border: 1px solid rgba(148, 163, 184, 0.15);
+            border-radius: 1rem;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: border-color 0.3s ease;
+        }
+        
+        .clinical-header {
+            padding: 1rem 1.25rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .clinical-header i {
+            font-size: 1.1rem;
+            color: #8b5cf6;
+        }
+        
+        .clinical-header span {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .clinical-body {
+            padding: 1.25rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .clinical-placeholder {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: rgba(148, 163, 184, 0.5);
+        }
+        
+        .clinical-placeholder i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        .clinical-placeholder p {
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+        
+        .clinical-content {
+            display: none;
+            animation: fadeInContent 0.4s ease;
+        }
+        
+        .clinical-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeInContent {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .condition-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        .condition-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: white;
+        }
+        
+        .condition-name {
+            flex: 1;
+        }
+        
+        .condition-name h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.15rem;
+        }
+        
+        .condition-name small {
+            font-size: 0.75rem;
+            color: rgba(148, 163, 184, 0.7);
+        }
+        
+        .condition-stats {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-mini {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            text-align: center;
+        }
+        
+        .stat-mini span {
+            display: block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .stat-mini small {
+            font-size: 0.65rem;
+            color: rgba(148, 163, 184, 0.7);
+            text-transform: uppercase;
+        }
+        
+        .diagnoses-list {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 0.75rem;
+            padding: 1rem;
+        }
+        
+        .diagnoses-list h4 {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: rgba(148, 163, 184, 0.7);
+            margin-bottom: 0.75rem;
+        }
+        
+        .diagnosis-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+        }
+        
+        .diagnosis-item:last-child {
+            border-bottom: none;
+        }
+        
+        .diagnosis-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+        
+        .diagnosis-item span {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        /* Leyenda inferior */
+        .legend-card {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%);
+            border: 1px solid rgba(148, 163, 184, 0.15);
+            border-radius: 1rem;
+            padding: 1rem 1.25rem;
+        }
+        
+        .legend-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: rgba(148, 163, 184, 0.7);
+            margin-bottom: 0.75rem;
+        }
+        
+        .legend-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        
+        .legend-item span {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        /* Viñeta de visor */
+        .microscope-frame {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 15;
+            border-radius: 1.5rem;
+            box-shadow: inset 0 0 100px 20px rgba(0, 0, 0, 0.6);
+        }
+        
+        .microscope-frame::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 1.5rem;
+            border: 2px solid rgba(148, 163, 184, 0.1);
+        }
+        
+        /* Crosshair central */
+        .crosshair {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            pointer-events: none;
+            z-index: 5;
+            opacity: 0.15;
+        }
+        
+        .crosshair::before,
+        .crosshair::after {
+            content: '';
+            position: absolute;
+            background: rgba(148, 163, 184, 0.5);
+        }
+        
+        .crosshair::before {
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+        }
+        
+        .crosshair::after {
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+        }
+        
+        .crosshair-circle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            border-radius: 50%;
+        }
+        
+        /* Indicadores de escala */
+        .scale-indicator {
+            position: absolute;
+            bottom: 1.5rem;
+            left: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            z-index: 20;
+        }
+        
+        .scale-bar {
+            width: 60px;
+            height: 3px;
+            background: rgba(148, 163, 184, 0.5);
+            border-radius: 2px;
+        }
+        
+        .scale-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: rgba(148, 163, 184, 0.6);
+        }
+        
+        /* Info de zoom */
+        .zoom-info {
+            position: absolute;
+            top: 1.5rem;
+            left: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            z-index: 20;
+        }
+        
+        .zoom-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            padding: 0.4rem 0.75rem;
+            border-radius: 2rem;
+        }
+        
+        .zoom-badge i {
+            font-size: 0.75rem;
+            color: rgba(148, 163, 184, 0.7);
+        }
+        
+        .zoom-badge span {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        /* Contador de muestra */
+        .sample-counter {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            z-index: 20;
+        }
+        
+        .sample-counter span {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: rgba(148, 163, 184, 0.8);
+        }
+        
+        .sample-counter strong {
+            color: #8b5cf6;
+        }
+        
+        /* Líneas de conexión */
+        .connection-lines {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 3;
+        }
+        
+        .connection-lines svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .connection-line {
+            stroke: rgba(148, 163, 184, 0.1);
+            stroke-width: 1;
+            fill: none;
+            stroke-dasharray: 5 5;
+        }
+        
+        /* Efectos de pulso para glow */
+        @keyframes pulseGlow {
+            0%, 100% {
+                box-shadow: 
+                    0 0 30px var(--glow-color),
+                    inset 0 0 20px rgba(255, 255, 255, 0.1);
+            }
+            50% {
+                box-shadow: 
+                    0 0 50px var(--glow-color),
+                    inset 0 0 25px rgba(255, 255, 255, 0.15);
+            }
+        }
+        
+        .bubble.glow-active {
+            animation: pulseGlow 2s ease-in-out infinite;
+        }
+        
+        .bubble-cardiopatias.glow-active {
+            --glow-color: rgba(236, 72, 153, 0.6);
+        }
+        
+        .bubble-infecciones.glow-active {
+            --glow-color: rgba(139, 92, 246, 0.6);
+        }
+        
+        .bubble-endocrino.glow-active {
+            --glow-color: rgba(6, 182, 212, 0.6);
+        }
+        
+        .bubble-hemoglobinopatias.glow-active {
+            --glow-color: rgba(185, 28, 28, 0.6);
+        }
+        
+        .bubble-neurologico.glow-active {
+            --glow-color: rgba(148, 163, 184, 0.6);
+        }
+        
+        .bubble-otros.glow-active {
+            --glow-color: rgba(249, 115, 22, 0.6);
+        }
+        
+        /* Scroll personalizado */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.5);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: rgba(148, 163, 184, 0.3);
+            border-radius: 3px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(148, 163, 184, 0.5);
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr auto;
+            }
+            
+            .info-panel {
+                order: -1;
+            }
+            
+            .bubble-arena {
+                min-height: 400px;
+            }
+        }
+        
+        /* Animación de entrada del panel */
+        .panel-animate {
+            opacity: 0;
+            transform: translateX(30px);
+        }
+        
+        /* Efecto de hover en cards */
+        .clinical-card:hover {
+            border-color: rgba(139, 92, 246, 0.3);
+        }
+        
+        /* Tooltip flotante */
+        .bubble-tooltip {
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0.4rem 0.75rem;
+            border-radius: 0.5rem;
+            white-space: nowrap;
+            font-size: 0.7rem;
+            color: white;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            pointer-events: none;
+            z-index: 1000;
+        }
+        
+        .bubble:hover .bubble-tooltip {
+            opacity: 1;
+        }
+        
+        /* Estado activo para burbujas seleccionadas */
+        .bubble.selected {
+            box-shadow: 
+                0 0 0 4px rgba(255, 255, 255, 0.3),
+                0 0 60px var(--glow-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- Fondo de microscopio -->
+    <div class="microscope-bg"></div>
+    <div class="grid-overlay"></div>
+    
+    <!-- Partículas flotantes de fondo -->
+    <div id="particles-container"></div>
+    
+    <!-- Contenedor principal -->
+    <div class="main-container">
+        <!-- Área de burbujas -->
+        <div class="bubble-arena" id="bubble-arena">
+            <!-- Marco de microscopio -->
+            <div class="microscope-frame"></div>
+            
+            <!-- Crosshair central -->
+            <div class="crosshair">
+                <div class="crosshair-circle"></div>
+            </div>
+            
+            <!-- Líneas de conexión SVG -->
+            <div class="connection-lines">
+                <svg id="connections-svg"></svg>
+            </div>
+            
+            <!-- Info de zoom -->
+            <div class="zoom-info">
+                <div class="zoom-badge">
+                    <i class="fas fa-search-plus"></i>
+                    <span>40x</span>
+                </div>
+                <div class="zoom-badge">
+                    <i class="fas fa-circle" style="color: #22c55e;"></i>
+                    <span>LIVE</span>
+                </div>
+            </div>
+            
+            <!-- Contador de muestra -->
+            <div class="sample-counter">
+                <span>Muestra: <strong>HUC-2011-2020</strong> | n=<strong>28</strong></span>
+            </div>
+            
+            <!-- Indicador de escala -->
+            <div class="scale-indicator">
+                <div class="scale-bar"></div>
+                <span class="scale-label">100 μm</span>
+            </div>
+            
+            <!-- Burbujas -->
+            <div class="bubble bubble-cardiopatias glow-active" id="bubble-cardiopatias" 
+                 data-category="cardiopatias" style="width: 140px; height: 140px;">
+                <div class="bubble-inner">
+                    <i class="fas fa-heartbeat bubble-icon"></i>
+                    <span class="bubble-count">6</span>
+                    <span class="bubble-label">Cardiopatías</span>
+                </div>
+                <div class="bubble-tooltip">Clic para ver detalles</div>
+            </div>
+            
+            <div class="bubble bubble-infecciones glow-active" id="bubble-infecciones" 
+                 data-category="infecciones" style="width: 140px; height: 140px;">
+                <div class="bubble-inner">
+                    <i class="fas fa-biohazard bubble-icon"></i>
+                    <span class="bubble-count">6</span>
+                    <span class="bubble-label">Infecciones</span>
+                </div>
+                <div class="bubble-tooltip">Clic para ver detalles</div>
+            </div>
+            
+            <div class="bubble bubble-endocrino glow-active" id="bubble-endocrino" 
+                 data-category="endocrino" style="width: 130px; height: 130px;">
+                <div class="bubble-inner">
+                    <i class="fas fa-dna bubble-icon"></i>
+                    <span class="bubble-count">5</span>
+                    <span class="bubble-label">Endocrino</span>
+                </div>
+                <div class="bubble-tooltip">Clic para ver detalles</div>
+            </div>
+            
+            <div class="bubble bubble-hemoglobinopatias glow-active" id="bubble-hemoglobinopatias" 
+                 data-category="hemoglobinopatias" style="width: 115px; height: 115px;">
+                <div class="bubble-inner">
+                    <i class="fas fa-moon bubble-icon"></i>
+                    <span class="bubble-count">4</span>
+                    <span class="bubble-label">Hemoglobino.</span>
+                </div>
+                <div class="bubble-tooltip">Clic para ver detalles</div>
+            </div>
+            
+            <div class="bubble bubble-neurologico glow-active" id="bubble-neurologico" 
+                 data-category="neurologico" style="width: 105px; height: 105px;">
+                <div class="bubble-inner">
+                    <i class="fas fa-brain bubble-icon"></i>
+                    <span class="bubble-count">3</span>
+                    <span class="bubble-label">Neurológico</span>
+                </div>
+                <div class="bubble-tooltip">Clic para ver detalles</div>
+            </div>
+            
+            <div class="bubble bubble-otros glow-active" id="bubble-otros" 
+                 data-category="otros" style="width: 115px; height: 115px;">
+                <div class="bubble-inner">
+                    <i class="fas fa-plus-circle bubble-icon"></i>
+                    <span class="bubble-count">4</span>
+                    <span class="bubble-label">Otros</span>
+                </div>
+                <div class="bubble-tooltip">Clic para ver detalles</div>
+            </div>
+        </div>
+        
+        <!-- Panel de información -->
+        <div class="info-panel">
+            <!-- Header -->
+            <div class="panel-header panel-animate">
+                <h1>Patologías Obstétricas Indirectas</h1>
+                <p>Complejidad oculta: enfermedades preexistentes que complican el embarazo</p>
+                <div class="stat-badge">
+                    <span>28</span>
+                    <small>Pacientes (9.7% del total)</small>
+                </div>
+            </div>
+            
+            <!-- Historia clínica interactiva -->
+            <div class="clinical-card panel-animate">
+                <div class="clinical-header">
+                    <i class="fas fa-file-medical"></i>
+                    <span>Historia Clínica</span>
+                </div>
+                <div class="clinical-body">
+                    <!-- Placeholder -->
+                    <div class="clinical-placeholder" id="clinical-placeholder">
+                        <i class="fas fa-microscope"></i>
+                        <p>Pase el cursor sobre una burbuja<br>para ver los detalles clínicos</p>
+                    </div>
+                    
+                    <!-- Contenido dinámico -->
+                    <div class="clinical-content" id="content-cardiopatias">
+                        <div class="condition-title">
+                            <div class="condition-icon" style="background: var(--color-cardiopatias);">
+                                <i class="fas fa-heartbeat"></i>
+                            </div>
+                            <div class="condition-name">
+                                <h3>Cardiopatías</h3>
+                                <small>Patología cardiovascular preexistente</small>
+                            </div>
+                        </div>
+                        <div class="condition-stats">
+                            <div class="stat-mini">
+                                <span style="color: var(--color-cardiopatias);">6</span>
+                                <small>Casos</small>
+                            </div>
+                            <div class="stat-mini">
+                                <span style="color: var(--color-cardiopatias);">2.1%</span>
+                                <small>del Total</small>
+                            </div>
+                        </div>
+                        <div class="diagnoses-list">
+                            <h4>Diagnósticos Específicos</h4>
+                            <div class="diagnosis-item">
+                                <div class="diagnosis-dot" style="background: var(--color-cardiopatias);"></div>
+                                <span>Prolapso valvular mitral</span>
+                            </div>
+                            <div class="diagnosis-item">
+                                <div class="diagnosis-dot" style="background: var(--color-cardiopatias);"></div>
+                                <span>Coartación aórtica</span>
+                            </div>
+                            <div class="diagnosis-item">
+                                <div class="diagnosis-dot" style="background: var(--color-cardiopatias);"></div>
+                                <span>Otras valvulopatías</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="clinical-content" id="content-infecciones">
+                        <div class="condition-title">
+                            <div class="condition-icon" style="background: var(--color-infecciones);">
+                                <i class="fas fa-biohazard"></i>
+                            </div>
+                            <div class="condition-name">
+                                <h3>Infecciones Crónicas</h3>
+                                <small>Enfermedades virales preexistentes</small>
+                            </div>
+                        </div>
+                        <div class="condition-stats">
+                            <div class="stat-mini">
+                                <span style="color: var(--color-infecciones);">6</span>
+                                <small>Casos</small>
+                            </div>
+                            <div class="stat-mini">
+                                <span style="color: var(--color-infecciones);">2.1%</span>
+                                <small>del Total</small>
+                            </div>
+                        </div>
+                        <div class="diagnoses-list">
+                            <h4>Diagnósticos Específicos</h4>
+                            <div class="diagnosis-item">
+                                <div class="diagnosis-dot" style="background: var(--color-infecciones);"></div>
+                                <span>VIH/SIDA</span>
+                            </div>
+                            <div class="diagnosis-item">
+                                <div class="diagnosis-dot" style="background: var(--color-infecciones);"></div>
+                                <span>Hepatitis B</span>
+                            </div>
+                            <div class="diagnosis-item">
+                                <div class="diagnosis-dot" style="background: var(--color-infecciones);"></div>
+                

@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide 03 - Planteamiento del Problema | MMG - HUC</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Open+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Anime.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'huc-blue': '#1e3a8a',
+                        'huc-blue-light': '#3b82f6',
+                        'alert-red': '#ef4444',
+                        'success-green': '#10b981',
+                    },
+                    fontFamily: {
+                        'montserrat': ['Montserrat', 'sans-serif'],
+                        'opensans': ['Open Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #f8fafc;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .font-montserrat {
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .font-opensans {
+            font-family: 'Open Sans', sans-serif;
+        }
+        
+        /* Background Pattern */
+        .bg-pattern {
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(30, 58, 138, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 40% 80%, rgba(239, 68, 68, 0.03) 0%, transparent 40%);
+            background-attachment: fixed;
+        }
+        
+        /* Glassmorphism Card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(30, 58, 138, 0.1);
+        }
+        
+        .glass-card-dark {
+            background: rgba(30, 58, 138, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Accordion Styles */
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, padding 0.4s ease-out;
+        }
+        
+        .accordion-content.active {
+            max-height: 500px;
+        }
+        
+        .accordion-header {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .accordion-header:hover {
+            transform: translateX(5px);
+        }
+        
+        .accordion-icon {
+            transition: transform 0.3s ease;
+        }
+        
+        .accordion-header.active .accordion-icon {
+            transform: rotate(180deg);
+        }
+        
+        /* SVG Map Styles */
+        .map-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .hospital-node {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .hospital-node:hover {
+            filter: brightness(1.2);
+        }
+        
+        /* Pulse Animation for HUC */
+        @keyframes pulse-alert {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+        }
+        
+        .pulse-alert {
+            animation: pulse-alert 2s infinite;
+        }
+        
+        /* Radar Wave Animation */
+        @keyframes radar-wave {
+            0% {
+                transform: scale(0.5);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(3);
+                opacity: 0;
+            }
+        }
+        
+        .radar-wave {
+            animation: radar-wave 2s infinite;
+            transform-origin: center;
+        }
+        
+        .radar-wave:nth-child(2) {
+            animation-delay: 0.5s;
+        }
+        
+        .radar-wave:nth-child(3) {
+            animation-delay: 1s;
+        }
+        
+        /* Connection Lines */
+        .connection-line {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+        }
+        
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s ease;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            transform: scale(0.8) translateY(50px);
+            transition: all 0.4s ease;
+        }
+        
+        .modal-overlay.active .modal-content {
+            transform: scale(1) translateY(0);
+        }
+        
+        /* Tooltip */
+        .tooltip {
+            position: absolute;
+            background: rgba(30, 58, 138, 0.95);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            white-space: nowrap;
+            z-index: 100;
+        }
+        
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: rgba(30, 58, 138, 0.95);
+        }
+        
+        /* Slide Number */
+        .slide-number {
+            position: fixed;
+            bottom: 20px;
+            right: 30px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 48px;
+            color: rgba(30, 58, 138, 0.08);
+            z-index: 1;
+        }
+        
+        /* Card Level Indicators */
+        .level-indicator {
+            width: 4px;
+            height: 100%;
+            border-radius: 4px;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        
+        /* Question Mark Animation */
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+        
+        .float-animation {
+            animation: float 2s ease-in-out infinite;
+        }
+        
+        /* Success Check Animation */
+        @keyframes checkmark {
+            0% {
+                stroke-dashoffset: 50;
+            }
+            100% {
+                stroke-dashoffset: 0;
+            }
+        }
+        
+        .checkmark-path {
+            stroke-dasharray: 50;
+            stroke-dashoffset: 50;
+        }
+        
+        .checkmark-path.animate {
+            animation: checkmark 0.5s ease forwards;
+        }
+        
+        /* Info Badge */
+        .info-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 24px;
+            height: 24px;
+            background: #ef4444;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: white;
+            font-weight: bold;
+            animation: pulse-alert 2s infinite;
+        }
+        
+        /* Map Background Grid */
+        .map-grid {
+            stroke: rgba(30, 58, 138, 0.05);
+            stroke-width: 1;
+        }
+        
+        /* Glow Effect */
+        .glow-blue {
+            filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.5));
+        }
+        
+        .glow-red {
+            filter: drop-shadow(0 0 12px rgba(239, 68, 68, 0.6));
+        }
+        
+        .glow-green {
+            filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.5));
+        }
+    </style>
+</head>
+<body class="bg-slate-50 bg-pattern min-h-screen">
+    
+    <!-- Slide Number Watermark -->
+    <div class="slide-number">03</div>
+    
+    <!-- Main Container -->
+    <div class="container mx-auto px-6 py-8 max-w-7xl">
+        
+        <!-- Header Section -->
+        <header class="mb-8">
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-huc-blue to-huc-blue-light flex items-center justify-content-center shadow-lg">
+                    <i class="fas fa-search-location text-white text-lg ml-2.5"></i>
+                </div>
+                <span class="text-sm font-opensans font-medium text-huc-blue-light uppercase tracking-wider">Slide 03 / Justificación</span>
+            </div>
+            
+            <h1 class="font-montserrat text-4xl md:text-5xl font-bold text-huc-blue mb-3 leading-tight">
+                Planteamiento del Problema
+            </h1>
+            
+            <p class="font-opensans text-lg text-slate-600 flex items-center gap-2">
+                <span class="w-8 h-0.5 bg-alert-red rounded"></span>
+                Contexto Global vs. Realidad Local: El Silencio Epidemiológico
+            </p>
+        </header>
+        
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 min-h-[70vh]">
+            
+            <!-- Left Column - Context Cards (40%) -->
+            <div class="lg:col-span-2 space-y-4">
+                
+                <!-- World Context Card -->
+                <div class="glass-card rounded-2xl overflow-hidden relative" data-level="world">
+                    <div class="level-indicator bg-gradient-to-b from-blue-400 to-blue-600"></div>
+                    
+                    <div class="accordion-header p-5 pl-6 flex items-center justify-between" onclick="toggleAccordion(this)">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center">
+                                <i class="fas fa-globe-americas text-xl text-blue-500"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-montserrat font-semibold text-huc-blue text-lg">Contexto Mundial</h3>
+                                <p class="font-opensans text-sm text-slate-500">Organización Mundial de la Salud</p>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-down accordion-icon text-slate-400"></i>
+                    </div>
+                    
+                    <div class="accordion-content px-5 pl-6 pb-5">
+                        <div class="bg-gradient-to-r from-blue-50 to-transparent p-4 rounded-xl border-l-4 border-blue-400">
+                            <p class="font-opensans text-slate-700 leading-relaxed mb-3">
+                                La <strong class="text-huc-blue">Morbilidad Materna Grave (MMG)</strong> afecta entre el 
+                                <span class="font-semibold text-blue-600">0.7% - 8.2%</span> de todos los embarazos a nivel mundial.
+                            </p>
+                            <div class="flex items-center gap-2 text-sm text-slate-500">
+                                <i class="fas fa-book-medical"></i>
+                                <span>WHO Near-Miss Approach, 2011</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 grid grid-cols-2 gap-3">
+                            <div class="bg-white p-3 rounded-lg shadow-sm text-center">
+                                <p class="font-montserrat font-bold text-2xl text-huc-blue">295K</p>
+                                <p class="font-opensans text-xs text-slate-500">Muertes maternas/año</p>
+                            </div>
+                            <div class="bg-white p-3 rounded-lg shadow-sm text-center">
+                                <p class="font-montserrat font-bold text-2xl text-alert-red">94%</p>
+                                <p class="font-opensans text-xs text-slate-500">En países en desarrollo</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Regional Context Card -->
+                <div class="glass-card rounded-2xl overflow-hidden relative" data-level="regional">
+                    <div class="level-indicator bg-gradient-to-b from-amber-400 to-amber-600"></div>
+                    
+                    <div class="accordion-header p-5 pl-6 flex items-center justify-between" onclick="toggleAccordion(this)">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center">
+                                <i class="fas fa-map-marked-alt text-xl text-amber-500"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-montserrat font-semibold text-huc-blue text-lg">América Latina</h3>
+                                <p class="font-opensans text-sm text-slate-500">Datos Regionales (FLASOG)</p>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-down accordion-icon text-slate-400"></i>
+                    </div>
+                    
+                    <div class="accordion-content px-5 pl-6 pb-5">
+                        <div class="bg-gradient-to-r from-amber-50 to-transparent p-4 rounded-xl border-l-4 border-amber-400">
+                            <p class="font-opensans text-slate-700 leading-relaxed mb-3">
+                                La región mantiene tasas de MMG <strong class="text-amber-600">superiores a países desarrollados</strong>, 
+                                con inequidad persistente en el acceso a servicios de salud.
+                            </p>
+                            <div class="flex items-center gap-2 text-sm text-slate-500">
+                                <i class="fas fa-chart-line"></i>
+                                <span>Serruya et al., 2017 - Estudio Multicéntrico</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 bg-white p-4 rounded-lg shadow-sm">
+                            <div class="flex items-center gap-3 mb-2">
+                                <i class="fas fa-exclamation-triangle text-amber-500"></i>
+                                <span class="font-montserrat font-semibold text-slate-700">Causas Principales:</span>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium">Hipertensión 41.2%</span>
+                                <span class="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-medium">Hemorragia 28.7%</span>
+                                <span class="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-medium">Sepsis 17.3%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- National Context Card -->
+                <div class="glass-card rounded-2xl overflow-hidden relative" data-level="national">
+                    <div class="level-indicator bg-gradient-to-b from-red-400 to-red-600"></div>
+                    <div class="info-badge">!</div>
+                    
+                    <div class="accordion-header active p-5 pl-6 flex items-center justify-between" onclick="toggleAccordion(this)">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center">
+                                <i class="fas fa-flag text-xl text-alert-red"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-montserrat font-semibold text-huc-blue text-lg">Venezuela</h3>
+                                <p class="font-opensans text-sm text-alert-red font-medium">Crisis Humanitaria Compleja</p>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-down accordion-icon text-slate-400"></i>
+                    </div>
+                    
+                    <div class="accordion-content active px-5 pl-6 pb-5">
+                        <div class="bg-gradient-to-r from-red-50 to-transparent p-4 rounded-xl border-l-4 border-alert-red">
+                            <p class="font-opensans text-slate-700 leading-relaxed">
+                                El sistema de salud venezolano enfrenta una <strong class="text-alert-red">crisis sin precedentes</strong>:
+                            </p>
+                        </div>
+                        
+                        <div class="mt-4 space-y-3">
+                            <div class="flex items-center gap-3 p-3 bg-white rounded-lg shadow-sm">
+                                <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
+                                    <i class="fas fa-pills text-sm text-alert-red"></i>
+                                </div>
+                                <span class="font-opensans text-sm text-slate-700">Escasez crítica de insumos médicos</span>
+                            </div>
+                            
+                            <div class="flex items-center gap-3 p-3 bg-white rounded-lg shadow-sm">
+                                <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
+                                    <i class="fas fa-user-md text-sm text-alert-red"></i>
+                                </div>
+                                <span class="font-opensans text-sm text-slate-700">Fuga masiva de personal de salud</span>
+                            </div>
+                            
+                            <div class="flex items-center gap-3 p-3 bg-white rounded-lg shadow-sm">
+                                <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
+                                    <i class="fas fa-hospital-alt text-sm text-alert-red"></i>
+                                </div>
+                                <span class="font-opensans text-sm text-slate-700">Infraestructura hospitalaria deteriorada</span>
+                            </div>
+                            
+                            <div class="flex items-center gap-3 p-3 bg-white rounded-lg shadow-sm">
+                                <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
+                                    <i class="fas fa-chart-bar text-sm text-alert-red"></i>
+                                </div>
+                                <span class="font-opensans text-sm text-slate-700">Datos estadísticos incompletos o inexistentes</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Research Question -->
+                <div class="glass-card-dark rounded-2xl p-5 mt-6">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
+                            <i class="fas fa-question-circle text-white text-lg"></i>
+                        </div>
+                        <h4 class="font-montserrat font-semibold text-white">Pregunta de Investigación</h4>
+                    </div>
+                    <p class="font-opensans text-blue-100 text-sm leading-relaxed italic">
+                        "¿Cuáles son las características epidemiológicas, clínicas y evolutivas de la 
+                        <span class="text-white font-semibold">Morbilidad Materna Grave</span> en el Servicio de Obstetricia 
+                        del HUC durante el período <span class="text-yellow-300 font-semibold">2011-2020</span>?"
+                    </p>
+                </div>
+                
+            </div>
+            
+            <!-- Right Column - Interactive Map (60%) -->
+            <div class="lg:col-span-3 glass-card rounded-2xl p-6 relative overflow-hidden">
+                
+                <!-- Map Header -->
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h3 class="font-montserrat font-semibold text-huc-blue text-lg">Red Hospitalaria de Caracas</h3>
+                        <p class="font-opensans text-sm text-slate-500">Centros de referencia con estudios de MMG</p>
+                    </div>
+                    <div class="flex items-center gap-4 text-xs font-opensans">
+                        <div class="flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-huc-blue-light"></span>
+                            <span class="text-slate-600">Con datos</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-alert-red animate-pulse"></span>
+                            <span class="text-slate-600">Sin datos</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- SVG Map Container -->
+                <div class="map-container bg-gradient-to-br from-slate-50 to-blue-50 rounded-xl p-4" style="min-height: 450px;">
+                    <svg id="caracas-map" viewBox="0 0 600 400" class="w-full h-full">
+                        <!-- Background Grid -->
+                        <defs>
+                            <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse">
+                                <path d="M 30 0 L 0 0 0 30" fill="none" class="map-grid"/>
+                            </pattern>
+                            
+                            <!-- Gradient for roads -->
+                            <linearGradient id="roadGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#cbd5e1;stop-opacity:0.5" />
+                                <stop offset="100%" style="stop-color:#94a3b8;stop-opacity:0.5" />
+                            </linearGradient>
+                            
+                            <!-- Glow filter for active elements -->
+                            <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                                <feMerge>
+                                    <feMergeNode in="coloredBlur"/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
+                            
+                            <!-- Red glow for HUC -->
+                            <filter id="redGlow" x="-50%" y="-50%" width="200%" height="200%">
+                                <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                                <feFlood flood-color="#ef4444" flood-opacity="0.6"/>
+                                <feComposite in2="coloredBlur" operator="in"/>
+                                <feMerge>
+                                    <feMergeNode/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
+                            
+                            <!-- Green glow for success -->
+                            <filter id="greenGlow" x="-50%" y="-50%" width="200%" height="200%">
+                                <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                                <feFlood flood-color="#10b981" flood-opacity="0.6"/>
+                                <feComposite in2="coloredBlur" operator="in"/>
+                                <feMerge>
+                                    <feMergeNode/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
+                        </defs>
+                        
+                        <!-- Grid Background -->
+                        <rect width="100%" height="100%" fill="url(#grid)" opacity="0.5"/>
+                        
+                        <!-- Abstract Caracas Shape (Avila Mountain silhouette) -->
+                        <path id="avila-mountain" 
+                              d="M 0 120 Q 100 60 150 80 T 250 70 T 350 60 T 450 75 T 550 85 T 600 100 L 600 0 L 0 0 Z" 
+                              fill="url(#mountainGradient)" opacity="0.15"/>
+                        
+                        <linearGradient id="mountainGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:#1e3a8a;stop-opacity:0.3" />
+                            <stop offset="100%" style="stop-color:#1e3a8a;stop-opacity:0" />
+                        </linearGradient>
+                        
+                        <!-- Main Roads (Stylized) -->
+                        <g id="roads" opacity="0.4">
+                            <!-- Highway East-West -->
+                            <path d="M 0 200 Q 150 180 300 200 T 600 190" 
+                                  stroke="url(#roadGradient)" stroke-width="8" fill="none" stroke-linecap="round"/>
+                            
+                            <!-- Highway North-South -->
+                            <path d="M 300 50 Q 280 150 300 250 T 320 400" 
+                                  stroke="url(#roadGradient)" stroke-width="6" fill="none" stroke-linecap="round"/>
+                            
+                            <!-- Secondary roads -->
+                            <path d="M 100 100 L 200 250" stroke="#cbd5e1" stroke-width="3" fill="none" opacity="0.5"/>
+                            <path d="M 400 80 L 450 280" stroke="#cbd5e1" stroke-width="3" fill="none" opacity="0.5"/>
+                        </g>
+                        
+                        <!-- Connection Lines (animated) -->
+                        <g id="connection-lines">
+                            <!-- MCP to HUC -->
+                            <path id="line-mcp-huc" 
+                                  d="M 150 220 Q 225 180 300 200" 
+                                  stroke="#3b82f6" stroke-width="2" fill="none" 
+                                  stroke-dasharray="5,5" class="connection-line" opacity="0.6"/>
+                            
+                            <!-- Perez Carreño to HUC -->
+                            <path id="line-pc-huc" 
+                                  d="M 450 180 Q 375 160 300 200" 
+                                  stroke="#3b82f6" stroke-width="2" fill="none" 
+                                  stroke-dasharray="5,5" class="connection-line" opacity="0.6"/>
+                            
+                            <!-- MCP to Perez Carreño -->
+                            <path id="line-mcp-pc" 
+                                  d="M 150 220 Q 300 280 450 180" 
+                                  stroke="#94a3b8" stroke-width="1.5" fill="none" 
+                                  stroke-dasharray="3,3" class="connection-line" opacity="0.3"/>
+                        </g>
+                        
+                        <!-- Hospital Nodes -->
+                        
+                        <!-- Maternidad Concepción Palacios -->
+                        <g id="node-mcp" class="hospital-node" transform="translate(150, 220)" 
+                           onmouseenter="showTooltip(evt, 'Maternidad Concepción Palacios', 'Chirinos et al., 2019')"
+                           onmouseleave="hideTooltip()">
+                            
+                            <circle r="25" fill="#3b82f6" opacity="0.15"/>
+                            <circle r="18" fill="#3b82f6" opacity="0.3"/>
+                            <circle r="12" fill="#3b82f6" filter="url(#glow)"/>
+                            
+                            <circle r="6" fill="white"/>
+                            <path d="M -3 0 L 3 0 M 0 -3 L 0 3" stroke="#3b82f6" stroke-width="1.5" fill="none"/>
+                            
+                            <!-- Label -->
+                            <text x="0" y="40" text-anchor="middle" class="font-montserrat" 
+                                  fill="#1e3a8a" font-size="10" font-weight="600">MCP</text>
+                            <text x="0" y="52" text-anchor="middle" class="font-opensans" 
+                                  fill="#64748b" font-size="8">2019 ✓</text>
+                        </g>
+                        
+                        <!-- Hospital Pérez Carreño -->
+                        <g id="node-pc" class="hospital-node" transform="translate(450, 180)"
+                           onmouseenter="showTooltip(evt, 'Hospital Miguel Pérez Carreño', 'Rondón, 2023')"
+                           onmouseleave="hideTooltip()">
+                            
+                            <circle r="25" fill="#3b82f6" opacity="0.15"/>
+                            <circle r="18" fill="#3b82f6" opacity="0.3"/>
+                            <circle r="12" fill="#3b82f6" filter="url(#glow)"/>
+                            
+                            <circle r="6" fill="white"/>
+                            <path d="M -3 0 L 3 0 M 0 -3 L 0 3" stroke="#3b82f6" stroke-width="1.5" fill="none"/>
+                            
+                            <!-- Label -->
+                            <text x="0" y="40" text-anchor="middle" class="font-montserrat" 
+                                  fill="#1e3a8a" font-size="10" font-weight="600">HPC</text>
+                            <text x="0" y="52" text-anchor="middle" class="font-opensans" 
+                                  fill="#64748b" font-size="8">2023 ✓</text>
+                        </g>
+                        
+                        <!-- HUC Node (Main Interactive Element) -->
+                        <g id="node-huc" class="hospital-node" transform="translate(300, 200)" 
+                           onclick="revealHUC()"
+                           style="cursor: pointer;">
+                            
+                            <!-- Radar Waves -->
+                            <circle class="radar-wave" r="30" fill="none" stroke="#ef4444" stroke-width="2" opacity="0.5"/>
+                            <circle class="radar-wave" r="30" fill="none" stroke="#ef4444" stroke-width="2" opacity="0.5"/>
+                            <circle class="radar-wave" r="30" fill="none" stroke="#ef4444" stroke-width="2" opacity="0.5"/>
+                            
+                            <!-- Main Node -->
+                            <circle id="huc-outer" r="35" fill="#ef4444" opacity="0.15" class="pulse-alert"/>
+                            <circle id="huc-middle" r="25" fill="#ef4444" opacity="0.3" class="pulse-alert"/>
+                            <circle id="huc-inner" r="18" fill="#ef4444" filter="url(#redGlow)"/>
+                            
+                            <!-- Question Mark (Initial State) -->
+                            <g id="huc-question" class="float-animation">
+                                <text x="0" y="6" text-anchor="middle" fill="white" 
+                                      font-size="18" font-weight="bold" font-family="Montserrat">?</text>
+                            </g>
+                            
+                            <!-- Checkmark (Hidden - Revealed State) -->
+                            <g id="huc-check" style="display: none;">
+                                <path class="checkmark-path" d="M -8 0 L -3 5 L 8 -6" 
+                                      stroke="white" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                            </g>
+                            
+                            <!-- Label -->
+                            <text x="0" y="55" text-anchor="middle" class="font-montserrat" 
+                                  fill="#ef4444" font-size="12" font-weight="700">HUC</text>
+                            <text id="huc-status" x="0" y="68" text-anchor="middle" class="font-opensans" 
+                                  fill="#ef4444" font-size="9" font-weight="600">2011-2020 ?</text>
+                            
+                            <!-- Click instruction -->
+                            <g id="click-hint" opacity="1">
+                                <rect x="-50" y="78" width="100" height="20" rx="10" fill="#1e3a8a"/>
+                                <text x="0" y="92" text-anchor="middle" fill="white" font-size="8" font-family="Open Sans">
+                                    <tspan>Clic para revelar</tspan>
+                                </text>
+                            </g>
+                        </g>
+                        
+                        <!-- Legend Box -->
+                        <g transform="translate(20, 320)">
+                            <rect width="180" height="70" rx="10" fill="white" opacity="0.9" 
+                                  stroke="#e2e8f0" stroke-width="1"/>
+                            
+                            <text x="15" y="20" class="font-montserrat" fill="#1e3a8a" 
+                                  font-size="10" font-weight="600">LEYENDA</text>
+                            
+                            <g transform="translate(15, 35)">
+                                <circle cx="8" cy="0" r="6" fill="#3b82f6"/>
+                                <text x="22" y="4" class="font-opensans" fill="#64748b" font-size="9">Estudio completado</text>
+                            </g>
+                            
+                            <g transform="translate(15, 55)">
+                                <circle cx="8" cy="0" r="6" fill="#ef4444"/>
+                                <text x="22" y="4" class="font-opensans" fill="#64748b" font-size="9">Brecha de conocimiento</text>
+                            </g>
+                        </g>
+                        
+                        <!-- Year Timeline -->
+                        <g transform="translate(420, 330)">
+                            <text class="font-montserrat" fill="#1e3a8a" font-size="9" font-weight="600">
+                                DÉCADA ESTUDIADA
+                            </text>
+                            <rect y="15" width="150" height="6" rx="3" fill="#e2e8f0"/>
+                            <rect y="15" width="150" height="6" rx="3" fill="url(#timelineGradient)"/>
+                            <text x="0" y="35" class="font-opensans" fill="#64748b" font-size="8">2011</text>
+                            <text x="130" y="35" class="font-opensans" fill="#64748b" font-size="8">2020</text>
+                        </g>
+                        
+                        <linearGradient id="timelineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color:#ef4444;stop-opacity:0.8" />
+                            <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:0.8" />
+                        </linearGradient>
+                        
+                    </svg>
+                    
+                    <!-- Tooltip Element -->
+                    <div id="tooltip" class="tooltip font-opensans"></div>
+                </div>
+                
+                <!-- Map Footer Info -->
+                <div class="mt-4 flex items-center justify-between text-sm">
+                    <div class="flex items-center gap-2 text-slate-500">
+                        <i class="fas fa-info-circle"></i>
+                        <span class="font-opensans">Haga clic en el nodo rojo (HUC) para revelar los hallazgos</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="font-opensans text-slate-400">Fuente: Tesis TEG 2025</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Navigation Footer -->
+        <footer class="mt-8 flex items-center justify-between">
+            <a href="#" class="flex items-center gap-2 text-slate-400 hover:text-huc-blue transition-colors">
+                <i class="fas fa-arrow-left"></i>
+                <span class="font-opensans text-sm">Slide anterior</span>
+            </a>
+            
+            <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-slate-300"></span>
+                <span class="w-2 h-2 rounded-full bg-slate-300"></span>
+                <span class="w-3 h-3 rounded-full bg-huc-blue"></span>
+                <span class="w-2 h-2 rounded-full bg-slate-300"></span>
+                <span class="w-2 h-2 rounded-full bg-slate-300"></span>
+            </div>
+            
+            <a href="#" class="flex items-center gap-2 text-slate-400 hover:text-huc-blue transition-colors">
+                <span class="font-opensans text-sm">Siguiente slide</span>
+                <i class="fas fa-arrow-right"></i>
+            </a>
+        </footer>
+    </div>
+    
+    <!-- Modal Overlay -->
+    <div id="modal-overlay" class="modal-overlay" onclick="closeModal(event)">
+        <div class="modal-content glass-card rounded-3xl p-8 max-w-lg mx-4" onclick="event.stopPropagation()">
+            
+            <!-- Success Icon -->
+            <div class="flex justify-center mb-6">
+                <div class="w-20 h-20 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center shadow-lg">
+                    <svg width="40" height="40" viewBox="0 0 40 40">
+                        <path id="modal-checkmark" d="M 10 20 L 17 27 L 30 12" 
+                              stroke="white" stroke-width="4" fill="none" 
+                              stroke-linecap="round" stroke-linejoin="round"
+                              stroke-dasharray="40" stroke-dashoffset="40"/>
+                    </svg>
+                </div>
+            </div>
+            
+            <!-- Title -->
+            <h2 class="font-montserrat text-3xl font-bold text-center text-huc-blue mb-2">
+                La Brecha Cerrada
+            </h2>
+            <p class="font-opensans text-center text-slate-500 mb-6">
+                El silencio epidemiológico del HUC ha sido roto
+            </p>
+            
+            <!-- Stats -->
+            <div class="bg-gradient-to-r from-huc-blue to-huc-blue-light rounded-2xl p-6 text-white mb-6">
+                <div class="text-center">
+                    <p class="font-opensans text-blue-200 text-sm mb-1">Período de Estudio</p>
+                    <p class="font-montserrat text-2xl font-bold mb-4">2011 - 2020</p>
+                    
+                    <div class="w-16 h-0.5 bg-white/30 mx-auto mb-4"></div>
+                    
+                    <p class="font-montserrat text-5xl font-bold mb-2">290</p>
+                    <p class="font-opensans text-blue-200">Casos recuperados y analizados</p>
+                </div>
+            </div>
+            
+            <!-- Additional Info -->
+            <div class="grid grid-cols-3 gap-3 mb-6">
+                <div class="bg-slate-50 rounded-xl p-3 text-center">
+                    <p class="font-montserrat font-bold text-huc-blue text-xl">10</p>
+                    <p class="font-opensans text-xs text-slate-500">Años de datos</p>
+                </div>
+                <div class="bg-slate-50 rounded-xl p-3 text-center">
+                    <p class="font-montserrat font-bold text-huc-blue text-xl">100%</p>
+                    <p class="font-opensans text-xs text-slate-500">Supervivencia</p>
+                </div>
+                <div class="bg-slate-50 rounded-xl p-3 text-center">
+                    <p class="font-montserrat font-bold text-huc-blue text-xl">1°</p>
+                    <p class="font-opensans text-xs text-slate-500">Estudio en HUC</p>
+                </div>
+            </div>
+            
+            <!-- Quote -->
+            <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded-r-xl mb-6">
+                <p class="font-opensans text-sm text-slate-700 italic">
+                    "Esta investigación llena la brecha de conocimiento crítica sobre la morbilidad materna grave 
+                    en el Hospital Universitario de Caracas, permitiendo por primera vez análisis comparativos 
+                    con otros centros de referencia."
+                </p>
+                <p class="font-opensans text-xs text-slate-500 mt-2">— Medina Ron & Moreno Contreras, 2025</p>
+            </div>
+            
+            <!-- Close Button -->
+            <button onclick="closeModal()" 
+                    class="w-full py-3 bg-huc-blue hover:bg-huc-blue-light text-white font-montserrat font-semibold 
+                           rounded-xl transition-all duration-300 flex items-center justify-center gap-2">
+                <span>Continuar explorando</span>
+                <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+    
+    <!-- JavaScript -->
+    <script>
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            initAnimations();
+            initAccordion();
+        });
+        
+        // Initialize Anime.js Animations
+        function initAnimations() {
+            // Animate connection lines
+            anime({
+                targets: '.connection-line',
+                strokeDashoffset: [1000, 0],
+                easing: 'easeInOutQuad',
+                duration: 2000,
+                delay: anime.stagger(300),
+            });
+            
+            // Animate hospital nodes appearance
+            anime({
+                targets: '#node-mcp, #node-pc',
+                scale: [0, 1],
+                opacity: [0, 1],
+                easing: 'easeOutElastic(1, .5)',
+                duration: 1500,
+                delay: anime.stagger(200, {start: 500}),
+            });
+            
+            // Animate HUC node with attention-grabbing effect
+            anime({
+                targets: '#node-huc',
+                scale: [0, 1],
+                opacity: [0, 1],
+                easing: 'easeOutElastic(1, .5)',
+                duration: 1500,
+                delay: 1000,
+            });
+            
+            // Pulsing click hint
+            anime({
+                targets: '#click-hint',
+                opacity: [0.5, 1],
+                scale: [0.95, 1.05],
+                easing: 'easeInOutSine',
+                duration: 1000,
+                direction: 'alternate',
+                loop: true,
+            });
+        }
+        
+        // Accordion functionality
+        function initAccordion() {
+            // Open the national card by default
+            const nationalCard = document.querySelector('[data-level="national"] .accordion-content');
+            if (nationalCard) {
+                nationalCard.classList.add('active');
+            }
+        }
+        
+        function toggleAccordion(header) {
+            const content = header.nextElementSibling;
+            const isActive = content.classList.contains('active');
+            
+            // Close all accordions
+            document.querySelectorAll('.accordion-content').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelectorAll('.accordion-header').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Open clicked one if it wasn't active
+            if (!isActive) {
+                content.classList.add('active');
+                header.classList.add('active');
+                
+                // Update map based on selected level
+                updateMapFocus(header.closest('[data-level]').dataset.level);
+            }
+        }
+        
+        // Update map focus based on accordion selection
+        function updateMapFocus(level) {
+            const mapBg = document.querySelector('.map-container');
+            
+            anime({
+                targets: mapBg,
+                backgroundColor: level === 'national' ? 'rgba(254, 226, 226, 0.3)' : 'rgba(239, 246, 255, 0.5)',
+                duration: 500,
+                easing: 'easeOutQuad'
+            });
+            
+            // Highlight relevant elements
+            if (level === 'national') {
+                anime({
+                    targets: '#node-huc',
+                    scale: 1.1,
+                    duration: 300,
+                    easing: 'easeOutQuad'
+                });
+            } else {
+                anime({
+                    targets: '#node-huc',
+                    scale: 1,
+                    duration: 300,
+                    easing: 'easeOutQuad'
+                });
+            }
+        }
+        
+        // Tooltip functions
+        function showTooltip(evt, title, subtitle) {
+            const tooltip = document.getElementById('tooltip');
+            tooltip.innerHTML = `<strong>${title}</strong><br><span style="font-size: 10px; opacity: 0.8;">${subtitle}</span>`;
+            tooltip.style.opacity = '1';
+            
+            // Position tooltip
+            const rect = evt.target.getBoundingClientRect();
+            const containerRect = document.querySelector('.map-container').getBoundingClientRect();
+            
+            tooltip.style.left = (rect.left - containerRect.left + rect.width/2 - tooltip.offsetWidth/2) + 'px';
+            tooltip.style.top = (rect.top - containerRect.top - tooltip.offsetHeight - 15) + 'px';
+        }
+        
+        function hideTooltip() {
+            const tooltip = document.getElementById('tooltip');
+            tooltip.style.opacity = '0';
+        }
+        
+        // HUC Reveal Function
+        let hucRevealed = false;
+        
+        function revealHUC() {
+            if (hucRevealed) {
+                openModal();
+                return;
+            }
+            
+            hucRevealed = true;
+            
+            // Stop radar waves
+            document.querySelectorAll('.radar-wave').forEach(wave => {
+                wave.style.animation = 'none';
+            });
+            
+            // Stop pulse animation
+            document.querySelectorAll('.pulse-alert').forEach(el => {
+                el.classList.remove('pulse-alert');
+            });
+            
+            // Hide click hint
+            anime({
+                targets: '#click-hint',
+                opacity: 0,
+                scale: 0.5,
+                duration: 300,
+                easing: 'easeOutQuad'
+            });
+            
+            // Transform node color from red to green
+            anime({
+                targets: '#huc-outer',
+                fill: '#10b981',
+                opacity: [0.15, 0.2],
+                duration: 800,
+                easing: 'easeOutQuad'
+            });
+            
+            anime({
+                targets: '#huc-middle',
+                fill: '#10b981',
+                opacity: [0.3, 0.4],
+                duration: 800,
+                easing: 'easeOutQuad'
+            });
+            
+            anime({
+                targets: '#huc-inner',
+                fill: '#10b981',
+                duration: 800,
+                easing: 'easeOutQuad'
+            });
+            
+            // Update filter
+            document.getElementById('huc-inner').setAttribute('filter', 'url(#greenGlow)');
+            
+            // Hide question mark, show checkmark
+            anime({
+                targets: '#huc-question',
+                opacity: 0,
+                scale: 0,
+                duration: 300,
+                easing: 'easeInQuad',
+                complete: function() {
+                    document.getElementById('huc-question').style.display = 'none';
+                    document.getElementById('huc-check').style.display = 'block';
+                    
+                    // Animate checkmark
+                    anime({
+                        targets: '#huc-check path',
+                        strokeDashoffset: [40, 0],
+                        duration: 600,
+                        easing: 'easeOutQuad'
+                    });
+                }
+            });
+            
+            // Update label
+            anime({
+                targets: '#huc-status',
+                opacity: [1, 0],
+                duration: 200,
+                easing: 'easeOutQuad',
+                complete: function() {
+                    document.getElementById('huc-status').textContent = '290 Casos ✓';
+                    document.getElementById('huc-status').setAttribute('fill', '#10b981');
+                    anime({
+                        targets: '#huc-status',
+                        opacity: [0, 1],
+                        duration: 200,
+                        easing: 'easeInQuad'
+                    });
+                }
+            });
+            
+            // Update label color
+            anime({
+                targets: '#node-huc text:first-of-type',
+                fill: '#10b981',
+                duration: 800,
+                easing: 'easeOutQuad'
+            });
+            
+            // Celebrate animation
+            anime({
+                targets: '#node-huc',
+                scale: [1, 1.2, 1],
+                duration: 600,
+                easing: 'easeOutElastic(1, .5)',
+                complete: function() {
+                    setTimeout(openModal, 500);
+                }
+            });
+            
+            // Update all connection lines to solid
+            anime({
+                targets: '#line-mcp-huc, #line-pc-huc',
+                stroke: '#10b981',
+                strokeDasharray: '0',
+                opacity: 0.8,
+                duration: 800,
+                easing: 'easeOutQuad'
+            });
+        }
+        
+        // Modal Functions
+        function openModal() {
+            const modal = document.getElementById('modal-overlay');
+            modal.classList.add('active');
+            
+            // Animate checkmark in modal
+            setTimeout(() => {
+                anime({
+                    targets: '#modal-checkmark',
+                    strokeDashoffset: [40, 0],
+                    duration: 800,
+                    easing: 'easeOutQuad'
+                });
+            }, 400);
+            
+            // Disable body scroll
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeModal(event) {
+            if (event && event.target !== document.getElementById('modal-overlay')) {
+                return;
+            }
+            
+            const modal = document.getElementById('modal-overlay');
+            modal.classList.remove('active');
+            
+            // Enable body scroll
+            document.body.style.overflow = '';
+        }
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+        
+        // Parallax effect on mouse move (subtle)
+        document.addEventListener('mousemove', function(e) {
+            const moveX = (e.clientX - window.innerWidth / 2) * 0.01;
+            const moveY = (e.clientY - window.innerHeight / 2) * 0.01;
+            
+            anime({
+                targets: '#avila-mountain',
+                translateX: moveX,
+                translateY: moveY,
+                duration: 500,
+                easing: 'easeOutQuad'
+            });
+        });
+    </script>
+    
+</body>
+</html>

@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide 18 - Análisis de Trastornos Hipertensivos | Morbilidad Materna Grave HUC</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <!-- Anime.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'huc-primary': '#b91c1c',
+                        'huc-dark': '#7f1d1d',
+                        'huc-light': '#ef4444',
+                        'reference-gray': '#94a3b8',
+                        'slate-dark': '#1e293b',
+                        'slate-medium': '#334155',
+                        'eclampsia': '#7f1d1d',
+                        'preeclampsia': '#dc2626',
+                        'hellp': '#991b1b',
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            min-height: 100vh;
+        }
+        
+        /* Pulse Animation for Heart Beat Effect */
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            14% { transform: scale(1.05); }
+            28% { transform: scale(1); }
+            42% { transform: scale(1.03); }
+            56% { transform: scale(1); }
+        }
+        
+        .heartbeat {
+            animation: heartbeat 2s ease-in-out infinite;
+        }
+        
+        /* Gradient Border Effect */
+        .gradient-border {
+            position: relative;
+            background: linear-gradient(135deg, #1e293b, #334155);
+            border-radius: 1rem;
+        }
+        
+        .gradient-border::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            padding: 2px;
+            border-radius: 1rem;
+            background: linear-gradient(135deg, #b91c1c, #ef4444, #b91c1c);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+        }
+        
+        /* Bar Chart Styles */
+        .bar-container {
+            position: relative;
+            height: 52px;
+            background: rgba(30, 41, 59, 0.6);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .bar-fill {
+            height: 100%;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 16px;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .bar-huc {
+            background: linear-gradient(90deg, #7f1d1d, #b91c1c, #dc2626);
+            box-shadow: 0 4px 20px rgba(185, 28, 28, 0.5);
+        }
+        
+        .bar-reference {
+            background: linear-gradient(90deg, #475569, #64748b, #94a3b8);
+        }
+        
+        /* Glow Effect for HUC bar */
+        .bar-huc::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 8px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1));
+        }
+        
+        /* Progress Bar Styles for Clinical Profile */
+        .progress-container {
+            height: 10px;
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            border-radius: 5px;
+            transform-origin: left;
+        }
+        
+        /* Tooltip Styles */
+        .tooltip-popup {
+            position: fixed;
+            max-width: 320px;
+            background: linear-gradient(135deg, #1e293b, #334155);
+            border: 1px solid #475569;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .tooltip-popup.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Axis Line */
+        .axis-line {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #475569;
+        }
+        
+        /* Grid Lines */
+        .grid-line {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: rgba(71, 85, 105, 0.3);
+        }
+        
+        /* Label Tag */
+        .label-tag {
+            position: absolute;
+            right: -70px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: linear-gradient(135deg, #b91c1c, #dc2626);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 10px rgba(185, 28, 28, 0.4);
+        }
+        
+        /* Diagnostic Card Icon */
+        .icon-container {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        /* Slide Counter */
+        .slide-counter {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: rgba(30, 41, 59, 0.9);
+            border: 1px solid #475569;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-size: 14px;
+            color: #94a3b8;
+        }
+        
+        /* Transition for bars on hover */
+        .bar-row {
+            transition: opacity 0.3s ease;
+        }
+        
+        .bar-row.dimmed {
+            opacity: 0.4;
+        }
+        
+        /* Legend Item */
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: #94a3b8;
+        }
+        
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+        
+        /* Reference Line */
+        .reference-line {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #fbbf24;
+            z-index: 10;
+        }
+        
+        .reference-label {
+            position: absolute;
+            bottom: -28px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #fbbf24;
+            color: #1e293b;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body class="overflow-hidden">
+    
+    <!-- Main Container -->
+    <div class="min-h-screen flex flex-col p-6 lg:p-8">
+        
+        <!-- Header Section -->
+        <header class="mb-8">
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-1.5 h-10 bg-gradient-to-b from-huc-light to-huc-primary rounded-full"></div>
+                <div>
+                    <h1 class="text-3xl lg:text-4xl font-bold text-white tracking-tight">
+                        Análisis de Trastornos Hipertensivos
+                    </h1>
+                    <p class="text-slate-400 text-sm lg:text-base mt-1">
+                        Perfil clínico y comparativa regional • HUC 2011-2020
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Breadcrumb / Context -->
+            <div class="flex items-center gap-2 text-xs text-slate-500 mt-4 ml-5">
+                <i class="fas fa-chart-pie"></i>
+                <span>Morbilidad Materna Grave</span>
+                <i class="fas fa-chevron-right text-[10px]"></i>
+                <span>Trastornos Hipertensivos</span>
+                <i class="fas fa-chevron-right text-[10px]"></i>
+                <span class="text-huc-light">Zoom: Enemigo #1</span>
+            </div>
+        </header>
+        
+        <!-- Main Content Grid -->
+        <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
+            
+            <!-- LEFT PANEL: Clinical Profile (40%) -->
+            <div class="lg:col-span-5 flex flex-col gap-6">
+                
+                <!-- Diagnostic Card -->
+                <div class="gradient-border flex-1 p-6 relative overflow-hidden">
+                    
+                    <!-- Background Pattern -->
+                    <div class="absolute inset-0 opacity-5">
+                        <svg width="100%" height="100%">
+                            <pattern id="heartPattern" width="40" height="40" patternUnits="userSpaceOnUse">
+                                <path d="M20 8 L24 4 Q28 0 32 4 Q36 8 32 14 L20 28 L8 14 Q4 8 8 4 Q12 0 16 4 Z" 
+                                      fill="currentColor" class="text-huc-primary"/>
+                            </pattern>
+                            <rect width="100%" height="100%" fill="url(#heartPattern)"/>
+                        </svg>
+                    </div>
+                    
+                    <!-- Card Header -->
+                    <div class="relative z-10">
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-huc-primary/20 flex items-center justify-center">
+                                    <i class="fas fa-heart-pulse text-huc-light text-lg"></i>
+                                </div>
+                                <div>
+                                    <h2 class="text-lg font-semibold text-white">Perfil Clínico</h2>
+                                    <p class="text-xs text-slate-400">Distribución por subtipo</p>
+                                </div>
+                            </div>
+                            <span class="text-xs bg-huc-primary/20 text-huc-light px-3 py-1 rounded-full font-medium">
+                                n = 198
+                            </span>
+                        </div>
+                        
+                        <!-- Central Metric -->
+                        <div class="text-center py-8 relative">
+                            <div class="inline-block heartbeat" id="centralMetric">
+                                <span class="text-8xl lg:text-9xl font-black text-transparent bg-clip-text bg-gradient-to-b from-huc-light via-huc-primary to-huc-dark">
+                                    198
+                                </span>
+                            </div>
+                            <p class="text-slate-300 text-lg font-medium mt-2">Casos con Trastornos Hipertensivos</p>
+                            <p class="text-slate-500 text-sm mt-1">
+                                <span class="text-huc-light font-semibold">68.3%</span> del total de MMG
+                            </p>
+                        </div>
+                        
+                        <!-- Subtype Breakdown -->
+                        <div class="space-y-4 mt-6">
+                            <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                                <i class="fas fa-layer-group"></i>
+                                Desglose por Subtipo
+                            </h3>
+                            
+                            <!-- Preeclampsia Severe -->
+                            <div class="bg-slate-800/40 rounded-xl p-4 border border-slate-700/50 subtype-item" data-delay="0">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="icon-container bg-preeclampsia/20">
+                                        <i class="fas fa-exclamation-triangle text-preeclampsia"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-white font-medium">Preeclampsia Severa</span>
+                                            <span class="text-preeclampsia font-bold">~78%</span>
+                                        </div>
+                                        <p class="text-slate-500 text-xs mt-0.5">Forma más frecuente del espectro</p>
+                                    </div>
+                                </div>
+                                <div class="progress-container">
+                                    <div class="progress-fill bg-gradient-to-r from-preeclampsia to-red-400" 
+                                         data-width="78" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- HELLP Syndrome -->
+                            <div class="bg-slate-800/40 rounded-xl p-4 border border-slate-700/50 subtype-item" data-delay="150">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="icon-container bg-hellp/20">
+                                        <i class="fas fa-biohazard text-yellow-500"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-white font-medium">Síndrome HELLP</span>
+                                            <span class="text-yellow-500 font-bold">~16%</span>
+                                        </div>
+                                        <p class="text-slate-500 text-xs mt-0.5">Falla multiorgánica • Hemólisis • Hepatopatía</p>
+                                    </div>
+                                </div>
+                                <div class="progress-container">
+                                    <div class="progress-fill bg-gradient-to-r from-yellow-600 to-yellow-400" 
+                                         data-width="16" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Eclampsia -->
+                            <div class="bg-slate-800/40 rounded-xl p-4 border border-slate-700/50 subtype-item" data-delay="300">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="icon-container bg-eclampsia/30">
+                                        <i class="fas fa-bolt text-amber-400"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-white font-medium">Eclampsia</span>
+                                            <span class="text-amber-400 font-bold">~6%</span>
+                                        </div>
+                                        <p class="text-slate-500 text-xs mt-0.5">Convulsiones tónico-clónicas</p>
+                                    </div>
+                                </div>
+                                <div class="progress-container">
+                                    <div class="progress-fill bg-gradient-to-r from-amber-600 to-amber-400" 
+                                         data-width="6" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Footer Note -->
+                        <div class="mt-6 p-3 bg-slate-800/30 rounded-lg border border-slate-700/30">
+                            <p class="text-xs text-slate-400 flex items-start gap-2">
+                                <i class="fas fa-info-circle text-slate-500 mt-0.5"></i>
+                                <span>Proporciones estimadas basadas en literatura internacional. 
+                                La tesis no detalla subtipos específicos dentro de los 198 casos.</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- RIGHT PANEL: Comparative Chart (60%) -->
+            <div class="lg:col-span-7 flex flex-col">
+                
+                <!-- Chart Container -->
+                <div class="gradient-border flex-1 p-6 relative">
+                    
+                    <!-- Chart Header -->
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-slate-700/50 flex items-center justify-center">
+                                <i class="fas fa-chart-bar text-slate-300 text-lg"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-lg font-semibold text-white">Comparativa Inter-Hospitalaria</h2>
+                                <p class="text-xs text-slate-400">Prevalencia de hipertensión en MMG</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Legend -->
+                        <div class="flex items-center gap-4">
+                            <div class="legend-item">
+                                <div class="legend-dot bg-gradient-to-r from-huc-dark to-huc-light"></div>
+                                <span>HUC (Este estudio)</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-dot bg-gradient-to-r from-slate-600 to-slate-400"></div>
+                                <span>Otros centros</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Chart Area -->
+                    <div class="relative mt-8 mb-12" id="chartArea">
+                        
+                        <!-- Y-Axis Labels (Hospital Names) -->
+                        <div class="space-y-4">
+                            
+                            <!-- Bar 1: Maternidad Concepción Palacios -->
+                            <div class="bar-row flex items-center gap-4" data-hospital="mcp" id="bar-mcp">
+                                <div class="w-56 flex-shrink-0 text-right pr-4">
+                                    <p class="text-sm font-medium text-slate-300">Maternidad Concepción Palacios</p>
+                                    <p class="text-xs text-slate-500">Santiago & Sierra, 2017</p>
+                                </div>
+                                <div class="flex-1 relative">
+                                    <div class="bar-container cursor-pointer" onclick="showTooltip('mcp', event)">
+                                        <div class="bar-fill bar-reference" data-value="91.1" style="width: 0%">
+                                            <span class="text-white font-bold text-lg opacity-0 bar-value">91.1%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Bar 2: HUC (Este Estudio) - DESTACADO -->
+                            <div class="bar-row flex items-center gap-4 relative" data-hospital="huc" id="bar-huc">
+                                <div class="w-56 flex-shrink-0 text-right pr-4">
+                                    <p class="text-sm font-bold text-huc-light">Hospital Universitario de Caracas</p>
+                                    <p class="text-xs text-huc-primary">Este estudio, 2011-2020</p>
+                                </div>
+                                <div class="flex-1 relative">
+                                    <div class="bar-container">
+                                        <div class="bar-fill bar-huc" data-value="68.3" style="width: 0%">
+                                            <span class="text-white font-bold text-lg opacity-0 bar-value">68.3%</span>
+                                        </div>
+                                        <div class="label-tag">Nosotros</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Bar 3: Hospital Pérez Carreño -->
+                            <div class="bar-row flex items-center gap-4" data-hospital="hpc" id="bar-hpc">
+                                <div class="w-56 flex-shrink-0 text-right pr-4">
+                                    <p class="text-sm font-medium text-slate-300">Hospital Miguel Pérez Carreño</p>
+                                    <p class="text-xs text-slate-500">Rondón, 2023</p>
+                                </div>
+                                <div class="flex-1 relative">
+                                    <div class="bar-container">
+                                        <div class="bar-fill bar-reference" data-value="47.8" style="width: 0%">
+                                            <span class="text-white font-bold text-lg opacity-0 bar-value">47.8%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Bar 4: Promedio LATAM -->
+                            <div class="bar-row flex items-center gap-4" data-hospital="latam" id="bar-latam">
+                                <div class="w-56 flex-shrink-0 text-right pr-4">
+                                    <p class="text-sm font-medium text-slate-300">Promedio Latinoamérica</p>
+                                    <p class="text-xs text-slate-500">Serruya et al. (OMS), 2017</p>
+                                </div>
+                                <div class="flex-1 relative">
+                                    <div class="bar-container">
+                                        <div class="bar-fill bar-reference" data-value="41.2" style="width: 0%">
+                                            <span class="text-white font-bold text-lg opacity-0 bar-value">41.2%</span>
+                                        </div>
+                                    </div>
+                                    <!-- Reference baseline indicator -->
+                                    <div class="absolute -bottom-6 left-0 flex items-center gap-1 text-xs text-yellow-500">
+                                        <i class="fas fa-ruler-horizontal"></i>
+                                        <span>Línea de referencia basal</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- X-Axis -->
+                        <div class="mt-12 ml-60 relative">
+                            <div class="h-px bg-slate-600 w-full"></div>
+                            <div class="flex justify-between mt-2 text-xs text-slate-500">
+                                <span>0%</span>
+                                <span>25%</span>
+                                <span>50%</span>
+                                <span>75%</span>
+                                <span>100%</span>
+                            </div>
+                            
+                            <!-- Grid lines -->
+                            <div class="absolute top-0 left-0 right-0 h-0 pointer-events-none" 
+                                 style="margin-top: -240px; height: 240px;">
+                                <div class="grid-line" style="left: 25%"></div>
+                                <div class="grid-line" style="left: 50%"></div>
+                                <div class="grid-line" style="left: 75%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Insight Box -->
+                    <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+                        
+                        <div class="bg-slate-800/40 rounded-xl p-4 border border-slate-700/30">
+                            <div class="flex items-center gap-2 mb-2">
+                                <i class="fas fa-arrow-up text-huc-light text-sm"></i>
+                                <span class="text-xs font-semibold text-slate-400 uppercase">vs. LATAM</span>
+                            </div>
+                            <p class="text-2xl font-bold text-white">+27.1 <span class="text-sm text-slate-400">pp</span></p>
+                            <p class="text-xs text-slate-500 mt-1">Puntos porcentuales por encima</p>
+                        </div>
+                        
+                        <div class="bg-slate-800/40 rounded-xl p-4 border border-slate-700/30">
+                            <div class="flex items-center gap-2 mb-2">
+                                <i class="fas fa-arrow-down text-green-400 text-sm"></i>
+                                <span class="text-xs font-semibold text-slate-400 uppercase">vs. MCP</span>
+                            </div>
+                            <p class="text-2xl font-bold text-white">-22.8 <span class="text-sm text-slate-400">pp</span></p>
+                            <p class="text-xs text-slate-500 mt-1">Menor que centro especializado</p>
+                        </div>
+                        
+                        <div class="bg-slate-800/40 rounded-xl p-4 border border-slate-700/30">
+                            <div class="flex items-center gap-2 mb-2">
+                                <i class="fas fa-hospital text-blue-400 text-sm"></i>
+                                <span class="text-xs font-semibold text-slate-400 uppercase">Contexto</span>
+                            </div>
+                            <p class="text-sm font-medium text-white">Hospital General</p>
+                            <p class="text-xs text-slate-500 mt-1">Población mixta, no solo embarazadas</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="mt-6 flex items-center justify-between text-xs text-slate-500">
+            <div class="flex items-center gap-4">
+                <span class="flex items-center gap-1">
+                    <i class="fas fa-database"></i>
+                    Fuente: Tesis MMG HUC 2011-2020
+                </span>
+                <span class="flex items-center gap-1">
+                    <i class="fas fa-book"></i>
+                    Referencias: Santiago & Sierra (2020), Rondón (2023), Serruya et al. (2017)
+                </span>
+            </div>
+            <span>Universidad Central de Venezuela • Facultad de Medicina</span>
+        </footer>
+    </div>
+    
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+        <span class="text-huc-light font-semibold">18</span> / 24
+    </div>
+    
+    <!-- Tooltip Popup -->
+    <div class="tooltip-popup" id="tooltipPopup">
+        <div class="flex items-start gap-3">
+            <div class="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-lightbulb text-blue-400"></i>
+            </div>
+            <div>
+                <h4 class="font-semibold text-white text-sm mb-1" id="tooltipTitle">Contexto Importante</h4>
+                <p class="text-slate-300 text-xs leading-relaxed" id="tooltipContent">
+                    Contenido del tooltip
+                </p>
+            </div>
+        </div>
+        <button onclick="hideTooltip()" class="absolute top-2 right-2 text-slate-500 hover:text-white transition-colors">
+            <i class="fas fa-times text-xs"></i>
+        </button>
+    </div>
+    
+    <!-- JavaScript -->
+    <script>
+        // ============================================
+        // ANIMATION CONTROLLER
+        // ============================================
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // Initialize all animations with a slight delay
+            setTimeout(initializeAnimations, 500);
+            
+        });
+        
+        function initializeAnimations() {
+            
+            // 1. Animate the central metric (heartbeat is CSS-based, but we fade it in)
+            anime({
+                targets: '#centralMetric',
+                opacity: [0, 1],
+                scale: [0.8, 1],
+                duration: 800,
+                easing: 'easeOutElastic(1, 0.8)'
+            });
+            
+            // 2. Animate subtype progress bars
+            animateProgressBars();
+            
+            // 3. Animate the comparative bar chart (Race Chart effect)
+            setTimeout(animateBarChart, 600);
+            
+            // 4. Setup hover interactions
+            setupHoverInteractions();
+        }
+        
+        // ============================================
+        // PROGRESS BARS ANIMATION (Left Panel)
+        // ============================================
+        
+        function animateProgressBars() {
+            const progressBars = document.querySelectorAll('.progress-fill');
+            
+            progressBars.forEach((bar, index) => {
+                const targetWidth = bar.getAttribute('data-width');
+                const delay = parseInt(bar.closest('.subtype-item').getAttribute('data-delay')) || 0;
+                
+                // Fade in the container first
+                anime({
+                    targets: bar.closest('.subtype-item'),
+                    opacity: [0, 1],
+                    translateX: [-20, 0],
+                    duration: 500,
+                    delay: delay,
+                    easing: 'easeOutCubic'
+                });
+                
+                // Then animate the progress bar
+                setTimeout(() => {
+                    anime({
+                        targets: bar,
+                        width: targetWidth + '%',
+                        duration: 1000,
+                        easing: 'easeOutQuart'
+                    });
+                }, delay + 300);
+            });
+        }
+        
+        // ============================================
+        // BAR CHART ANIMATION (Right Panel - Race Effect)
+        // ============================================
+        
+        function animateBarChart() {
+            const bars = document.querySelectorAll('.bar-fill');
+            const barValues = document.querySelectorAll('.bar-value');
+            
+            // Create a race effect - all bars start together but reach their values at different times
+            const animations = [];
+            
+            bars.forEach((bar, index) => {
+                const targetValue = parseFloat(bar.getAttribute('data-value'));
+                const isHUC = bar.classList.contains('bar-huc');
+                
+                // Calculate duration based on value (higher = longer)
+                const baseDuration = 1500;
+                const duration = baseDuration + (targetValue * 10);
+                
+                // Special easing for HUC bar - "braking" effect
+                const easing = isHUC ? 'easeOutQuint' : 'easeOutCubic';
+                
+                // Animate the bar width
+                const anim = anime({
+                    targets: bar,
+                    width: targetValue + '%',
+                    duration: duration,
+                    easing: easing,
+                    delay: index * 100, // Stagger start
+                    update: function(anim) {
+                        // Update the percentage text during animation
+                        const currentWidth = parseFloat(bar.style.width) || 0;
+                        const valueElement = bar.querySelector('.bar-value');
+                        if (valueElement) {
+                            valueElement.textContent = currentWidth.toFixed(1) + '%';
+                        }
+                    }
+                });
+                
+                animations.push(anim);
+            });
+            
+            // Fade in the values after bars reach a certain point
+            setTimeout(() => {
+                anime({
+                    targets: '.bar-value',
+                    opacity: [0, 1],
+                    duration: 400,
+                    easing: 'easeOutQuad',
+                    delay: anime.stagger(100)
+                });
+            }, 800);
+            
+            // Add pulse effect to HUC bar after animation completes
+            setTimeout(() => {
+                const hucBar = document.querySelector('.bar-huc');
+                if (hucBar) {
+                    anime({
+                        targets: hucBar,
+                        boxShadow: [
+                            '0 4px 20px rgba(185, 28, 28, 0.5)',
+                            '0 4px 40px rgba(185, 28, 28, 0.8)',
+                            '0 4px 20px rgba(185, 28, 28, 0.5)'
+                        ],
+                        duration: 1500,
+                        easing: 'easeInOutSine',
+                        loop: true
+                    });
+                }
+            }, 2000);
+        }
+        
+        // ============================================
+        // HOVER INTERACTIONS
+        // ============================================
+        
+        function setupHoverInteractions() {
+            const barRows = document.querySelectorAll('.bar-row');
+            const hucRow = document.getElementById('bar-huc');
+            
+            // Highlight HUC on hover - dim other bars
+            hucRow.addEventListener('mouseenter', function() {
+                barRows.forEach(row => {
+                    if (row !== hucRow) {
+                        row.classList.add('dimmed');
+                    }
+                });
+            });
+            
+            hucRow.addEventListener('mouseleave', function() {
+                barRows.forEach(row => {
+                    row.classList.remove('dimmed');
+                });
+            });
+        }
+        
+        // ============================================
+        // TOOLTIP FUNCTIONS
+        // ============================================
+        
+        const tooltipData = {
+            'mcp': {
+                title: 'Maternidad Concepción Palacios',
+                content: 'Centro de referencia exclusivamente obstétrico que atiende únicamente embarazadas. Esta población selecta explica su tasa más alta (91.1%) comparada con el HUC, que es un hospital general con población mixta.'
+            },
+            'huc': {
+                title: 'Hospital Universitario de Caracas',
+                content: 'Como hospital general y docente, el HUC recibe casos de alta complejidad referidos de todo el país, pero también atiende otras especialidades médicas.'
+            },
+            'hpc': {
+                title: 'Hospital Miguel Pérez Carreño',
+                content: 'Menor prevalencia de hipertensión posiblemente relacionada con mayor proporción de hemorragias obstétricas (45.7%) en su casuística.'
+            },
+            'latam': {
+                title: 'Promedio Latinoamericano',
+                content: 'Según el estudio multicéntrico de Serruya et al. (2017), la hipertensión representa el 41.2% de la morbilidad materna grave en la región LATAM/Caribe.'
+            }
+        };
+        
+        function showTooltip(hospital, event) {
+            const tooltip = document.getElementById('tooltipPopup');
+            const data = tooltipData[hospital];
+            
+            if (!data) return;
+            
+            document.getElementById('tooltipTitle').textContent = data.title;
+            document.getElementById('tooltipContent').textContent = data.content;
+            
+            // Position near the click
+            const rect = event.target.getBoundingClientRect();
+            tooltip.style.top = (rect.top - 120) + 'px';
+            tooltip.style.left = (rect.left + rect.width / 2 - 160) + 'px';
+            
+            tooltip.classList.add('active');
+            
+            // Auto-hide after 8 seconds
+            setTimeout(hideTooltip, 8000);
+        }
+        
+        function hideTooltip() {
+            const tooltip = document.getElementById('tooltipPopup');
+            tooltip.classList.remove('active');
+        }
+        
+        // Close tooltip on outside click
+        document.addEventListener('click', function(event) {
+            const tooltip = document.getElementById('tooltipPopup');
+            if (!tooltip.contains(event.target) && !event.target.closest('.bar-container')) {
+                hideTooltip();
+            }
+        });
+        
+        // ============================================
+        // KEYBOARD NAVIGATION
+        // ============================================
+        
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                hideTooltip();
+            }
+        });
+        
+        // ============================================
+        // RESPONSIVE ADJUSTMENTS
+        // ============================================
+        
+        function handleResize() {
+            const width = window.innerWidth;
+            
+            if (width < 1024) {
+                // Adjust bar chart labels for mobile
+                document.querySelectorAll('.bar-row .w-56').forEach(el => {
+                    el.classList.remove('w-56');
+                    el.classList.add('w-32');
+                });
+            }
+        }
+        
+        window.addEventListener('resize', handleResize);
+        
+        // ============================================
+        // ACCESSIBILITY: Reduce motion if preferred
+        // ============================================
+        
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            // Skip animations and show final state
+            document.querySelectorAll('.bar-fill').forEach(bar => {
+                bar.style.width = bar.getAttribute('data-value') + '%';
+            });
+            document.querySelectorAll('.progress-fill').forEach(bar => {
+                bar.style.width = bar.getAttribute('data-width') + '%';
+            });
+            document.querySelectorAll('.bar-value').forEach(val => {
+                val.style.opacity = '1';
+            });
+        }
+    </script>
+    
+</body>
+</html>

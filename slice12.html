@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide 12 - La Crisis Silenciosa: Control Prenatal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .donut-segment {
+            transform-origin: center;
+            transition: all 0.3s ease;
+        }
+        
+        .donut-segment:hover {
+            filter: brightness(1.1);
+            cursor: pointer;
+        }
+        
+        .pulse-alarm {
+            animation: pulse-red 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes pulse-red {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            }
+            50% {
+                box-shadow: 0 0 0 20px rgba(239, 68, 68, 0);
+            }
+        }
+        
+        .glow-red {
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.5);
+        }
+        
+        .card-highlight {
+            transform: scale(1.02);
+            box-shadow: 0 10px 40px rgba(239, 68, 68, 0.3);
+            border-color: #ef4444 !important;
+        }
+        
+        .progress-bar-fill {
+            transition: width 1.5s ease-out;
+        }
+        
+        .modal-overlay {
+            backdrop-filter: blur(8px);
+            background: rgba(0, 0, 0, 0.7);
+        }
+        
+        .stat-counter {
+            font-variant-numeric: tabular-nums;
+        }
+        
+        .danger-badge {
+            background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+        }
+        
+        .success-badge {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+        
+        .alert-stripe {
+            background: repeating-linear-gradient(
+                45deg,
+                #fef2f2,
+                #fef2f2 10px,
+                #fee2e2 10px,
+                #fee2e2 20px
+            );
+        }
+        
+        .donut-container {
+            filter: drop-shadow(0 10px 30px rgba(239, 68, 68, 0.2));
+        }
+        
+        .center-stat {
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-nulo:hover,
+        .card-inadecuado:hover {
+            transform: translateY(-4px);
+        }
+        
+        .breathing-glow {
+            animation: breathing 2s ease-in-out infinite;
+        }
+        
+        @keyframes breathing {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(239, 68, 68, 0.6);
+            }
+        }
+        
+        .slide-in-left {
+            opacity: 0;
+            transform: translateX(-50px);
+        }
+        
+        .slide-in-right {
+            opacity: 0;
+            transform: translateX(50px);
+        }
+        
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        
+        .icon-shake {
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-10deg); }
+            75% { transform: rotate(10deg); }
+        }
+    </style>
+</head>
+<body class="bg-white min-h-screen overflow-x-hidden">
+    
+    <!-- Main Container -->
+    <div class="container mx-auto px-6 py-8 max-w-7xl">
+        
+        <!-- Header Section -->
+        <header class="mb-8 slide-in-left">
+            <!-- Alert Banner -->
+            <div class="alert-stripe rounded-lg p-3 mb-6 border-l-4 border-red-600 flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full danger-badge flex items-center justify-center">
+                    <i class="fas fa-exclamation-triangle text-white text-lg"></i>
+                </div>
+                <div>
+                    <span class="text-red-800 font-bold text-sm uppercase tracking-wide">Alerta Epidemiológica</span>
+                    <span class="text-red-600 text-sm ml-2">• Falla Sistémica Detectada</span>
+                </div>
+            </div>
+            
+            <!-- Title -->
+            <div class="flex items-start justify-between">
+                <div>
+                    <h1 class="text-4xl md:text-5xl font-black text-gray-900 leading-tight mb-2">
+                        Control Prenatal: <span class="text-red-600">El Factor Decisivo</span>
+                    </h1>
+                    <p class="text-gray-600 text-lg md:text-xl font-medium">
+                        Evaluación de la prevención primaria según estándares OMS 
+                        <span class="inline-flex items-center gap-1 bg-gray-100 px-2 py-1 rounded text-sm font-semibold text-gray-700">
+                            <i class="fas fa-check-circle text-emerald-500"></i> ≥8 consultas
+                        </span>
+                    </p>
+                </div>
+                <div class="hidden md:flex items-center gap-2 bg-red-50 px-4 py-2 rounded-full border border-red-200">
+                    <span class="w-3 h-3 bg-red-500 rounded-full animate-pulse"></span>
+                    <span class="text-red-700 font-semibold text-sm">Datos Críticos</span>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Main Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+            
+            <!-- Left: Donut Chart -->
+            <div class="relative flex flex-col items-center justify-center slide-in-left">
+                
+                <!-- Chart Container -->
+                <div id="donutContainer" class="donut-container relative w-80 h-80 md:w-96 md:h-96">
+                    
+                    <!-- SVG Donut -->
+                    <svg viewBox="0 0 200 200" class="w-full h-full transform -rotate-90">
+                        <!-- Background Circle -->
+                        <circle
+                            cx="100"
+                            cy="100"
+                            r="80"
+                            fill="none"
+                            stroke="#f3f4f6"
+                            stroke-width="24"
+                        />
+                        
+                        <!-- Success Segment (13.1%) - Verde -->
+                        <circle
+                            id="successSegment"
+                            class="donut-segment"
+                            cx="100"
+                            cy="100"
+                            r="80"
+                            fill="none"
+                            stroke="#10b981"
+                            stroke-width="24"
+                            stroke-dasharray="0 502.65"
+                            stroke-dashoffset="0"
+                            stroke-linecap="round"
+                            data-value="13.1"
+                        />
+                        
+                        <!-- Failure Segment (86.9%) - Rojo -->
+                        <circle
+                            id="failureSegment"
+                            class="donut-segment"
+                            cx="100"
+                            cy="100"
+                            r="80"
+                            fill="none"
+                            stroke="url(#redGradient)"
+                            stroke-width="24"
+                            stroke-dasharray="0 502.65"
+                            stroke-dashoffset="-65.85"
+                            stroke-linecap="round"
+                            data-value="86.9"
+                        />
+                        
+                        <!-- Gradient Definition -->
+                        <defs>
+                            <linearGradient id="redGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#ef4444"/>
+                                <stop offset="100%" style="stop-color:#b91c1c"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    
+                    <!-- Center Content -->
+                    <div class="absolute inset-0 flex flex-col items-center justify-center">
+                        <div id="centerContent" class="text-center">
+                            <div class="flex items-baseline justify-center">
+                                <span id="mainCounter" class="stat-counter text-6xl md:text-7xl font-black text-red-600 center-stat">0.0</span>
+                                <span class="text-3xl md:text-4xl font-bold text-red-600">%</span>
+                            </div>
+                            <div id="deficitLabel" class="mt-2 opacity-0">
+                                <span class="danger-badge text-white text-sm md:text-base font-bold px-4 py-2 rounded-full uppercase tracking-wider">
+                                    Déficit Crítico
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Legend -->
+                <div class="flex items-center justify-center gap-6 mt-6">
+                    <div class="flex items-center gap-2">
+                        <span class="w-4 h-4 rounded-full bg-gradient-to-br from-red-500 to-red-700"></span>
+                        <span class="text-sm font-semibold text-gray-700">Inadecuado/Nulo (86.9%)</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-4 h-4 rounded-full bg-emerald-500"></span>
+                        <span class="text-sm font-semibold text-gray-700">Adecuado (13.1%)</span>
+                    </div>
+                </div>
+                
+                <!-- Impact Button -->
+                <button 
+                    id="impactBtn"
+                    class="mt-6 group flex items-center gap-2 bg-gray-900 hover:bg-red-600 text-white font-bold px-6 py-3 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 fade-in-up"
+                >
+                    <i class="fas fa-heartbeat group-hover:animate-pulse"></i>
+                    <span>Ver Impacto Clínico</span>
+                    <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                </button>
+            </div>
+            
+            <!-- Right: Breakdown Panel -->
+            <div class="space-y-6 slide-in-right">
+                
+                <!-- Section Header -->
+                <div class="border-b-2 border-gray-200 pb-4">
+                    <h2 class="text-2xl font-bold text-gray-900 flex items-center gap-3">
+                        <span class="w-10 h-10 rounded-lg bg-red-100 flex items-center justify-center">
+                            <i class="fas fa-chart-pie text-red-600"></i>
+                        </span>
+                        Desglose del Déficit
+                    </h2>
+                    <p class="text-gray-600 mt-1">Composición del 86.9% de falla en control prenatal</p>
+                </div>
+                
+                <!-- Card: Sin Control (Nulo) -->
+                <div id="cardNulo" class="card-nulo bg-white border-2 border-gray-200 rounded-2xl p-6 transition-all duration-300 hover:border-red-400">
+                    <div class="flex items-start gap-4">
+                        <!-- Icon -->
+                        <div class="w-16 h-16 rounded-xl danger-badge flex items-center justify-center flex-shrink-0 shadow-lg">
+                            <i class="fas fa-eye-slash text-white text-2xl"></i>
+                        </div>
+                        
+                        <!-- Content -->
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between mb-2">
+                                <h3 class="text-xl font-bold text-gray-900">Sin Control (Nulo)</h3>
+                                <span id="nuloCounter" class="stat-counter text-3xl font-black text-red-600">0.0%</span>
+                            </div>
+                            
+                            <!-- Progress Bar -->
+                            <div class="w-full bg-gray-200 rounded-full h-4 mb-3 overflow-hidden">
+                                <div id="nuloProgress" class="progress-bar-fill h-full rounded-full danger-badge" style="width: 0%"></div>
+                            </div>
+                            
+                            <!-- Description -->
+                            <p class="text-gray-600 font-medium flex items-center gap-2">
+                                <i class="fas fa-quote-left text-red-300 text-xs"></i>
+                                <span class="italic">Llegaron a la emergencia a ciegas</span>
+                                <i class="fas fa-quote-right text-red-300 text-xs"></i>
+                            </p>
+                            
+                            <!-- Stats -->
+                            <div class="mt-4 flex items-center gap-4">
+                                <div class="flex items-center gap-2 text-sm">
+                                    <i class="fas fa-users text-gray-400"></i>
+                                    <span class="font-semibold text-gray-700">90 pacientes</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-sm">
+                                    <i class="fas fa-clipboard-list text-gray-400"></i>
+                                    <span class="font-semibold text-gray-700">0 consultas</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Card: Inadecuado -->
+                <div id="cardInadecuado" class="card-inadecuado bg-white border-2 border-gray-200 rounded-2xl p-6 transition-all duration-300 hover:border-red-400">
+                    <div class="flex items-start gap-4">
+                        <!-- Icon -->
+                        <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center flex-shrink-0 shadow-lg">
+                            <i class="fas fa-hourglass-half text-white text-2xl"></i>
+                        </div>
+                        
+                        <!-- Content -->
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between mb-2">
+                                <h3 class="text-xl font-bold text-gray-900">Inadecuado (1-7 consultas)</h3>
+                                <span id="inadecuadoCounter" class="stat-counter text-3xl font-black text-orange-600">0.0%</span>
+                            </div>
+                            
+                            <!-- Progress Bar -->
+                            <div class="w-full bg-gray-200 rounded-full h-4 mb-3 overflow-hidden">
+                                <div id="inadecuadoProgress" class="progress-bar-fill h-full rounded-full bg-gradient-to-r from-orange-500 to-red-600" style="width: 0%"></div>
+                            </div>
+                            
+                            <!-- Description -->
+                            <p class="text-gray-600 font-medium flex items-center gap-2">
+                                <i class="fas fa-quote-left text-orange-300 text-xs"></i>
+                                <span class="italic">Oportunidades de diagnóstico perdidas</span>
+                                <i class="fas fa-quote-right text-orange-300 text-xs"></i>
+                            </p>
+                            
+                            <!-- Stats -->
+                            <div class="mt-4 flex items-center gap-4">
+                                <div class="flex items-center gap-2 text-sm">
+                                    <i class="fas fa-users text-gray-400"></i>
+                                    <span class="font-semibold text-gray-700">162 pacientes</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-sm">
+                                    <i class="fas fa-clipboard-list text-gray-400"></i>
+                                    <span class="font-semibold text-gray-700">1-7 consultas</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Card: Adecuado (Contraste) -->
+                <div id="cardAdecuado" class="bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-5 transition-all duration-300">
+                    <div class="flex items-center gap-4">
+                        <!-- Icon -->
+                        <div class="w-12 h-12 rounded-xl success-badge flex items-center justify-center flex-shrink-0 shadow-md">
+                            <i class="fas fa-check-circle text-white text-xl"></i>
+                        </div>
+                        
+                        <!-- Content -->
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-bold text-emerald-800">Control Adecuado (≥8)</h3>
+                                <span id="adecuadoCounter" class="stat-counter text-2xl font-black text-emerald-600">0.0%</span>
+                            </div>
+                            <p class="text-emerald-700 text-sm font-medium mt-1">
+                                Solo 38 pacientes cumplieron el estándar OMS
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Warning Box -->
+                <div class="bg-red-50 border border-red-200 rounded-xl p-5 fade-in-up">
+                    <div class="flex items-start gap-3">
+                        <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <i class="fas fa-radiation text-red-600"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-red-800 text-lg">Consecuencia Directa</h4>
+                            <p class="text-red-700 text-sm mt-1 leading-relaxed">
+                                El <strong>86.9%</strong> de las pacientes con MMG ingresaron sin diagnósticos previos de hipertensión o anemia, transformando condiciones <em>tratables</em> en emergencias <em>potencialmente mortales</em>.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bottom Stats Bar -->
+        <div class="mt-10 grid grid-cols-2 md:grid-cols-4 gap-4 fade-in-up">
+            <div class="bg-gray-50 rounded-xl p-4 text-center border border-gray-200">
+                <div class="text-3xl font-black text-gray-900">290</div>
+                <div class="text-sm font-medium text-gray-600">Casos Estudiados</div>
+            </div>
+            <div class="bg-red-50 rounded-xl p-4 text-center border border-red-200">
+                <div class="text-3xl font-black text-red-600">252</div>
+                <div class="text-sm font-medium text-red-700">Control Deficiente</div>
+            </div>
+            <div class="bg-orange-50 rounded-xl p-4 text-center border border-orange-200">
+                <div class="text-3xl font-black text-orange-600">0</div>
+                <div class="text-sm font-medium text-orange-700">Consultas Promedio*</div>
+            </div>
+            <div class="bg-emerald-50 rounded-xl p-4 text-center border border-emerald-200">
+                <div class="text-3xl font-black text-emerald-600">38</div>
+                <div class="text-sm font-medium text-emerald-700">Cumplieron OMS</div>
+            </div>
+        </div>
+        
+        <!-- Footer Note -->
+        <div class="mt-6 text-center">
+            <p class="text-gray-500 text-sm">
+                <i class="fas fa-info-circle mr-1"></i>
+                *Mediana de consultas prenatales en casos de MMG. Estándar OMS: ≥8 consultas.
+            </p>
+        </div>
+    </div>
+    
+    <!-- Modal Overlay -->
+    <div id="modalOverlay" class="fixed inset-0 modal-overlay z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div id="modalContent" class="bg-white rounded-3xl max-w-2xl w-full p-8 shadow-2xl transform scale-95 transition-transform duration-300">
+            
+            <!-- Modal Header -->
+            <div class="flex items-start justify-between mb-6">
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 rounded-2xl danger-badge flex items-center justify-center shadow-lg">
+                        <i class="fas fa-heartbeat text-white text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-black text-gray-900">Impacto Clínico</h3>
+                        <p class="text-gray-600 font-medium">Consecuencias de la falla en control prenatal</p>
+                    </div>
+                </div>
+                <button id="closeModal" class="w-10 h-10 rounded-full bg-gray-100 hover:bg-red-100 flex items-center justify-center transition-colors group">
+                    <i class="fas fa-times text-gray-500 group-hover:text-red-600"></i>
+                </button>
+            </div>
+            
+            <!-- Modal Body -->
+            <div class="space-y-6">
+                
+                <!-- Key Finding -->
+                <div class="bg-red-50 border-l-4 border-red-600 p-5 rounded-r-xl">
+                    <h4 class="font-bold text-red-800 text-lg mb-2 flex items-center gap-2">
+                        <i class="fas fa-exclamation-circle"></i>
+                        Hallazgo Principal
+                    </h4>
+                    <p class="text-red-700 leading-relaxed">
+                        La <strong>ausencia de control prenatal</strong> impidió detectar <strong>hipertensión</strong> y <strong>anemia</strong> a tiempo, convirtiendo condiciones <em>tratables</em> en <strong>emergencias de vida o muerte</strong>.
+                    </p>
+                </div>
+                
+                <!-- Impact Points -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-gray-50 rounded-xl p-4">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 rounded-lg bg-red-100 flex items-center justify-center">
+                                <i class="fas fa-stethoscope text-red-600"></i>
+                            </div>
+                            <span class="font-bold text-gray-900">Sin Diagnóstico Previo</span>
+                        </div>
+                        <p class="text-gray-600 text-sm">
+                            El 68.3% desarrolló trastornos hipertensivos que pudieron detectarse en controles tempranos.
+                        </p>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-xl p-4">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center">
+                                <i class="fas fa-clock text-orange-600"></i>
+                            </div>
+                            <span class="font-bold text-gray-900">Llegada Tardía</span>
+                        </div>
+                        <p class="text-gray-600 text-sm">
+                            El 70.3% llegó en el tercer trimestre, con reserva fisiológica ya comprometida.
+                        </p>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-xl p-4">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
+                                <i class="fas fa-ambulance text-purple-600"></i>
+                            </div>
+                            <span class="font-bold text-gray-900">Manejo de Rescate</span>
+                        </div>
+                        <p class="text-gray-600 text-sm">
+                            El equipo médico ejecutó maniobras de emergencia en lugar de tratamiento preventivo.
+                        </p>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-xl p-4">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center">
+                                <i class="fas fa-shield-alt text-emerald-600"></i>
+                            </div>
+                            <span class="font-bold text-gray-900">Oportunidad Perdida</span>
+                        </div>
+                        <p class="text-gray-600 text-sm">
+                            Cada consulta prenatal omitida fue una oportunidad de intervención desaprovechada.
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Conclusion -->
+                <div class="bg-gray-900 rounded-xl p-5 text-white">
+                    <div class="flex items-center gap-3 mb-3">
+                        <i class="fas fa-lightbulb text-yellow-400 text-xl"></i>
+                        <span class="font-bold text-lg">Conclusión</span>
+                    </div>
+                    <p class="text-gray-300 leading-relaxed">
+                        La falla en el control prenatal representa la <strong class="text-white">primera demora</strong> del modelo de Thaddeus y Maine: las pacientes no buscaron atención a tiempo porque desconocían los signos de alarma. Esta brecha educativa y de acceso es <strong class="text-red-400">prevenible</strong>.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Modal Footer -->
+            <div class="mt-6 flex items-center justify-between pt-6 border-t border-gray-200">
+                <div class="flex items-center gap-2 text-gray-500 text-sm">
+                    <i class="fas fa-book-medical"></i>
+                    <span>Fuente: Hospital Universitario de Caracas, 2011-2020</span>
+                </div>
+                <button id="closeModalBtn" class="bg-gray-900 hover:bg-gray-800 text-white font-bold px-6 py-2 rounded-full transition-colors">
+                    Entendido
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =============================================
+        // CONFIGURATION & DATA
+        // =============================================
+        const CONFIG = {
+            totalPercent: 86.9,
+            nuloPercent: 31.0,
+            inadecuadoPercent: 55.9,
+            adecuadoPercent: 13.1,
+            circumference: 2 * Math.PI * 80, // ~502.65
+            animationDuration: 2000,
+            counterDuration: 2500
+        };
+
+        // =============================================
+        // DOM ELEMENTS
+        // =============================================
+        const elements = {
+            // Donut segments
+            failureSegment: document.getElementById('failureSegment'),
+            successSegment: document.getElementById('successSegment'),
+            donutContainer: document.getElementById('donutContainer'),
+            
+            // Counters
+            mainCounter: document.getElementById('mainCounter'),
+            nuloCounter: document.getElementById('nuloCounter'),
+            inadecuadoCounter: document.getElementById('inadecuadoCounter'),
+            adecuadoCounter: document.getElementById('adecuadoCounter'),
+            
+            // Progress bars
+            nuloProgress: document.getElementById('nuloProgress'),
+            inadecuadoProgress: document.getElementById('inadecuadoProgress'),
+            
+            // Labels and cards
+            deficitLabel: document.getElementById('deficitLabel'),
+            cardNulo: document.getElementById('cardNulo'),
+            cardInadecuado: document.getElementById('cardInadecuado'),
+            
+            // Modal
+            modalOverlay: document.getElementById('modalOverlay'),
+            modalContent: document.getElementById('modalContent'),
+            impactBtn: document.getElementById('impactBtn'),
+            closeModal: document.getElementById('closeModal'),
+            closeModalBtn: document.getElementById('closeModalBtn')
+        };
+
+        // =============================================
+        // ANIMATION FUNCTIONS
+        // =============================================
+        
+        // Animate donut chart segments
+        function animateDonutChart() {
+            const successDash = (CONFIG.adecuadoPercent / 100) * CONFIG.circumference;
+            const failureDash = (CONFIG.totalPercent / 100) * CONFIG.circumference;
+            
+            // Animate success segment (green)
+            anime({
+                targets: elements.successSegment,
+                strokeDasharray: [0, CONFIG.circumference, successDash, CONFIG.circumference],
+                duration: CONFIG.animationDuration * 0.8,
+                easing: 'easeOutQuart',
+                delay: 200
+            });
+            
+            // Animate failure segment (red) - aggressive speed
+            anime({
+                targets: elements.failureSegment,
+                strokeDasharray: [0, CONFIG.circumference, failureDash, CONFIG.circumference],
+                duration: CONFIG.animationDuration * 0.6,
+                easing: 'easeOutExpo',
+                delay: 400
+            });
+        }
+
+        // Animate counter with decimals
+        function animateCounter(element, targetValue, suffix = '%', duration = CONFIG.counterDuration) {
+            const obj = { value: 0 };
+            
+            anime({
+                targets: obj,
+                value: targetValue,
+                duration: duration,
+                easing: 'easeOutExpo',
+                update: function() {
+                    element.textContent = obj.value.toFixed(1) + suffix;
+                }
+            });
+        }
+
+        // Animate progress bars
+        function animateProgressBars() {
+            anime({
+                targets: elements.nuloProgress,
+                width: [(CONFIG.nuloPercent / CONFIG.totalPercent * 100) + '%'],
+                duration: 1500,
+                easing: 'easeOutQuart',
+                delay: 800
+            });
+            
+            anime({
+                targets: elements.inadecuadoProgress,
+                width: [(CONFIG.inadecuadoPercent / CONFIG.totalPercent * 100) + '%'],
+                duration: 1500,
+                easing: 'easeOutQuart',
+                delay: 1000
+            });
+        }
+
+        // Show deficit label with pulse effect
+        function showDeficitLabel() {
+            setTimeout(() => {
+                anime({
+                    targets: elements.deficitLabel,
+                    opacity: [0, 1],
+                    scale: [0.8, 1],
+                    duration: 500,
+                    easing: 'easeOutBack'
+                });
+                
+                // Add pulse alarm effect to donut container
+                elements.donutContainer.classList.add('breathing-glow');
+            }, CONFIG.counterDuration);
+        }
+
+        // Animate slide-in elements
+        function animateSlideElements() {
+            // Left side animations
+            anime({
+                targets: '.slide-in-left',
+                translateX: [-50, 0],
+                opacity: [0, 1],
+                duration: 800,
+                easing: 'easeOutQuart',
+                delay: anime.stagger(100)
+            });
+            
+            // Right side animations
+            anime({
+                targets: '.slide-in-right',
+                translateX: [50, 0],
+                opacity: [0, 1],
+                duration: 800,
+                easing: 'easeOutQuart',
+                delay: anime.stagger(150, { start: 300 })
+            });
+            
+            // Fade in up animations
+            anime({
+                targets: '.fade-in-up',
+                translateY: [30, 0],
+                opacity: [0, 1],
+                duration: 800,
+                easing: 'easeOutQuart',
+                delay: anime.stagger(200, { start: 1500 })
+            });
+        }
+
+        // =============================================
+        // INTERACTIVITY FUNCTIONS
+        // =============================================
+        
+        // Hover effect on failure segment
+        function setupDonutHover() {
+            elements.failureSegment.addEventListener('mouseenter', () => {
+                elements.cardNulo.classList.add('card-highlight');
+                elements.cardInadecuado.classList.add('card-highlight');
+                
+                // Shake icons
+                elements.cardNulo.querySelector('i').classList.add('icon-shake');
+                elements.cardInadecuado.querySelector('i').classList.add('icon-shake');
+            });
+            
+            elements.failureSegment.addEventListener('mouseleave', () => {
+                elements.cardNulo.classList.remove('card-highlight');
+                elements.cardInadecuado.classList.remove('card-highlight');
+                
+                elements.cardNulo.querySelector('i').classList.remove('icon-shake');
+                elements.cardInadecuado.querySelector('i').classList.remove('icon-shake');
+            });
+        }
+
+        // Modal functionality
+        function setupModal() {
+            const openModal = () => {
+                elements.modalOverlay.classList.remove('opacity-0', 'pointer-events-none');
+                anime({
+                    targets: elements.modalContent,
+                    scale: [0.95, 1],
+                    opacity: [0, 1],
+                    duration: 300,
+                    easing: 'easeOutQuart'
+                });
+            };
+            
+            const closeModal = () => {
+                anime({
+                    targets: elements.modalContent,
+                    scale: [1, 0.95],
+                    opacity: [1, 0],
+                    duration: 200,
+                    easing: 'easeInQuart',
+                    complete: () => {
+                        elements.modalOverlay.classList.add('opacity-0', 'pointer-events-none');
+                    }
+                });
+            };
+            
+            elements.impactBtn.addEventListener('click', openModal);
+            elements.closeModal.addEventListener('click', closeModal);
+            elements.closeModalBtn.addEventListener('click', closeModal);
+            elements.modalOverlay.addEventListener('click', (e) => {
+                if (e.target === elements.modalOverlay) closeModal();
+            });
+            
+            // ESC key to close
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && !elements.modalOverlay.classList.contains('pointer-events-none')) {
+                    closeModal();
+                }
+            });
+        }
+
+        // =============================================
+        // INITIALIZATION
+        // =============================================
+        function init() {
+            // Start animations
+            animateSlideElements();
+            
+            // Delay main chart animations
+            setTimeout(() => {
+                animateDonutChart();
+                animateCounter(elements.mainCounter, CONFIG.totalPercent);
+                animateCounter(elements.nuloCounter, CONFIG.nuloPercent);
+                animateCounter(elements.inadecuadoCounter, CONFIG.inadecuadoPercent);
+                animateCounter(elements.adecuadoCounter, CONFIG.adecuadoPercent);
+                animateProgressBars();
+                showDeficitLabel();
+            }, 500);
+            
+            // Setup interactions
+            setupDonutHover();
+            setupModal();
+        }
+
+        // Run when DOM is ready
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide 15 - Clasificación Etiológica | Morbilidad Materna Grave</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Anime.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'obstetrica-directa': '#1e3a8a',
+                        'obstetrica-directa-light': '#3b82f6',
+                        'obstetrica-indirecta': '#06b6d4',
+                        'obstetrica-indirecta-light': '#22d3ee',
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        /* Estilos base del gráfico */
+        .donut-chart {
+            transform: rotate(-90deg);
+            transform-origin: center;
+        }
+        
+        .donut-segment {
+            fill: transparent;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+        
+        /* Efecto de separación al hover */
+        .segment-directa:hover {
+            filter: brightness(1.15);
+        }
+        
+        .segment-indirecta:hover {
+            filter: brightness(1.2);
+        }
+        
+        .segment-directa.active {
+            transform: translate(2px, 0);
+        }
+        
+        .segment-indirecta.active {
+            transform: translate(-3px, -3px);
+        }
+        
+        /* Gradiente para el segmento dominante */
+        .gradient-directa {
+            stroke: url(#gradientDirecta);
+        }
+        
+        /* Líneas conectoras */
+        .connector-line {
+            stroke-dasharray: 5, 3;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .legend-card:hover .connector-line {
+            opacity: 1;
+        }
+        
+        /* Tooltip */
+        .tooltip-content {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .tooltip-trigger:hover .tooltip-content,
+        .tooltip-trigger.active .tooltip-content {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        /* Animación de pulso para el centro */
+        @keyframes pulse-center {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        
+        .center-pulse {
+            animation: pulse-center 3s ease-in-out infinite;
+        }
+        
+        /* Efecto de brillo */
+        @keyframes glow {
+            0%, 100% { filter: drop-shadow(0 0 5px rgba(6, 182, 212, 0.3)); }
+            50% { filter: drop-shadow(0 0 15px rgba(6, 182, 212, 0.6)); }
+        }
+        
+        .glow-effect {
+            animation: glow 2s ease-in-out infinite;
+        }
+        
+        /* Patrón de textura sutil */
+        .texture-pattern {
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(255,255,255,0.1) 1px, transparent 1px),
+                radial-gradient(circle at 75% 75%, rgba(255,255,255,0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        
+        /* Cards de leyenda */
+        .legend-card {
+            backdrop-filter: blur(10px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .legend-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        
+        /* Indicador de porcentaje grande */
+        .percentage-large {
+            font-size: clamp(3rem, 8vw, 5rem);
+            font-weight: 900;
+            line-height: 1;
+        }
+        
+        /* Responsive grid */
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr auto;
+            }
+        }
+        
+        /* Decoración de fondo */
+        .bg-decoration {
+            background: 
+                radial-gradient(ellipse at 20% 80%, rgba(30, 58, 138, 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(6, 182, 212, 0.05) 0%, transparent 50%);
+        }
+        
+        /* Animación del número central */
+        .number-animate {
+            transition: all 0.3s ease;
+        }
+        
+        /* Lista de ejemplos */
+        .examples-list {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+        
+        .examples-list.expanded {
+            max-height: 300px;
+        }
+        
+        /* Indicador visual */
+        .visual-indicator {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+        
+        /* Badge animado */
+        .badge-animated {
+            animation: badge-pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes badge-pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.4); }
+            50% { box-shadow: 0 0 0 8px rgba(6, 182, 212, 0); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen overflow-hidden bg-decoration">
+    
+    <!-- Contenedor Principal -->
+    <div class="w-full h-screen flex flex-col p-6 lg:p-8">
+        
+        <!-- Header -->
+        <header class="mb-6 opacity-0" id="header">
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="w-1.5 h-12 bg-gradient-to-b from-obstetrica-directa to-obstetrica-indirecta rounded-full"></div>
+                        <div>
+                            <h1 class="text-3xl lg:text-4xl font-bold text-slate-800 tracking-tight">
+                                Clasificación Etiológica
+                            </h1>
+                            <p class="text-slate-500 text-lg mt-1">
+                                Distribución según el origen de la complicación <span class="font-semibold text-slate-600">(n=290)</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="hidden lg:flex items-center gap-4">
+                    <div class="flex items-center gap-2 px-4 py-2 bg-white rounded-xl shadow-sm border border-slate-100">
+                        <i class="fas fa-chart-pie text-obstetrica-directa"></i>
+                        <span class="text-sm font-medium text-slate-600">Gráfico de Anillo</span>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xs text-slate-400 uppercase tracking-wider">HUC 2011-2020</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Grid Principal -->
+        <div class="flex-1 grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-6 lg:gap-8 items-center main-grid">
+            
+            <!-- Card Izquierda - Obstétrica Directa -->
+            <div class="legend-card opacity-0 order-2 lg:order-1" id="card-directa">
+                <div class="bg-white rounded-3xl p-6 lg:p-8 shadow-xl border border-slate-100 relative overflow-hidden">
+                    
+                    <!-- Decoración de fondo -->
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-obstetrica-directa/10 to-transparent rounded-bl-full"></div>
+                    
+                    <!-- Indicador de color -->
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="visual-indicator bg-gradient-to-br from-obstetrica-directa to-obstetrica-directa-light shadow-lg"></div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Segmento A • Dominante</span>
+                    </div>
+                    
+                    <!-- Título -->
+                    <h2 class="text-2xl lg:text-3xl font-bold text-obstetrica-directa mb-3">
+                        Obstétricas Directas
+                    </h2>
+                    
+                    <!-- Datos principales -->
+                    <div class="flex items-baseline gap-3 mb-4">
+                        <span class="percentage-large text-obstetrica-directa">90.3%</span>
+                        <div class="flex flex-col">
+                            <span class="text-2xl font-bold text-slate-700">262</span>
+                            <span class="text-sm text-slate-400">casos</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Descripción -->
+                    <p class="text-slate-600 text-sm lg:text-base leading-relaxed mb-5">
+                        <span class="font-semibold text-slate-700">Complicaciones propias del estado de gestación:</span>
+                        Patologías que surgen directamente del embarazo, parto o puerperio.
+                    </p>
+                    
+                    <!-- Botón expandir ejemplos -->
+                    <div class="tooltip-trigger" id="trigger-directa">
+                        <button class="w-full flex items-center justify-between px-4 py-3 bg-slate-50 hover:bg-slate-100 rounded-xl transition-all group" onclick="toggleExamples('directa')">
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-list-ul text-obstetrica-directa"></i>
+                                <span class="font-medium text-slate-700">Ver patologías incluidas</span>
+                            </div>
+                            <i class="fas fa-chevron-down text-slate-400 group-hover:text-obstetrica-directa transition-all transform" id="chevron-directa"></i>
+                        </button>
+                        
+                        <!-- Lista de ejemplos -->
+                        <div class="examples-list mt-3" id="examples-directa">
+                            <div class="grid grid-cols-1 gap-2">
+                                <div class="flex items-center gap-3 p-3 bg-obstetrica-directa/5 rounded-lg">
+                                    <i class="fas fa-heartbeat text-obstetrica-directa text-sm"></i>
+                                    <span class="text-sm text-slate-700">Trastornos Hipertensivos (68.3%)</span>
+                                </div>
+                                <div class="flex items-center gap-3 p-3 bg-obstetrica-directa/5 rounded-lg">
+                                    <i class="fas fa-tint text-red-500 text-sm"></i>
+                                    <span class="text-sm text-slate-700">Hemorragia Obstétrica (20.0%)</span>
+                                </div>
+                                <div class="flex items-center gap-3 p-3 bg-obstetrica-directa/5 rounded-lg">
+                                    <i class="fas fa-virus text-amber-500 text-sm"></i>
+                                    <span class="text-sm text-slate-700">Infecciones Obstétricas (10.0%)</span>
+                                </div>
+                                <div class="flex items-center gap-3 p-3 bg-obstetrica-directa/5 rounded-lg">
+                                    <i class="fas fa-baby text-purple-500 text-sm"></i>
+                                    <span class="text-sm text-slate-700">Complicaciones Placentarias (2.4%)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Línea conectora (visual) -->
+                    <div class="hidden lg:block absolute right-0 top-1/2 transform translate-x-full">
+                        <svg width="60" height="4" class="connector-line">
+                            <line x1="0" y1="2" x2="60" y2="2" stroke="#1e3a8a" stroke-width="2" stroke-dasharray="5,3"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Gráfico Central -->
+            <div class="flex items-center justify-center order-1 lg:order-2" id="chart-container">
+                <div class="relative">
+                    
+                    <!-- SVG Donut Chart -->
+                    <svg 
+                        width="380" 
+                        height="380" 
+                        viewBox="0 0 42 42" 
+                        class="donut-chart opacity-0"
+                        id="donut-svg"
+                        role="img"
+                        aria-labelledby="chart-title chart-desc"
+                    >
+                        <title id="chart-title">Clasificación Etiológica de Morbilidad Materna Grave</title>
+                        <desc id="chart-desc">Gráfico de anillo mostrando 90.3% causas obstétricas directas y 9.7% causas obstétricas indirectas</desc>
+                        
+                        <!-- Definiciones de gradientes y filtros -->
+                        <defs>
+                            <!-- Gradiente para segmento directo -->
+                            <linearGradient id="gradientDirecta" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#1e3a8a;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#2563eb;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#1e3a8a;stop-opacity:1" />
+                            </linearGradient>
+                            
+                            <!-- Gradiente para segmento indirecto -->
+                            <linearGradient id="gradientIndirecta" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#06b6d4;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#22d3ee;stop-opacity:1" />
+                            </linearGradient>
+                            
+                            <!-- Filtro de brillo -->
+                            <filter id="glow-filter" x="-50%" y="-50%" width="200%" height="200%">
+                                <feGaussianBlur stdDeviation="0.3" result="coloredBlur"/>
+                                <feMerge>
+                                    <feMergeNode in="coloredBlur"/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
+                            
+                            <!-- Sombra -->
+                            <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                                <feDropShadow dx="0" dy="0.5" stdDeviation="0.5" flood-color="#1e3a8a" flood-opacity="0.3"/>
+                            </filter>
+                        </defs>
+                        
+                        <!-- Círculo de fondo (anillo base) -->
+                        <circle 
+                            class="donut-hole" 
+                            cx="21" 
+                            cy="21" 
+                            r="15.91549430918954" 
+                            fill="#f8fafc"
+                        ></circle>
+                        
+                        <!-- Anillo de fondo sutil -->
+                        <circle 
+                            class="donut-ring" 
+                            cx="21" 
+                            cy="21" 
+                            r="15.91549430918954" 
+                            fill="transparent" 
+                            stroke="#e2e8f0" 
+                            stroke-width="4"
+                        ></circle>
+                        
+                        <!-- Segmento: Obstétrica Directa (90.3%) -->
+                        <!-- Cálculo: stroke-dasharray = "90.3 9.7" (suma = 100, que es la circunferencia) -->
+                        <!-- stroke-dashoffset = 25 para comenzar desde las 12:00 -->
+                        <circle 
+                            class="donut-segment segment-directa"
+                            id="segment-directa"
+                            cx="21" 
+                            cy="21" 
+                            r="15.91549430918954" 
+                            fill="transparent" 
+                            stroke="url(#gradientDirecta)"
+                            stroke-width="4"
+                            stroke-dasharray="0 100"
+                            stroke-dashoffset="25"
+                            stroke-linecap="round"
+                            filter="url(#shadow)"
+                            data-percentage="90.3"
+                            data-cases="262"
+                            data-label="Obstétricas Directas"
+                        ></circle>
+                        
+                        <!-- Segmento: Obstétrica Indirecta (9.7%) -->
+                        <!-- stroke-dasharray = "9.7 90.3" -->
+                        <!-- stroke-dashoffset = 100 - 90.3 + 25 = 34.7 -->
+                        <circle 
+                            class="donut-segment segment-indirecta"
+                            id="segment-indirecta"
+                            cx="21" 
+                            cy="21" 
+                            r="15.91549430918954" 
+                            fill="transparent" 
+                            stroke="url(#gradientIndirecta)"
+                            stroke-width="4"
+                            stroke-dasharray="0 100"
+                            stroke-dashoffset="34.7"
+                            stroke-linecap="round"
+                            data-percentage="9.7"
+                            data-cases="28"
+                            data-label="Obstétricas Indirectas"
+                        ></circle>
+                        
+                    </svg>
+                    
+                    <!-- Centro del Donut - Información Dinámica -->
+                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                        <div class="text-center center-pulse" id="center-content">
+                            <div class="bg-white/90 backdrop-blur-sm rounded-full w-44 h-44 lg:w-52 lg:h-52 flex flex-col items-center justify-center shadow-2xl border border-slate-100">
+                                <div id="center-number" class="number-animate">
+                                    <span class="text-5xl lg:text-6xl font-black text-slate-800">290</span>
+                                </div>
+                                <div id="center-label" class="mt-1">
+                                    <span class="text-sm lg:text-base font-medium text-slate-500 uppercase tracking-wider">Casos Totales</span>
+                                </div>
+                                <div id="center-sublabel" class="mt-2 opacity-0">
+                                    <span class="text-xs text-slate-400"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Indicadores externos -->
+                    <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 opacity-0" id="indicator-top">
+                        <div class="bg-white px-3 py-1.5 rounded-full shadow-lg border border-slate-100 flex items-center gap-2">
+                            <div class="w-2 h-2 rounded-full bg-obstetrica-directa"></div>
+                            <span class="text-xs font-semibold text-slate-600">12:00 - Inicio</span>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+            
+            <!-- Card Derecha - Obstétrica Indirecta -->
+            <div class="legend-card opacity-0 order-3" id="card-indirecta">
+                <div class="bg-white rounded-3xl p-6 lg:p-8 shadow-xl border border-slate-100 relative overflow-hidden">
+                    
+                    <!-- Decoración de fondo -->
+                    <div class="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-obstetrica-indirecta/10 to-transparent rounded-br-full"></div>
+                    
+                    <!-- Badge de importancia -->
+                    <div class="absolute top-4 right-4">
+                        <div class="badge-animated px-3 py-1 bg-obstetrica-indirecta/10 text-obstetrica-indirecta rounded-full text-xs font-bold uppercase tracking-wider">
+                            <i class="fas fa-exclamation-circle mr-1"></i>
+                            Vigilar
+                        </div>
+                    </div>
+                    
+                    <!-- Indicador de color -->
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="visual-indicator bg-gradient-to-br from-obstetrica-indirecta to-obstetrica-indirecta-light shadow-lg glow-effect"></div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Segmento B • Minoritario</span>
+                    </div>
+                    
+                    <!-- Título -->
+                    <h2 class="text-2xl lg:text-3xl font-bold text-obstetrica-indirecta mb-3">
+                        Obstétricas Indirectas
+                    </h2>
+                    
+                    <!-- Datos principales -->
+                    <div class="flex items-baseline gap-3 mb-4">
+                        <span class="percentage-large text-obstetrica-indirecta">9.7%</span>
+                        <div class="flex flex-col">
+                            <span class="text-2xl font-bold text-slate-700">28</span>
+                            <span class="text-sm text-slate-400">casos</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Descripción -->
+                    <p class="text-slate-600 text-sm lg:text-base leading-relaxed mb-5">
+                        <span class="font-semibold text-slate-700">Enfermedades preexistentes agravadas por el embarazo:</span>
+                        Condiciones médicas previas que se descompensan durante la gestación.
+                    </p>
+                    
+                    <!-- Botón expandir ejemplos -->
+                    <div class="tooltip-trigger" id="trigger-indirecta">
+                        <button class="w-full flex items-center justify-between px-4 py-3 bg-slate-50 hover:bg-slate-100 rounded-xl transition-all group" onclick="toggleExamples('indirecta')">
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-list-ul text-obstetrica-indirecta"></i>
+                                <span class="font-medium text-slate-700">Ver patologías incluidas</span>
+                            </div>
+                            <i class="fas fa-chevron-down text-slate-400 group-hover:text-obstetrica-indirecta transition-all transform" id="chevron-indirecta"></i>
+                        </button>
+                        
+                        <!-- Lista de ejemplos -->
+                        <div class="examples-list mt-3" id="examples-indirecta">
+                            <div class="grid grid-cols-1 gap-2">
+                                <div class="flex items-center gap-3 p-3 bg-obstetrica-indirecta/5 rounded-lg">
+                                    <i class="fas fa-heart text-red-500 text-sm"></i>
+                                    <span class="text-sm text-slate-700">Cardiopatías (2.1%)</span>
+                                </div>
+                                <div class="flex items-center gap-3 p-3 bg-obstetrica-indirecta/5 rounded-lg">
+                                    <i class="fas fa-shield-virus text-obstetrica-indirecta text-sm"></i>
+                                    <span class="text-sm text-slate-700">VIH / Hepatitis (2.1%)</span>
+                                </div>
+                                <div class="flex items-center gap-3 p-3 bg-obstetrica-indirecta/5 rounded-lg">
+                                    <i class="fas fa-dna text-purple-500 text-sm"></i>
+                                    <span class="text-sm text-slate-700">Hemoglobinopatías (1.4%)</span>
+                                </div>
+                                <div class="flex items-center gap-3 p-3 bg-obstetrica-indirecta/5 rounded-lg">
+                                    <i class="fas fa-brain text-amber-500 text-sm"></i>
+                                    <span class="text-sm text-slate-700">Epilepsia / Neurológicas (1.0%)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Línea conectora (visual) -->
+                    <div class="hidden lg:block absolute left-0 top-1/2 transform -translate-x-full">
+                        <svg width="60" height="4" class="connector-line">
+                            <line x1="0" y1="2" x2="60" y2="2" stroke="#06b6d4" stroke-width="2" stroke-dasharray="5,3"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        
+        <!-- Footer con insights -->
+        <footer class="mt-6 opacity-0" id="footer">
+            <div class="bg-white rounded-2xl p-4 lg:p-5 shadow-lg border border-slate-100">
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                    
+                    <!-- Insight principal -->
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-obstetrica-directa/10 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-lightbulb text-obstetrica-directa text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-800">Hallazgo Clave</h3>
+                            <p class="text-sm text-slate-500">
+                                La <span class="font-semibold text-obstetrica-directa">hegemonía de las causas directas</span> confirma que las complicaciones intrínsecas del embarazo 
+                                siguen siendo el principal desafío en salud materna.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Métricas rápidas -->
+                    <div class="flex items-center gap-6">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-obstetrica-directa">9:1</div>
+                            <div class="text-xs text-slate-400">Ratio Dir/Ind</div>
+                        </div>
+                        <div class="w-px h-10 bg-slate-200"></div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-slate-700">100%</div>
+                            <div class="text-xs text-slate-400">Clasificados</div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </footer>
+        
+    </div>
+    
+    <!-- JavaScript para animaciones e interactividad -->
+    <script>
+        // ============================================
+        // CONFIGURACIÓN Y CONSTANTES
+        // ============================================
+        
+        const CONFIG = {
+            // Datos del gráfico (calculados matemáticamente)
+            // Radio = 15.91549430918954 para circunferencia = 100
+            // Circunferencia = 2 * π * r = 2 * 3.14159... * 15.91549... ≈ 100
+            radius: 15.91549430918954,
+            circumference: 100, // 2 * Math.PI * 15.91549430918954 ≈ 100
+            
+            segments: {
+                directa: {
+                    percentage: 90.3,
+                    cases: 262,
+                    label: 'Obstétricas Directas',
+                    dasharray: '90.3 9.7', // porcentaje, resto
+                    dashoffset: 25, // Comenzar desde las 12:00
+                    color: '#1e3a8a'
+                },
+                indirecta: {
+                    percentage: 9.7,
+                    cases: 28,
+                    label: 'Obstétricas Indirectas',
+                    dasharray: '9.7 90.3',
+                    // Offset = 100 - 90.3 + 25 = 34.7
+                    dashoffset: 34.7,
+                    color: '#06b6d4'
+                }
+            },
+            
+            animationDuration: 2000,
+            staggerDelay: 200
+        };
+        
+        // ============================================
+        // FUNCIONES DE ANIMACIÓN
+        // ============================================
+        
+        function initAnimations() {
+            // Timeline de animaciones
+            const timeline = anime.timeline({
+                easing: 'easeInOutExpo'
+            });
+            
+            // 1. Header fade in
+            timeline.add({
+                targets: '#header',
+                opacity: [0, 1],
+                translateY: [-20, 0],
+                duration: 800
+            });
+            
+            // 2. Mostrar el SVG
+            timeline.add({
+                targets: '#donut-svg',
+                opacity: [0, 1],
+                scale: [0.8, 1],
+                duration: 600
+            }, '-=400');
+            
+            // 3. Animar el segmento directo (Draw animation)
+            timeline.add({
+                targets: '#segment-directa',
+                strokeDasharray: ['0 100', CONFIG.segments.directa.dasharray],
+                duration: CONFIG.animationDuration,
+                easing: 'easeInOutExpo'
+            }, '-=200');
+            
+            // 4. Animar el segmento indirecto
+            timeline.add({
+                targets: '#segment-indirecta',
+                strokeDasharray: ['0 100', CONFIG.segments.indirecta.dasharray],
+                duration: CONFIG.animationDuration * 0.5,
+                easing: 'easeInOutExpo'
+            }, `-=${CONFIG.animationDuration * 0.3}`);
+            
+            // 5. Card izquierda (Directa) - Fade in stagger
+            timeline.add({
+                targets: '#card-directa',
+                opacity: [0, 1],
+                translateX: [-50, 0],
+                duration: 800
+            }, `-=${CONFIG.animationDuration * 0.5}`);
+            
+            // 6. Card derecha (Indirecta) - Fade in stagger
+            timeline.add({
+                targets: '#card-indirecta',
+                opacity: [0, 1],
+                translateX: [50, 0],
+                duration: 800
+            }, '-=600');
+            
+            // 7. Indicador superior
+            timeline.add({
+                targets: '#indicator-top',
+                opacity: [0, 1],
+                translateY: [-10, 0],
+                duration: 500
+            }, '-=400');
+            
+            // 8. Footer
+            timeline.add({
+                targets: '#footer',
+                opacity: [0, 1],
+                translateY: [20, 0],
+                duration: 600
+            }, '-=300');
+            
+            // Animar contador central
+            animateCenterCounter();
+        }
+        
+        function animateCenterCounter() {
+            const centerNumber = document.getElementById('center-number');
+            let currentValue = 0;
+            const targetValue = 290;
+            const duration = 2000;
+            const startTime = Date.now();
+            
+            function updateCounter() {
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // Easing function (easeOutExpo)
+                const easeProgress = 1 - Math.pow(1 - progress, 3);
+                currentValue = Math.floor(easeProgress * targetValue);
+                
+                centerNumber.innerHTML = `<span class="text-5xl lg:text-6xl font-black text-slate-800">${currentValue}</span>`;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(updateCounter);
+                }
+            }
+            
+            setTimeout(updateCounter, 800);
+        }
+        
+        // ============================================
+        // INTERACTIVIDAD DEL GRÁFICO
+        // ============================================
+        
+        function setupChartInteractivity() {
+            const segmentDirecta = document.getElementById('segment-directa');
+            const segmentIndirecta = document.getElementById('segment-indirecta');
+            const centerNumber = document.getElementById('center-number');
+            const centerLabel = document.getElementById('center-label');
+            const centerSublabel = document.getElementById('center-sublabel');
+            
+            // Función para actualizar el centro
+            function updateCenter(segment) {
+                const data = CONFIG.segments[segment];
+                
+                centerNumber.innerHTML = `<span class="text-5xl lg:text-6xl font-black" style="color: ${data.color}">${data.cases}</span>`;
+                centerLabel.innerHTML = `<span class="text-sm lg:text-base font-medium uppercase tracking-wider" style="color: ${data.color}">${data.label}</span>`;
+                centerSublabel.innerHTML = `<span class="text-xs text-slate-400">${data.percentage}% del total</span>`;
+                
+                anime({
+                    targets: '#center-sublabel',
+                    opacity: [0, 1],
+                    duration: 300
+                });
+            }
+            
+            // Función para resetear el centro
+            function resetCenter() {
+                centerNumber.innerHTML = `<span class="text-5xl lg:text-6xl font-black text-slate-800">290</span>`;
+                centerLabel.innerHTML = `<span class="text-sm lg:text-base font-medium text-slate-500 uppercase tracking-wider">Casos Totales</span>`;
+                
+                anime({
+                    targets: '#center-sublabel',
+                    opacity: 0,
+                    duration: 200
+                });
+            }
+            
+            // Eventos para segmento Directa
+            segmentDirecta.addEventListener('mouseenter', () => {
+                updateCenter('directa');
+                segmentDirecta.classList.add('active');
+                
+                // Efecto de separación
+                anime({
+                    targets: '#segment-directa',
+                    strokeWidth: 4.5,
+                    duration: 300,
+                    easing: 'easeOutCubic'
+                });
+            });
+            
+            segmentDirecta.addEventListener('mouseleave', () => {
+                resetCenter();
+                segmentDirecta.classList.remove('active');
+                
+                anime({
+                    targets: '#segment-directa',
+                    strokeWidth: 4,
+                    duration: 300
+                });
+            });
+            
+            segmentDirecta.addEventListener('click', () => {
+                toggleExamples('directa');
+                highlightCard('directa');
+            });
+            
+            // Eventos para segmento Indirecta
+            segmentIndirecta.addEventListener('mouseenter', () => {
+                updateCenter('indirecta');
+                segmentIndirecta.classList.add('active');
+                
+                anime({
+                    targets: '#segment-indirecta',
+                    strokeWidth: 4.5,
+                    duration: 300,
+                    easing: 'easeOutCubic'
+                });
+            });
+            
+            segmentIndirecta.addEventListener('mouseleave', () => {
+                resetCenter();
+                segmentIndirecta.classList.remove('active');
+                
+                anime({
+                    targets: '#segment-indirecta',
+                    strokeWidth: 4,
+                    duration: 300
+                });
+            });
+            
+            segmentIndirecta.addEventListener('click', () => {
+                toggleExamples('indirecta');
+                highlightCard('indirecta');
+            });
+        }
+        
+        // ============================================
+        // FUNCIONES DE TOOLTIPS Y EJEMPLOS
+        // ============================================
+        
+        function toggleExamples(type) {
+            const examplesList = document.getElementById(`examples-${type}`);
+            const chevron = document.getElementById(`chevron-${type}`);
+            
+            examplesList.classList.toggle('expanded');
+            
+            if (examplesList.classList.contains('expanded')) {
+                chevron.style.transform = 'rotate(180deg)';
+            } else {
+                chevron.style.transform = 'rotate(0deg)';
+            }
+        }
+        
+        function highlightCard(type) {
+            const card = document.getElementById(`card-${type}`);
+            
+            anime({
+                targets: card,
+                scale: [1, 1.02, 1],
+                duration: 400,
+                easing: 'easeInOutQuad'
+            });
+        }
+        
+        // ============================================
+        // EFECTOS ADICIONALES
+        // ============================================
+        
+        function setupHoverEffects() {
+            // Efecto parallax sutil en el gráfico
+            const chartContainer = document.getElementById('chart-container');
+            
+            chartContainer.addEventListener('mousemove', (e) => {
+                const rect = chartContainer.getBoundingClientRect();
+                const x = (e.clientX - rect.left - rect.width / 2) / rect.width;
+                const y = (e.clientY - rect.top - rect.height / 2) / rect.height;
+                
+                anime({
+                    targets: '#donut-svg',
+                    translateX: x * 5,
+                    translateY: y * 5,
+                    duration: 500,
+                    easing: 'easeOutQuad'
+                });
+            });
+            
+            chartContainer.addEventListener('mouseleave', () => {
+                anime({
+                    targets: '#donut-svg',
+                    translateX: 0,
+                    translateY: 0,
+                    duration: 500,
+                    easing: 'easeOutQuad'
+                });
+            });
+        }
+        
+        // ============================================
+        // CÁLCULOS MATEMÁTICOS (VERIFICACIÓN)
+        // ============================================
+        
+        function verifyCalculations() {
+            // Verificación matemática de los cálculos del SVG
+            const r = CONFIG.radius;
+            const circumference = 2 * Math.PI * r;
+            
+            console.log('=== VERIFICACIÓN DE CÁLCULOS SVG ===');
+            console.log(`Radio (r): ${r}`);
+            console.log(`Circunferencia (2πr): ${circumference.toFixed(4)}`);
+            console.log(`Circunferencia objetivo: 100`);
+            console.log(`Error: ${Math.abs(100 - circumference).toFixed(10)}`);
+            
+            // Cálculo de segmentos
+            const directaLength = (90.3 / 100) * circumference;
+            const indirectaLength = (9.7 / 100) * circumference;
+            
+            console.log(`\n--- Segmento Directa (90.3%) ---`);
+            console.log(`Longitud del arco: ${directaLength.toFixed(4)}`);
+            console.log(`stroke-dasharray: "90.3 9.7"`);
+            
+            console.log(`\n--- Segmento Indirecta (9.7%) ---`);
+            console.log(`Longitud del arco: ${indirectaLength.toFixed(4)}`);
+            console.log(`stroke-dasharray: "9.7 90.3"`);
+            console.log(`stroke-dashoffset: 100 - 90.3 + 25 = 34.7`);
+        }
+        
+        // ============================================
+        // INICIALIZACIÓN
+        // ============================================
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            // Verificar cálculos (en consola)
+            verifyCalculations();
+            
+            // Iniciar animaciones
+            initAnimations();
+            
+            // Configurar interactividad
+            setupChartInteractivity();
+            
+            // Configurar efectos hover
+            setupHoverEffects();
+        });
+        
+        // ============================================
+        // ACCESIBILIDAD
+        // ============================================
+        
+        // Soporte para navegación con teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                const focused = document.activeElement;
+                if (focused.classList.contains('donut-segment')) {
+                    focused.click();
+                }
+            }
+        });
+        
+        // Hacer los segmentos focuseables
+        document.querySelectorAll('.donut-segment').forEach(segment => {
+            segment.setAttribute('tabindex', '0');
+            segment.setAttribute('role', 'button');
+        });
+    </script>
+    
+    <!-- Metadatos estructurados para accesibilidad -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Dataset",
+        "name": "Clasificación Etiológica de Morbilidad Materna Grave - HUC 2011-2020",
+        "description": "Distribución de 290 casos de morbilidad materna grave según origen obstétrico",
+        "creator": {
+            "@type": "Organization",
+            "name": "Hospital Universitario de Caracas"
+        },
+        "distribution": {
+            "@type": "DataDownload",
+            "contentUrl": "#",
+            "encodingFormat": "application/json"
+        }
+    }
+    </script>
+    
+</body>
+</html>

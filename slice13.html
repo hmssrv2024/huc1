@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide 13 - Momento de Ocurrencia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .timeline-path {
+            stroke-dasharray: 2000;
+            stroke-dashoffset: 2000;
+        }
+        
+        .area-fill {
+            opacity: 0;
+        }
+        
+        .peak-zone {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: center bottom;
+        }
+        
+        .peak-zone:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 10px 25px rgba(234, 88, 12, 0.4));
+        }
+        
+        .data-card {
+            transition: all 0.3s ease;
+        }
+        
+        .data-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .data-card.active {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .tooltip-custom {
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .tooltip-custom.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .contrast-panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease, padding 0.3s ease;
+        }
+        
+        .contrast-panel.open {
+            max-height: 200px;
+            padding: 1rem;
+        }
+        
+        .wave-animation {
+            animation: waveMotion 4s ease-in-out infinite;
+        }
+        
+        @keyframes waveMotion {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-3px);
+            }
+        }
+        
+        .pulse-dot {
+            animation: pulseDot 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulseDot {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.3);
+                opacity: 0.7;
+            }
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .insight-badge {
+            background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 100%);
+        }
+        
+        .timeline-marker {
+            transition: all 0.3s ease;
+        }
+        
+        .timeline-marker:hover {
+            transform: scale(1.2);
+        }
+        
+        .progress-indicator {
+            width: 0%;
+            transition: width 2s ease-out;
+        }
+        
+        .glow-effect {
+            box-shadow: 0 0 30px rgba(245, 158, 11, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen overflow-x-hidden">
+    
+    <!-- Main Container -->
+    <div class="container mx-auto px-6 py-8 max-w-7xl">
+        
+        <!-- Header Section -->
+        <header class="text-center mb-8">
+            <div class="inline-flex items-center gap-2 bg-orange-100 text-orange-700 px-4 py-2 rounded-full text-sm font-medium mb-4">
+                <i class="fas fa-clock"></i>
+                <span>Análisis Temporal</span>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold text-slate-800 mb-3">
+                Momento de <span class="gradient-text">Ocurrencia</span>
+            </h1>
+            <p class="text-lg text-slate-600 max-w-2xl mx-auto">
+                Distribución según edad gestacional al diagnóstico de morbilidad materna grave
+            </p>
+            
+            <!-- Progress Bar -->
+            <div class="mt-6 max-w-md mx-auto">
+                <div class="h-1 bg-slate-200 rounded-full overflow-hidden">
+                    <div class="progress-indicator h-full bg-gradient-to-r from-amber-400 to-orange-500 rounded-full" id="progressBar"></div>
+                </div>
+                <p class="text-xs text-slate-500 mt-2">Progreso gestacional visualizado</p>
+            </div>
+        </header>
+        
+        <!-- Key Insight Banner -->
+        <div class="insight-badge rounded-2xl p-4 mb-8 border border-amber-200">
+            <div class="flex items-center justify-center gap-3">
+                <div class="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center">
+                    <i class="fas fa-exclamation text-white"></i>
+                </div>
+                <p class="text-slate-700 font-medium text-center">
+                    <span class="text-orange-600 font-bold">Hallazgo Crítico:</span> 
+                    El 70.3% de los diagnósticos ocurren en el tercer trimestre — 
+                    <span class="italic">"Llegan embarazadas y enfermas"</span>
+                </p>
+            </div>
+        </div>
+        
+        <!-- SVG Timeline Chart -->
+        <div class="relative bg-white rounded-3xl shadow-xl p-6 mb-8 overflow-hidden">
+            
+            <!-- Chart Title -->
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold text-slate-700">
+                    <i class="fas fa-chart-area text-orange-500 mr-2"></i>
+                    Línea de Tiempo Gestacional
+                </h3>
+                <button id="contrastBtn" class="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-lg text-sm transition-colors">
+                    <i class="fas fa-balance-scale"></i>
+                    Ver contraste
+                </button>
+            </div>
+            
+            <!-- Contrast Panel -->
+            <div id="contrastPanel" class="contrast-panel bg-blue-50 rounded-xl border border-blue-200 mb-4">
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-info text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-blue-800 mb-1">Contexto Comparativo</h4>
+                        <p class="text-blue-700 text-sm">
+                            A diferencia de otros estudios (<strong>Nava et al.</strong>, Maracaibo) donde el 
+                            <strong>80% de los ingresos a UCI</strong> ocurrieron durante el puerperio, en el HUC 
+                            la gravedad es <strong>pre-parto</strong>. Las pacientes ingresan con patología activa 
+                            antes del nacimiento, evidenciando fallas en el control prenatal.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- SVG Container -->
+            <div class="relative" id="chartContainer">
+                <svg viewBox="0 0 1000 400" class="w-full h-auto" id="timelineSvg">
+                    <!-- Definitions -->
+                    <defs>
+                        <!-- Gradient for Third Trimester -->
+                        <linearGradient id="orangeGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#ea580c;stop-opacity:1" />
+                        </linearGradient>
+                        
+                        <!-- Gradient for Area Fill -->
+                        <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:0.4" />
+                            <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:0.05" />
+                        </linearGradient>
+                        
+                        <!-- Gradient for Green -->
+                        <linearGradient id="greenGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:#059669;stop-opacity:0.4" />
+                            <stop offset="100%" style="stop-color:#059669;stop-opacity:0.05" />
+                        </linearGradient>
+                        
+                        <!-- Glow Filter -->
+                        <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                            <feMerge>
+                                <feMergeNode in="coloredBlur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                        
+                        <!-- Drop Shadow -->
+                        <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
+                            <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#ea580c" flood-opacity="0.3"/>
+                        </filter>
+                    </defs>
+                    
+                    <!-- Background Grid -->
+                    <g class="grid-lines" opacity="0.3">
+                        <!-- Horizontal Lines -->
+                        <line x1="50" y1="100" x2="950" y2="100" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="5,5"/>
+                        <line x1="50" y1="180" x2="950" y2="180" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="5,5"/>
+                        <line x1="50" y1="260" x2="950" y2="260" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="5,5"/>
+                        
+                        <!-- Vertical Lines (Trimesters) -->
+                        <line x1="200" y1="50" x2="200" y2="340" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="5,5"/>
+                        <line x1="450" y1="50" x2="450" y2="340" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="5,5"/>
+                        <line x1="750" y1="50" x2="750" y2="340" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="5,5"/>
+                    </g>
+                    
+                    <!-- X-Axis Labels -->
+                    <g class="axis-labels" fill="#64748b" font-size="12">
+                        <text x="125" y="370" text-anchor="middle">1er Trimestre</text>
+                        <text x="325" y="370" text-anchor="middle">2do Trimestre</text>
+                        <text x="600" y="370" text-anchor="middle" font-weight="bold" fill="#ea580c">3er Trimestre</text>
+                        <text x="850" y="370" text-anchor="middle">Puerperio</text>
+                    </g>
+                    
+                    <!-- Week Markers -->
+                    <g class="week-markers" fill="#94a3b8" font-size="10">
+                        <text x="50" y="355" text-anchor="middle">0</text>
+                        <text x="200" y="355" text-anchor="middle">13 sem</text>
+                        <text x="450" y="355" text-anchor="middle">27 sem</text>
+                        <text x="750" y="355" text-anchor="middle">40 sem</text>
+                        <text x="950" y="355" text-anchor="middle">+42 días</text>
+                    </g>
+                    
+                    <!-- Area Fill - First Trimester -->
+                    <path class="area-fill" id="area1"
+                          d="M50,320 L50,310 Q75,308 100,305 Q125,302 150,300 Q175,298 200,295 L200,320 Z"
+                          fill="#94a3b8" opacity="0.15"/>
+                    
+                    <!-- Area Fill - Second Trimester -->
+                    <path class="area-fill" id="area2"
+                          d="M200,320 L200,295 Q250,285 300,270 Q350,255 400,235 Q425,225 450,210 L450,320 Z"
+                          fill="#60a5fa" opacity="0.2"/>
+                    
+                    <!-- Area Fill - Third Trimester (THE PEAK) -->
+                    <path class="area-fill peak-zone" id="area3"
+                          d="M450,320 L450,210 
+                             Q480,180 510,140 
+                             Q540,100 580,70 
+                             Q620,50 660,45 
+                             Q700,50 720,70 
+                             Q740,95 750,130 
+                             L750,320 Z"
+                          fill="url(#areaGradient)" 
+                          filter="url(#dropShadow)"
+                          data-tooltip="true"
+                          data-value="204"
+                          data-percent="70.3%"/>
+                    
+                    <!-- Area Fill - Puerperium -->
+                    <path class="area-fill" id="area4"
+                          d="M750,320 L750,130 
+                             Q780,150 810,180 
+                             Q840,200 870,220 
+                             Q900,235 930,250 
+                             Q945,258 950,265 
+                             L950,320 Z"
+                          fill="url(#greenGradient)"/>
+                    
+                    <!-- Main Timeline Curve -->
+                    <path class="timeline-path wave-animation" id="mainPath"
+                          d="M50,310 
+                             Q75,308 100,305 
+                             Q125,302 150,300 
+                             Q175,298 200,295
+                             Q250,285 300,270 
+                             Q350,255 400,235 
+                             Q425,225 450,210
+                             Q480,180 510,140 
+                             Q540,100 580,70 
+                             Q620,50 660,45 
+                             Q700,50 720,70 
+                             Q740,95 750,130
+                             Q780,150 810,180 
+                             Q840,200 870,220 
+                             Q900,235 930,250 
+                             Q945,258 950,265"
+                          fill="none" 
+                          stroke="url(#orangeGradient)" 
+                          stroke-width="4"
+                          stroke-linecap="round"
+                          filter="url(#glow)"/>
+                    
+                    <!-- Data Points -->
+                    <g class="data-points">
+                        <!-- First Trimester Point -->
+                        <circle class="timeline-marker" cx="125" cy="303" r="8" fill="#94a3b8" stroke="white" stroke-width="3"
+                                data-period="1" data-value="2" data-percent="0.7"/>
+                        <text x="125" y="280" text-anchor="middle" fill="#64748b" font-size="11" font-weight="600">0.7%</text>
+                        
+                        <!-- Second Trimester Point -->
+                        <circle class="timeline-marker" cx="325" cy="252" r="12" fill="#60a5fa" stroke="white" stroke-width="3"
+                                data-period="2" data-value="23" data-percent="7.9"/>
+                        <text x="325" y="228" text-anchor="middle" fill="#3b82f6" font-size="12" font-weight="600">7.9%</text>
+                        
+                        <!-- Third Trimester Point (THE PEAK) -->
+                        <circle class="timeline-marker pulse-dot" cx="660" cy="45" r="18" fill="#ea580c" stroke="white" stroke-width="4"
+                                data-period="3" data-value="204" data-percent="70.3"/>
+                        <text x="660" y="25" text-anchor="middle" fill="#ea580c" font-size="16" font-weight="bold">70.3%</text>
+                        
+                        <!-- Puerperium Point -->
+                        <circle class="timeline-marker" cx="850" cy="220" r="14" fill="#059669" stroke="white" stroke-width="3"
+                                data-period="4" data-value="60" data-percent="20.7"/>
+                        <text x="850" y="195" text-anchor="middle" fill="#059669" font-size="13" font-weight="600">20.7%</text>
+                    </g>
+                    
+                    <!-- Zone Label for Third Trimester -->
+                    <g class="zone-label" transform="translate(600, 85)">
+                        <rect x="-80" y="-25" width="160" height="30" rx="15" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+                        <text x="0" y="-5" text-anchor="middle" fill="#ea580c" font-size="11" font-weight="bold">
+                            ZONA DE MÁXIMA INCIDENCIA
+                        </text>
+                    </g>
+                    
+                    <!-- Baseline -->
+                    <line x1="50" y1="320" x2="950" y2="320" stroke="#cbd5e1" stroke-width="2"/>
+                </svg>
+                
+                <!-- Tooltip -->
+                <div id="tooltip" class="tooltip-custom absolute bg-slate-800 text-white px-4 py-3 rounded-xl text-sm shadow-2xl pointer-events-none z-50">
+                    <div class="flex items-center gap-2 mb-1">
+                        <i class="fas fa-users text-orange-400"></i>
+                        <span class="font-bold" id="tooltipValue">n = 204 pacientes</span>
+                    </div>
+                    <p class="text-slate-300 text-xs" id="tooltipDesc">Diagnóstico en tercer trimestre</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Data Cards Section -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            
+            <!-- Card 1: First Trimester -->
+            <div class="data-card bg-white rounded-2xl p-5 border-2 border-transparent hover:border-slate-200 shadow-lg cursor-pointer" data-period="1">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-seedling text-slate-500 text-xl"></i>
+                    </div>
+                    <span class="text-3xl font-bold text-slate-400" id="counter1">0</span>
+                </div>
+                <h4 class="font-semibold text-slate-700 mb-1">1er Trimestre</h4>
+                <p class="text-slate-500 text-sm">≤ 13 semanas</p>
+                <div class="mt-3 flex items-center gap-2">
+                    <div class="h-2 flex-1 bg-slate-100 rounded-full overflow-hidden">
+                        <div class="h-full bg-slate-400 rounded-full" style="width: 0.7%"></div>
+                    </div>
+                    <span class="text-xs text-slate-500">2 casos</span>
+                </div>
+            </div>
+            
+            <!-- Card 2: Second Trimester -->
+            <div class="data-card bg-white rounded-2xl p-5 border-2 border-transparent hover:border-blue-200 shadow-lg cursor-pointer" data-period="2">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-baby text-blue-500 text-xl"></i>
+                    </div>
+                    <span class="text-3xl font-bold text-blue-500" id="counter2">0</span>
+                </div>
+                <h4 class="font-semibold text-slate-700 mb-1">2do Trimestre</h4>
+                <p class="text-slate-500 text-sm">14 - 27 semanas</p>
+                <div class="mt-3 flex items-center gap-2">
+                    <div class="h-2 flex-1 bg-blue-100 rounded-full overflow-hidden">
+                        <div class="h-full bg-blue-500 rounded-full" style="width: 7.9%"></div>
+                    </div>
+                    <span class="text-xs text-slate-500">23 casos</span>
+                </div>
+            </div>
+            
+            <!-- Card 3: Third Trimester (HIGHLIGHTED) -->
+            <div class="data-card bg-gradient-to-br from-orange-50 to-amber-50 rounded-2xl p-5 border-2 border-orange-300 shadow-lg glow-effect cursor-pointer" data-period="3">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-exclamation-triangle text-white text-xl"></i>
+                    </div>
+                    <span class="text-3xl font-bold text-orange-600" id="counter3">0</span>
+                </div>
+                <h4 class="font-semibold text-slate-700 mb-1">3er Trimestre</h4>
+                <p class="text-orange-600 text-sm font-medium">≥ 28 semanas (CRÍTICO)</p>
+                <div class="mt-3 flex items-center gap-2">
+                    <div class="h-2 flex-1 bg-orange-200 rounded-full overflow-hidden">
+                        <div class="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full" style="width: 70.3%"></div>
+                    </div>
+                    <span class="text-xs text-orange-600 font-semibold">204 casos</span>
+                </div>
+                <div class="mt-3 bg-orange-100 rounded-lg px-3 py-2">
+                    <p class="text-xs text-orange-700">
+                        <i class="fas fa-lightbulb mr-1"></i>
+                        Pre-parto con patología activa
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Card 4: Puerperium -->
+            <div class="data-card bg-white rounded-2xl p-5 border-2 border-transparent hover:border-green-200 shadow-lg cursor-pointer" data-period="4">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-heart text-green-500 text-xl"></i>
+                    </div>
+                    <span class="text-3xl font-bold text-green-600" id="counter4">0</span>
+                </div>
+                <h4 class="font-semibold text-slate-700 mb-1">Puerperio</h4>
+                <p class="text-slate-500 text-sm">Post-parto (hasta 42 días)</p>
+                <div class="mt-3 flex items-center gap-2">
+                    <div class="h-2 flex-1 bg-green-100 rounded-full overflow-hidden">
+                        <div class="h-full bg-green-500 rounded-full" style="width: 20.7%"></div>
+                    </div>
+                    <span class="text-xs text-slate-500">60 casos</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bottom Statistics -->
+        <div class="bg-white rounded-2xl shadow-lg p-6">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="flex items-center gap-4">
+                    <div class="w-16 h-16 bg-gradient-to-br from-orange-400 to-orange-600 rounded-2xl flex items-center justify-center">
+                        <i class="fas fa-chart-pie text-white text-2xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-800 text-lg">Distribución Total</h4>
+                        <p class="text-slate-500">n = 290 casos de MMG (2011-2020)</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-8">
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-orange-600" id="totalPrenatal">0%</div>
+                        <div class="text-xs text-slate-500">Pre-nacimiento</div>
+                    </div>
+                    <div class="w-px h-12 bg-slate-200"></div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-green-600" id="totalPostnatal">0%</div>
+                        <div class="text-xs text-slate-500">Post-nacimiento</div>
+                    </div>
+                </div>
+                
+                <div class="bg-slate-50 rounded-xl px-4 py-3">
+                    <div class="flex items-center gap-2 text-slate-600 text-sm">
+                        <i class="fas fa-info-circle"></i>
+                        <span>1 caso sin registro (0.3%)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="text-center mt-8 text-slate-500 text-sm">
+            <p>Hospital Universitario de Caracas • Servicio de Obstetricia</p>
+            <p class="mt-1">Fuente: Medina Ron & Moreno Contreras, TEG 2025</p>
+        </footer>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // ===== ANIME.JS ANIMATIONS =====
+            
+            // Draw the timeline path
+            anime({
+                targets: '#mainPath',
+                strokeDashoffset: [anime.setDashoffset, 0],
+                easing: 'easeInOutQuart',
+                duration: 3000,
+                delay: 500
+            });
+            
+            // Fade in area fills
+            anime({
+                targets: '.area-fill',
+                opacity: [0, 1],
+                easing: 'easeInOutQuad',
+                duration: 1500,
+                delay: anime.stagger(300, {start: 1500})
+            });
+            
+            // Animate data points
+            anime({
+                targets: '.timeline-marker',
+                scale: [0, 1],
+                opacity: [0, 1],
+                easing: 'easeOutElastic(1, .5)',
+                duration: 1500,
+                delay: anime.stagger(200, {start: 2000})
+            });
+            
+            // Progress bar animation
+            setTimeout(() => {
+                document.getElementById('progressBar').style.width = '100%';
+            }, 500);
+            
+            // Counter animations
+            const counters = [
+                { id: 'counter1', value: 0.7, suffix: '%' },
+                { id: 'counter2', value: 7.9, suffix: '%' },
+                { id: 'counter3', value: 70.3, suffix: '%' },
+                { id: 'counter4', value: 20.7, suffix: '%' }
+            ];
+            
+            counters.forEach((counter, index) => {
+                anime({
+                    targets: { val: 0 },
+                    val: counter.value,
+                    round: 10,
+                    easing: 'easeOutExpo',
+                    duration: 2000,
+                    delay: 1500 + (index * 200),
+                    update: function(anim) {
+                        document.getElementById(counter.id).innerHTML = 
+                            anim.animations[0].currentValue.toFixed(1) + counter.suffix;
+                    }
+                });
+            });
+            
+            // Total counters
+            anime({
+                targets: { val: 0 },
+                val: 78.9,
+                round: 10,
+                easing: 'easeOutExpo',
+                duration: 2500,
+                delay: 2500,
+                update: function(anim) {
+                    document.getElementById('totalPrenatal').innerHTML = 
+                        anim.animations[0].currentValue.toFixed(1) + '%';
+                }
+            });
+            
+            anime({
+                targets: { val: 0 },
+                val: 20.7,
+                round: 10,
+                easing: 'easeOutExpo',
+                duration: 2500,
+                delay: 2700,
+                update: function(anim) {
+                    document.getElementById('totalPostnatal').innerHTML = 
+                        anim.animations[0].currentValue.toFixed(1) + '%';
+                }
+            });
+            
+            // ===== INTERACTIVITY =====
+            
+            // Contrast button toggle
+            const contrastBtn = document.getElementById('contrastBtn');
+            const contrastPanel = document.getElementById('contrastPanel');
+            
+            contrastBtn.addEventListener('click', function() {
+                contrastPanel.classList.toggle('open');
+                this.classList.toggle('bg-blue-100');
+                this.classList.toggle('text-blue-600');
+            });
+            
+            // Tooltip functionality
+            const tooltip = document.getElementById('tooltip');
+            const tooltipValue = document.getElementById('tooltipValue');
+            const tooltipDesc = document.getElementById('tooltipDesc');
+            const peakZone = document.getElementById('area3');
+            const chartContainer = document.getElementById('chartContainer');
+            
+            const tooltipData = {
+                1: { value: 'n = 2 pacientes', desc: 'Diagnóstico muy temprano (≤13 sem)' },
+                2: { value: 'n = 23 pacientes', desc: 'Diagnóstico en segundo trimestre' },
+                3: { value: 'n = 204 pacientes', desc: 'Zona crítica: 3er trimestre pre-parto' },
+                4: { value: 'n = 60 pacientes', desc: 'Diagnóstico en puerperio' }
+            };
+            
+            // Peak zone hover
+            peakZone.addEventListener('mouseenter', function(e) {
+                tooltipValue.textContent = 'n = 204 pacientes';
+                tooltipDesc.textContent = 'Zona de máxima incidencia - 3er trimestre';
+                tooltip.classList.add('visible');
+            });
+            
+            peakZone.addEventListener('mousemove', function(e) {
+                const rect = chartContainer.getBoundingClientRect();
+                tooltip.style.left = (e.clientX - rect.left + 15) + 'px';
+                tooltip.style.top = (e.clientY - rect.top - 60) + 'px';
+            });
+            
+            peakZone.addEventListener('mouseleave', function() {
+                tooltip.classList.remove('visible');
+            });
+            
+            // Timeline markers hover
+            document.querySelectorAll('.timeline-marker').forEach(marker => {
+                marker.addEventListener('mouseenter', function(e) {
+                    const period = this.dataset.period;
+                    const data = tooltipData[period];
+                    tooltipValue.textContent = data.value;
+                    tooltipDesc.textContent = data.desc;
+                    tooltip.classList.add('visible');
+                    
+                    // Highlight corresponding card
+                    document.querySelectorAll('.data-card').forEach(card => {
+                        if (card.dataset.period === period) {
+                            card.classList.add('active');
+                        }
+                    });
+                });
+                
+                marker.addEventListener('mousemove', function(e) {
+                    const rect = chartContainer.getBoundingClientRect();
+                    tooltip.style.left = (e.clientX - rect.left + 15) + 'px';
+                    tooltip.style.top = (e.clientY - rect.top - 60) + 'px';
+                });
+                
+                marker.addEventListener('mouseleave', function() {
+                    tooltip.classList.remove('visible');
+                    document.querySelectorAll('.data-card').forEach(card => {
+                        card.classList.remove('active');
+                    });
+                });
+            });
+            
+            // Data cards interaction
+            document.querySelectorAll('.data-card').forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    const period = this.dataset.period;
+                    
+                    // Highlight corresponding marker
+                    document.querySelectorAll('.timeline-marker').forEach(marker => {
+                        if (marker.dataset.period === period) {
+                            anime({
+                                targets: marker,
+                                scale: 1.3,
+                                duration: 300,
+                                easing: 'easeOutQuad'
+                            });
+                        }
+                    });
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    const period = this.dataset.period;
+                    
+                    document.querySelectorAll('.timeline-marker').forEach(marker => {
+                        if (marker.dataset.period === period) {
+                            anime({
+                                targets: marker,
+                                scale: 1,
+                                duration: 300,
+                                easing: 'easeOutQuad'
+                            });
+                        }
+                    });
+                });
+            });
+            
+            // ===== WAVE ANIMATION FOR PATH =====
+            
+            function createWaveEffect() {
+                const path = document.getElementById('mainPath');
+                
+                anime({
+                    targets: path,
+                    translateY: [
+                        { value: -2, duration: 2000 },
+                        { value: 2, duration: 2000 },
+                        { value: 0, duration: 2000 }
+                    ],
+                    easing: 'easeInOutSine',
+                    loop: true
+                });
+            }
+            
+            // Start wave effect after initial animation
+            setTimeout(createWaveEffect, 4000);
+            
+            // ===== RESPONSIVE ADJUSTMENTS =====
+            
+            function handleResize() {
+                const svg = document.getElementById('timelineSvg');
+                const container = document.getElementById('chartContainer');
+                const width = container.offsetWidth;
+                
+                if (width < 600) {
+                    svg.setAttribute('viewBox', '0 0 1000 450');
+                } else {
+                    svg.setAttribute('viewBox', '0 0 1000 400');
+                }
+            }
+            
+            window.addEventListener('resize', handleResize);
+            handleResize();
+            
+            // ===== ACCESSIBILITY: Keyboard navigation =====
+            
+            document.querySelectorAll('.data-card').forEach((card, index) => {
+                card.setAttribute('tabindex', '0');
+                card.setAttribute('role', 'button');
+                card.setAttribute('aria-label', `Datos del período ${index + 1}`);
+                
+                card.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        this.click();
+                    }
+                });
+            });
+            
+        });
+    </script>
+</body>
+</html>

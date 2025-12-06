@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide 05 - Los Tres Pilares: Justificación e Importancia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Glassmorphism base styles */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .glass-panel-strong {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        /* Pillar specific glassmorphism */
+        .pillar-scientific {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(255, 255, 255, 0.8) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(37, 99, 235, 0.2);
+        }
+
+        .pillar-scientific:hover {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.15) 0%, rgba(255, 255, 255, 0.9) 100%);
+            border-color: rgba(37, 99, 235, 0.4);
+            box-shadow: 0 25px 50px -12px rgba(37, 99, 235, 0.25);
+        }
+
+        .pillar-academic {
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.1) 0%, rgba(255, 255, 255, 0.8) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(124, 58, 237, 0.2);
+        }
+
+        .pillar-academic:hover {
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.15) 0%, rgba(255, 255, 255, 0.9) 100%);
+            border-color: rgba(124, 58, 237, 0.4);
+            box-shadow: 0 25px 50px -12px rgba(124, 58, 237, 0.25);
+        }
+
+        .pillar-assistential {
+            background: linear-gradient(135deg, rgba(5, 150, 105, 0.1) 0%, rgba(255, 255, 255, 0.8) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(5, 150, 105, 0.2);
+        }
+
+        .pillar-assistential:hover {
+            background: linear-gradient(135deg, rgba(5, 150, 105, 0.15) 0%, rgba(255, 255, 255, 0.9) 100%);
+            border-color: rgba(5, 150, 105, 0.4);
+            box-shadow: 0 25px 50px -12px rgba(5, 150, 105, 0.25);
+        }
+
+        /* Icon glow effects */
+        .icon-glow-blue {
+            filter: drop-shadow(0 0 20px rgba(37, 99, 235, 0.4));
+        }
+
+        .icon-glow-violet {
+            filter: drop-shadow(0 0 20px rgba(124, 58, 237, 0.4));
+        }
+
+        .icon-glow-green {
+            filter: drop-shadow(0 0 20px rgba(5, 150, 105, 0.4));
+        }
+
+        /* Floating animation keyframes */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .floating-icon {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* Background pattern */
+        .bg-pattern {
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(37, 99, 235, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(124, 58, 237, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(5, 150, 105, 0.03) 0%, transparent 50%);
+        }
+
+        /* Modal styles */
+        .modal-overlay {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(8px);
+        }
+
+        .modal-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(30px);
+        }
+
+        /* Pillar expand animation */
+        .pillar-card {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .pillars-container:hover .pillar-card:not(:hover) {
+            flex: 0.8;
+            opacity: 0.7;
+        }
+
+        .pillars-container:hover .pillar-card:hover {
+            flex: 1.4;
+        }
+
+        /* Text reveal animation */
+        .text-content {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+        }
+
+        .pillar-card:hover .text-content {
+            max-height: 500px;
+            opacity: 1;
+        }
+
+        /* Decorative elements */
+        .decorative-line {
+            background: linear-gradient(90deg, transparent, currentColor, transparent);
+            height: 1px;
+        }
+
+        /* Button hover effects */
+        .btn-scientific:hover {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            box-shadow: 0 10px 30px -5px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn-academic:hover {
+            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+            box-shadow: 0 10px 30px -5px rgba(124, 58, 237, 0.4);
+        }
+
+        .btn-assistential:hover {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            box-shadow: 0 10px 30px -5px rgba(5, 150, 105, 0.4);
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen bg-pattern overflow-x-hidden">
+    
+    <!-- Main Container -->
+    <div class="min-h-screen flex flex-col px-4 py-6 md:px-8 lg:px-12">
+        
+        <!-- Header Section -->
+        <header class="text-center mb-8 md:mb-12" id="header">
+            <!-- Decorative top element -->
+            <div class="flex justify-center mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent"></div>
+                    <div class="w-2 h-2 rounded-full bg-blue-500"></div>
+                    <div class="w-2 h-2 rounded-full bg-violet-500"></div>
+                    <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
+                    <div class="w-12 h-px bg-gradient-to-r from-transparent via-emerald-500 to-transparent"></div>
+                </div>
+            </div>
+
+            <!-- Slide number indicator -->
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel mb-4">
+                <span class="text-xs font-medium text-slate-500 tracking-wider uppercase">Diapositiva</span>
+                <span class="text-sm font-bold bg-gradient-to-r from-blue-600 via-violet-600 to-emerald-600 bg-clip-text text-transparent">05</span>
+            </div>
+
+            <!-- Main Title -->
+            <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-800 mb-4 tracking-tight" id="main-title">
+                Justificación e <span class="bg-gradient-to-r from-blue-600 via-violet-600 to-emerald-600 bg-clip-text text-transparent">Importancia</span>
+            </h1>
+
+            <!-- Subtitle -->
+            <p class="text-lg md:text-xl text-slate-600 font-light max-w-2xl mx-auto" id="subtitle">
+                El valor estratégico de la investigación
+            </p>
+
+            <!-- Decorative subtitle element -->
+            <div class="mt-6 flex justify-center">
+                <div class="glass-panel rounded-full px-6 py-3 inline-flex items-center gap-3">
+                    <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                    </svg>
+                    <span class="text-sm text-slate-600 font-medium">Los Tres Pilares del Conocimiento</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Three Pillars Container -->
+        <main class="flex-1 flex items-center justify-center">
+            <div class="pillars-container flex flex-col lg:flex-row gap-6 w-full max-w-7xl" id="pillars-container">
+                
+                <!-- Pillar 1: Scientific -->
+                <article class="pillar-card pillar-scientific rounded-3xl p-6 md:p-8 transition-all duration-500 ease-in-out cursor-pointer transform hover:scale-[1.02]" id="pillar-1" data-pillar="scientific">
+                    
+                    <!-- Pillar Header -->
+                    <div class="flex flex-col items-center text-center mb-6">
+                        
+                        <!-- Icon Container -->
+                        <div class="relative mb-6">
+                            <!-- Background glow -->
+                            <div class="absolute inset-0 bg-blue-500 rounded-full blur-2xl opacity-20"></div>
+                            
+                            <!-- Icon -->
+                            <div class="relative w-24 h-24 md:w-28 md:h-28 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-xl floating-icon icon-glow-blue" id="icon-1">
+                                <!-- Network/Microscope SVG -->
+                                <svg class="w-12 h-12 md:w-14 md:h-14 text-white" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2">
+                                    <!-- Central node -->
+                                    <circle cx="32" cy="32" r="6" fill="currentColor" opacity="0.3"/>
+                                    <circle cx="32" cy="32" r="4" fill="currentColor"/>
+                                    
+                                    <!-- Outer nodes -->
+                                    <circle cx="16" cy="16" r="3" fill="currentColor"/>
+                                    <circle cx="48" cy="16" r="3" fill="currentColor"/>
+                                    <circle cx="16" cy="48" r="3" fill="currentColor"/>
+                                    <circle cx="48" cy="48" r="3" fill="currentColor"/>
+                                    <circle cx="32" cy="8" r="2.5" fill="currentColor"/>
+                                    <circle cx="32" cy="56" r="2.5" fill="currentColor"/>
+                                    <circle cx="8" cy="32" r="2.5" fill="currentColor"/>
+                                    <circle cx="56" cy="32" r="2.5" fill="currentColor"/>
+                                    
+                                    <!-- Connection lines -->
+                                    <line x1="32" y1="28" x2="32" y2="10.5" stroke="currentColor" stroke-width="1.5" opacity="0.6"/>
+                                    <line x1="32" y1="36" x2="32" y2="53.5" stroke="currentColor" stroke-width="1.5" opacity="0.6"/>
+                                    <line x1="28" y1="32" x2="10.5" y2="32" stroke="currentColor" stroke-width="1.5" opacity="0.6"/>
+                                    <line x1="36" y1="32" x2="53.5" y2="32" stroke="currentColor" stroke-width="1.5" opacity="0.6"/>
+                                    <line x1="28" y1="28" x2="19" y2="19" stroke="currentColor" stroke-width="1.5" opacity="0.6"/>
+                                    <line x1="36" y1="28" x2="45" y2="19" stroke="currentColor" stroke-width="1.5" opacity="0.6"/>
+                                    <line x1="28" y1="36" x2="19" y2="45" stroke="currentColor" stroke-width="1.5" opacity="0.6"/>
+                                    <line x1="36" y1="36" x2="45" y2="45" stroke="currentColor" stroke-width="1.5" opacity="0.6"/>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- Badge -->
+                        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-100 text-blue-700 mb-4">
+                            <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                            <span class="text-xs font-semibold tracking-wider uppercase">Pilar 01</span>
+                        </div>
+
+                        <!-- Title -->
+                        <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mb-2">
+                            Científico
+                        </h2>
+
+                        <!-- Tagline -->
+                        <p class="text-blue-600 font-semibold text-lg">
+                            El Mapa Completo
+                        </p>
+                    </div>
+
+                    <!-- Decorative line -->
+                    <div class="decorative-line w-16 mx-auto mb-6 text-blue-300"></div>
+
+                    <!-- Content (reveals on hover) -->
+                    <div class="text-content transition-all duration-500 ease-in-out">
+                        
+                        <!-- Main concept -->
+                        <div class="bg-white/50 rounded-2xl p-5 mb-5">
+                            <div class="flex items-start gap-3 mb-3">
+                                <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-slate-800 mb-1">Llenar el Vacío</h3>
+                                    <p class="text-slate-600 text-sm leading-relaxed">
+                                        Sin los datos del Hospital Universitario de Caracas, la información epidemiológica de la capital estaba <strong class="text-blue-600">incompleta</strong>.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Key insight -->
+                        <div class="bg-gradient-to-r from-blue-50 to-white rounded-2xl p-5 border border-blue-100 mb-5">
+                            <div class="flex items-center gap-2 mb-3">
+                                <svg class="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"/>
+                                </svg>
+                                <span class="text-sm font-semibold text-blue-700">Dato Clave</span>
+                            </div>
+                            <p class="text-slate-700 text-sm leading-relaxed">
+                                Este estudio permite por primera vez realizar un <strong>análisis comparativo robusto</strong> entre los tres principales centros de referencia obstétrica de Caracas.
+                            </p>
+                        </div>
+
+                        <!-- CTA Button -->
+                        <button onclick="openModal('scientific')" class="btn-scientific w-full py-3 px-5 rounded-xl bg-blue-600 text-white font-medium transition-all duration-300 flex items-center justify-center gap-2 hover:translate-y-[-2px]">
+                            <span>Ver Comparación</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Collapsed indicator -->
+                    <div class="flex justify-center mt-4 pillar-indicator">
+                        <div class="flex items-center gap-1 text-blue-400">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                            <span class="text-xs font-medium">Explorar</span>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Pillar 2: Academic -->
+                <article class="pillar-card pillar-academic rounded-3xl p-6 md:p-8 transition-all duration-500 ease-in-out cursor-pointer transform hover:scale-[1.02]" id="pillar-2" data-pillar="academic">
+                    
+                    <!-- Pillar Header -->
+                    <div class="flex flex-col items-center text-center mb-6">
+                        
+                        <!-- Icon Container -->
+                        <div class="relative mb-6">
+                            <!-- Background glow -->
+                            <div class="absolute inset-0 bg-violet-500 rounded-full blur-2xl opacity-20"></div>
+                            
+                            <!-- Icon -->
+                            <div class="relative w-24 h-24 md:w-28 md:h-28 rounded-full bg-gradient-to-br from-violet-500 to-violet-600 flex items-center justify-center shadow-xl floating-icon icon-glow-violet" id="icon-2" style="animation-delay: 0.5s;">
+                                <!-- Book with light SVG -->
+                                <svg class="w-12 h-12 md:w-14 md:h-14 text-white" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2">
+                                    <!-- Open book base -->
+                                    <path d="M8 50V18C8 16 10 14 12 14H28C30 14 32 16 32 18V50" fill="none" stroke-width="2"/>
+                                    <path d="M56 50V18C56 16 54 14 52 14H36C34 14 32 16 32 18V50" fill="none" stroke-width="2"/>
+                                    
+                                    <!-- Book pages lines -->
+                                    <line x1="14" y1="22" x2="26" y2="22" stroke-width="1.5" opacity="0.5"/>
+                                    <line x1="14" y1="28" x2="26" y2="28" stroke-width="1.5" opacity="0.5"/>
+                                    <line x1="14" y1="34" x2="26" y2="34" stroke-width="1.5" opacity="0.5"/>
+                                    <line x1="38" y1="22" x2="50" y2="22" stroke-width="1.5" opacity="0.5"/>
+                                    <line x1="38" y1="28" x2="50" y2="28" stroke-width="1.5" opacity="0.5"/>
+                                    <line x1="38" y1="34" x2="50" y2="34" stroke-width="1.5" opacity="0.5"/>
+                                    
+                                    <!-- Light rays emanating from book -->
+                                    <line x1="32" y1="8" x2="32" y2="2" stroke-width="2" opacity="0.8"/>
+                                    <line x1="24" y1="10" x2="20" y2="4" stroke-width="2" opacity="0.6"/>
+                                    <line x1="40" y1="10" x2="44" y2="4" stroke-width="2" opacity="0.6"/>
+                                    <line x1="18" y1="14" x2="12" y2="10" stroke-width="1.5" opacity="0.4"/>
+                                    <line x1="46" y1="14" x2="52" y2="10" stroke-width="1.5" opacity="0.4"/>
+                                    
+                                    <!-- Graduation cap hint at top -->
+                                    <circle cx="32" cy="8" r="2" fill="currentColor" opacity="0.6"/>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- Badge -->
+                        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-violet-100 text-violet-700 mb-4">
+                            <span class="w-2 h-2 rounded-full bg-violet-500"></span>
+                            <span class="text-xs font-semibold tracking-wider uppercase">Pilar 02</span>
+                        </div>
+
+                        <!-- Title -->
+                        <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mb-2">
+                            Académico
+                        </h2>
+
+                        <!-- Tagline -->
+                        <p class="text-violet-600 font-semibold text-lg">
+                            El Legado
+                        </p>
+                    </div>
+
+                    <!-- Decorative line -->
+                    <div class="decorative-line w-16 mx-auto mb-6 text-violet-300"></div>
+
+                    <!-- Content (reveals on hover) -->
+                    <div class="text-content transition-all duration-500 ease-in-out">
+                        
+                        <!-- Main concept -->
+                        <div class="bg-white/50 rounded-2xl p-5 mb-5">
+                            <div class="flex items-start gap-3 mb-3">
+                                <div class="w-8 h-8 rounded-lg bg-violet-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <svg class="w-4 h-4 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-slate-800 mb-1">Transformar Anécdotas en Estadística</h3>
+                                    <p class="text-slate-600 text-sm leading-relaxed">
+                                        Formación de nuevos residentes basada en <strong class="text-violet-600">evidencia local</strong>, no solo en literatura internacional.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Key insight -->
+                        <div class="bg-gradient-to-r from-violet-50 to-white rounded-2xl p-5 border border-violet-100 mb-5">
+                            <div class="flex items-center gap-2 mb-3">
+                                <svg class="w-5 h-5 text-violet-500" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0z"/>
+                                </svg>
+                                <span class="text-sm font-semibold text-violet-700">Impacto Formativo</span>
+                            </div>
+                            <p class="text-slate-700 text-sm leading-relaxed">
+                                Este estudio establece una <strong>línea de base</strong> para futuras investigaciones y desarrollo de proyectos de intervención en el HUC.
+                            </p>
+                        </div>
+
+                        <!-- CTA Button -->
+                        <button onclick="openModal('academic')" class="btn-academic w-full py-3 px-5 rounded-xl bg-violet-600 text-white font-medium transition-all duration-300 flex items-center justify-center gap-2 hover:translate-y-[-2px]">
+                            <span>Ver Líneas de Investigación</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Collapsed indicator -->
+                    <div class="flex justify-center mt-4 pillar-indicator">
+                        <div class="flex items-center gap-1 text-violet-400">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                            <span class="text-xs font-medium">Explorar</span>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Pillar 3: Assistential -->
+                <article class="pillar-card pillar-assistential rounded-3xl p-6 md:p-8 transition-all duration-500 ease-in-out cursor-pointer transform hover:scale-[1.02]" id="pillar-3" data-pillar="assistential">
+                    
+                    <!-- Pillar Header -->
+                    <div class="flex flex-col items-center text-center mb-6">
+                        
+                        <!-- Icon Container -->
+                        <div class="relative mb-6">
+                            <!-- Background glow -->
+                            <div class="absolute inset-0 bg-emerald-500 rounded-full blur-2xl opacity-20"></div>
+                            
+                            <!-- Icon -->
+                            <div class="relative w-24 h-24 md:w-28 md:h-28 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center shadow-xl floating-icon icon-glow-green" id="icon-3" style="animation-delay: 1s;">
+                                <!-- Hands protecting life / Medical cross SVG -->
+                                <svg class="w-12 h-12 md:w-14 md:h-14 text-white" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2">
+                                    <!-- Protective hands -->
+                                    <path d="M12 36C8 32 6 28 8 24C10 20 14 22 16 24L20 28" fill="none" stroke-width="2.5"/>
+                                    <path d="M52 36C56 32 58 28 56 24C54 20 50 22 48 24L44 28" fill="none" stroke-width="2.5"/>
+                                    
+                                    <!-- Heart/Life symbol in center -->
+                                    <path d="M32 44C32 44 22 36 22 28C22 24 26 22 30 24C31 24.5 32 26 32 26C32 26 33 24.5 34 24C38 22 42 24 42 28C42 36 32 44 32 44Z" fill="currentColor" opacity="0.3"/>
+                                    <path d="M32 44C32 44 22 36 22 28C22 24 26 22 30 24C31 24.5 32 26 32 26C32 26 33 24.5 34 24C38 22 42 24 42 28C42 36 32 44 32 44Z" stroke-width="2"/>
+                                    
+                                    <!-- Medical cross inside heart -->
+                                    <line x1="32" y1="28" x2="32" y2="36" stroke-width="2"/>
+                                    <line x1="28" y1="32" x2="36" y2="32" stroke-width="2"/>
+                                    
+                                    <!-- Protective aura lines -->
+                                    <path d="M16 44C14 48 16 52 20 54" stroke-width="1.5" opacity="0.5"/>
+                                    <path d="M48 44C50 48 48 52 44 54" stroke-width="1.5" opacity="0.5"/>
+                                    <path d="M26 52C28 56 36 56 38 52" stroke-width="1.5" opacity="0.5"/>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- Badge -->
+                        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-100 text-emerald-700 mb-4">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                            <span class="text-xs font-semibold tracking-wider uppercase">Pilar 03</span>
+                        </div>
+
+                        <!-- Title -->
+                        <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mb-2">
+                            Asistencial
+                        </h2>
+
+                        <!-- Tagline -->
+                        <p class="text-emerald-600 font-semibold text-lg">
+                            La Resiliencia
+                        </p>
+                    </div>
+
+                    <!-- Decorative line -->
+                    <div class="decorative-line w-16 mx-auto mb-6 text-emerald-300"></div>
+
+                    <!-- Content (reveals on hover) -->
+                    <div class="text-content transition-all duration-500 ease-in-out">
+                        
+                        <!-- Main concept -->
+                        <div class="bg-white/50 rounded-2xl p-5 mb-5">
+                            <div class="flex items-start gap-3 mb-3">
+                                <div class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-slate-800 mb-1">Resiliencia Institucional</h3>
+                                    <p class="text-slate-600 text-sm leading-relaxed">
+                                        Demostrar cómo se <strong class="text-emerald-600">salvan vidas</strong> con recursos limitados y optimizar protocolos asistenciales.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Key insight -->
+                        <div class="bg-gradient-to-r from-emerald-50 to-white rounded-2xl p-5 border border-emerald-100 mb-5">
+                            <div class="flex items-center gap-2 mb-3">
+                                <svg class="w-5 h-5 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                </svg>
+                                <span class="text-sm font-semibold text-emerald-700">Resultado Clave</span>
+                            </div>
+                            <p class="text-slate-700 text-sm leading-relaxed">
+                                <strong>100% de supervivencia</strong> materna a pesar de que el 86.9% llegó sin control prenatal adecuado. Alta capacidad de "rescate".
+                            </p>
+                        </div>
+
+                        <!-- CTA Button -->
+                        <button onclick="openModal('assistential')" class="btn-assistential w-full py-3 px-5 rounded-xl bg-emerald-600 text-white font-medium transition-all duration-300 flex items-center justify-center gap-2 hover:translate-y-[-2px]">
+                            <span>Ver Protocolos de Éxito</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Collapsed indicator -->
+                    <div class="flex justify-center mt-4 pillar-indicator">
+                        <div class="flex items-center gap-1 text-emerald-400">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                            <span class="text-xs font-medium">Explorar</span>
+                        </div>
+                    </div>
+                </article>
+
+            </div>
+        </main>
+
+        <!-- Footer navigation hint -->
+        <footer class="text-center mt-8" id="footer">
+            <div class="inline-flex items-center gap-3 glass-panel rounded-full px-6 py-3">
+                <span class="text-sm text-slate-500">Interactúa con cada pilar para descubrir más</span>
+                <div class="flex gap-1">
+                    <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
+                    <span class="w-2 h-2 rounded-full bg-violet-400 animate-pulse" style="animation-delay: 0.2s;"></span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" style="animation-delay: 0.4s;"></span>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- Modal Overlay -->
+    <div id="modal-overlay" class="fixed inset-0 modal-overlay z-50 hidden opacity-0 transition-opacity duration-300">
+        
+        <!-- Modal Container -->
+        <div class="min-h-screen flex items-center justify-center p-4">
+            
+            <!-- Modal Content -->
+            <div id="modal-content" class="modal-content rounded-3xl shadow-2xl max-w-lg w-full p-8 transform scale-95 opacity-0 transition-all duration-300">
+                
+                <!-- Modal Header -->
+                <div class="flex items-center justify-between mb-6" id="modal-header">
+                    <!-- Dynamic icon and title will be inserted here -->
+                </div>
+
+                <!-- Modal Body -->
+                <div id="modal-body" class="space-y-4">
+                    <!-- Dynamic content will be inserted here -->
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="mt-8 flex justify-end">
+                    <button onclick="closeModal()" class="px-6 py-3 rounded-xl bg-slate-100 text-slate-700 font-medium hover:bg-slate-200 transition-colors duration-200 flex items-center gap-2">
+                        <span>Cerrar</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Modal content data
+        const modalData = {
+            scientific: {
+                icon: `<svg class="w-8 h-8 text-blue-600" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="32" cy="32" r="4" fill="currentColor"/>
+                    <circle cx="16" cy="16" r="3" fill="currentColor"/>
+                    <circle cx="48" cy="16" r="3" fill="currentColor"/>
+                    <circle cx="16" cy="48" r="3" fill="currentColor"/>
+                    <circle cx="48" cy="48" r="3" fill="currentColor"/>
+                    <line x1="28" y1="28" x2="19" y2="19" stroke="currentColor" stroke-width="1.5"/>
+                    <line x1="36" y1="28" x2="45" y2="19" stroke="currentColor" stroke-width="1.5"/>
+                    <line x1="28" y1="36" x2="19" y2="45" stroke="currentColor" stroke-width="1.5"/>
+                    <line x1="36" y1="36" x2="45" y2="45" stroke="currentColor" stroke-width="1.5"/>
+                </svg>`,
+                title: 'Comparación entre Centros de Referencia',
+                color: 'blue',
+                content: `
+                    <div class="space-y-4">
+                        <div class="p-4 rounded-xl bg-blue-50 border border-blue-100">
+                            <h4 class="font-semibold text-blue-800 mb-2">📍 Maternidad Concepción Palacios</h4>
+                            <p class="text-sm text-slate-600">91.1% de casos por trastornos hipertensivos. 84% cesáreas. Mayor prevalencia de control prenatal (78.4%).</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-blue-50 border border-blue-100">
+                            <h4 class="font-semibold text-blue-800 mb-2">📍 Hospital Miguel Pérez Carreño</h4>
+                            <p class="text-sm text-slate-600">47.8% hipertensión, 45.7% hemorragia. Mayor tasa de histerectomía (14.1%). Edad media: 29 años.</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-gradient-to-r from-blue-100 to-blue-50 border-2 border-blue-200">
+                            <h4 class="font-semibold text-blue-800 mb-2">🏥 Hospital Universitario de Caracas</h4>
+                            <p class="text-sm text-slate-700">68.3% hipertensión, 20% hemorragia. <strong>Solo 1.7% histerectomía</strong>. Edad media: 25.2 años. <strong>100% supervivencia</strong>.</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-slate-50 mt-4">
+                            <p class="text-sm text-slate-600 italic">💡 El HUC demuestra una posición intermedia pero con la menor tasa de cirugía radical, evidenciando un manejo conservador exitoso.</p>
+                        </div>
+                    </div>
+                `
+            },
+            academic: {
+                icon: `<svg class="w-8 h-8 text-violet-600" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M8 50V18C8 16 10 14 12 14H28C30 14 32 16 32 18V50"/>
+                    <path d="M56 50V18C56 16 54 14 52 14H36C34 14 32 16 32 18V50"/>
+                    <line x1="32" y1="8" x2="32" y2="2" stroke-width="2"/>
+                    <circle cx="32" cy="8" r="2" fill="currentColor"/>
+                </svg>`,
+                title: 'Líneas de Investigación Futuras',
+                color: 'violet',
+                content: `
+                    <div class="space-y-4">
+                        <div class="p-4 rounded-xl bg-violet-50 border border-violet-100">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="w-6 h-6 rounded-full bg-violet-200 flex items-center justify-center text-violet-700 text-xs font-bold">1</span>
+                                <h4 class="font-semibold text-violet-800">Estudios de Intervención</h4>
+                            </div>
+                            <p class="text-sm text-slate-600 ml-8">Evaluar impacto de programas de educación prenatal en la reducción de demoras tipo 1.</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-violet-50 border border-violet-100">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="w-6 h-6 rounded-full bg-violet-200 flex items-center justify-center text-violet-700 text-xs font-bold">2</span>
+                                <h4 class="font-semibold text-violet-800">Análisis de Factores Predictivos</h4>
+                            </div>
+                            <p class="text-sm text-slate-600 ml-8">Desarrollar modelos de machine learning para identificar pacientes de alto riesgo desde el primer trimestre.</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-violet-50 border border-violet-100">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="w-6 h-6 rounded-full bg-violet-200 flex items-center justify-center text-violet-700 text-xs font-bold">3</span>
+                                <h4 class="font-semibold text-violet-800">Evaluación de Estrategias de Prevención</h4>
+                            </div>
+                            <p class="text-sm text-slate-600 ml-8">Estudios prospectivos sobre el impacto de protocolos estandarizados en la reducción de morbimortalidad.</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-gradient-to-r from-violet-100 to-violet-50 border-2 border-violet-200 mt-4">
+                            <p class="text-sm text-violet-700">🎓 Este estudio proporciona la <strong>línea de base</strong> necesaria para 10+ años de investigación en el HUC.</p>
+                        </div>
+                    </div>
+                `
+            },
+            assistential: {
+                icon: `<svg class="w-8 h-8 text-emerald-600" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M32 44C32 44 22 36 22 28C22 24 26 22 30 24C31 24.5 32 26 32 26C32 26 33 24.5 34 24C38 22 42 24 42 28C42 36 32 44 32 44Z" fill="currentColor" opacity="0.3"/>
+                    <line x1="32" y1="28" x2="32" y2="36" stroke-width="2"/>
+                    <line x1="28" y1="32" x2="36" y2="32" stroke-width="2"/>
+                </svg>`,
+                title: 'Protocolos de Éxito del HUC',
+                color: 'emerald',
+                content: `
+                    <div class="space-y-4">
+                        <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-100">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="text-xl">💊</span>
+                                <h4 class="font-semibold text-emerald-800">Sulfato de Magnesio</h4>
+                            </div>
+                            <p class="text-sm text-slate-600">Administrado en el <strong>63.8%</strong> de los casos. Adherencia rigurosa a protocolos internacionales de neuroprotección.</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-100">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="text-xl">🩸</span>
+                                <h4 class="font-semibold text-emerald-800">Manejo Conservador de Hemorragia</h4>
+                            </div>
+                            <p class="text-sm text-slate-600">Solo <strong>1.7% de histerectomías</strong> vs 14.1% en otros centros. Uso de técnicas B-Lynch, ligaduras arteriales.</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-100">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="text-xl">🏥</span>
+                                <h4 class="font-semibold text-emerald-800">Gestión de UCI</h4>
+                            </div>
+                            <p class="text-sm text-slate-600"><strong>93.5%</strong> de pacientes críticas manejadas exitosamente en piso. El obstetra asume rol de intensivista.</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-gradient-to-r from-emerald-100 to-emerald-50 border-2 border-emerald-200 mt-4">
+                            <div class="flex items-center gap-2 text-emerald-700">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                </svg>
+                                <strong>100% SUPERVIVENCIA MATERNA</strong>
+                            </div>
+                            <p class="text-sm text-emerald-600 mt-2">A pesar de que 86.9% llegaron sin control prenatal adecuado.</p>
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        // Modal functions
+        function openModal(type) {
+            const data = modalData[type];
+            const overlay = document.getElementById('modal-overlay');
+            const content = document.getElementById('modal-content');
+            const header = document.getElementById('modal-header');
+            const body = document.getElementById('modal-body');
+
+            // Set content
+            header.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-xl bg-${data.color}-100 flex items-center justify-center">
+                        ${data.icon}
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">${data.title}</h3>
+                </div>
+                <button onclick="closeModal()" class="p-2 rounded-lg hover:bg-slate-100 transition-colors">
+                    <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            `;
+            body.innerHTML = data.content;
+
+            // Show modal
+            overlay.classList.remove('hidden');
+            
+            // Animate in
+            setTimeout(() => {
+                overlay.classList.remove('opacity-0');
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
+
+            // Disable body scroll
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            const overlay = document.getElementById('modal-overlay');
+            const content = document.getElementById('modal-content');
+
+            // Animate out
+            overlay.classList.add('opacity-0');
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+
+            // Hide after animation
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+                document.body.style.overflow = '';
+            }, 300);
+        }
+
+        // Close modal on overlay click
+        document.getElementById('modal-overlay').addEventListener('click', function(e) {
+            if (e.target === this || e.target.closest('.min-h-screen') === e.target.querySelector('.min-h-screen')) {
+                closeModal();
+            }
+        });
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Anime.js animations
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // Header entrance animation
+            anime({
+                targets: '#header',
+                opacity: [0, 1],
+                translateY: [-30, 0],
+                duration: 800,
+                easing: 'easeOutQuad'
+            });
+
+            // Pillars entrance animation with staggering
+            anime({
+                targets: '.pillar-card',
+                opacity: [0, 1],
+                translateY: [100, 0],
+                scale: [0.9, 1],
+                duration: 1000,
+                delay: anime.stagger(200, { start: 400 }),
+                easing: 'easeOutExpo'
+            });
+
+            // Icons floating animation (enhanced)
+            const icons = document.querySelectorAll('.floating-icon');
+            icons.forEach((icon, index) => {
+                anime({
+                    targets: icon,
+                    translateY: [0, -12, 0],
+                    duration: 3000,
+                    delay: index * 500,
+                    loop: true,
+                    easing: 'easeInOutSine'
+                });
+            });
+
+            // Footer entrance
+            anime({
+                targets: '#footer',
+                opacity: [0, 1],
+                translateY: [20, 0],
+                duration: 800,
+                delay: 1200,
+                easing: 'easeOutQuad'
+            });
+
+            // Pillar hover enhancements
+            const pillars = document.querySelectorAll('.pillar-card');
+            
+            pillars.forEach(pillar => {
+                pillar.addEventListener('mouseenter', function() {
+                    const icon = this.querySelector('.floating-icon');
+                    
+                    // Pulse effect on icon
+                    anime({
+                        targets: icon,
+                        scale: [1, 1.1, 1],
+                        duration: 400,
+                        easing: 'easeOutElastic(1, .5)'
+                    });
+
+                    // Hide indicator
+                    const indicator = this.querySelector('.pillar-indicator');
+                    anime({
+                        targets: indicator,
+                        opacity: 0,
+                        translateY: 10,
+                        duration: 200,
+                        easing: 'easeOutQuad'
+                    });
+                });
+
+                pillar.addEventListener('mouseleave', function() {
+                    // Show indicator
+                    const indicator = this.querySelector('.pillar-indicator');
+                    anime({
+                        targets: indicator,
+                        opacity: 1,
+                        translateY: 0,
+                        duration: 200,
+                        easing: 'easeOutQuad'
+                    });
+                });
+            });
+
+            // Subtle background animation
+            anime({
+                targets: '.bg-pattern',
+                backgroundPosition: ['0% 0%', '100% 100%'],
+                duration: 30000,
+                loop: true,
+                direction: 'alternate',
+                easing: 'linear'
+            });
+
+        });
+
+        // Additional interactivity: Click to toggle on mobile
+        if (window.innerWidth < 1024) {
+            const pillars = document.querySelectorAll('.pillar-card');
+            
+            pillars.forEach(pillar => {
+                pillar.addEventListener('click', function(e) {
+                    // Don't toggle if clicking the button
+                    if (e.target.closest('button')) return;
+                    
+                    const textContent = this.querySelector('.text-content');
+                    const isExpanded = textContent.style.maxHeight === '500px';
+                    
+                    if (isExpanded) {
+                        textContent.style.maxHeight = '0';
+                        textContent.style.opacity = '0';
+                    } else {
+                        // Close others first
+                        document.querySelectorAll('.text-content').forEach(tc => {
+                            tc.style.maxHeight = '0';
+                            tc.style.opacity = '0';
+                        });
+                        
+                        textContent.style.maxHeight = '500px';
+                        textContent.style.opacity = '1';
+                    }
+                });
+            });
+        }
+    </script>
+
+</body>
+</html>

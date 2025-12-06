@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide 21 - El Arsenal Terapéutico: Respuesta Médica</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .medical-container {
+            perspective: 1000px;
+        }
+        
+        .liquid-wave {
+            animation: wave 3s ease-in-out infinite;
+        }
+        
+        @keyframes wave {
+            0%, 100% { transform: translateX(0) translateY(0); }
+            25% { transform: translateX(-2px) translateY(1px); }
+            50% { transform: translateX(0) translateY(-1px); }
+            75% { transform: translateX(2px) translateY(1px); }
+        }
+        
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: rise linear forwards;
+        }
+        
+        @keyframes rise {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-100px) scale(0.5);
+                opacity: 0;
+            }
+        }
+        
+        .float-animation {
+            animation: float 4s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            25% { transform: translateY(-8px) rotate(0.5deg); }
+            50% { transform: translateY(-4px) rotate(0deg); }
+            75% { transform: translateY(-10px) rotate(-0.5deg); }
+        }
+        
+        .glass-effect {
+            background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 100%);
+        }
+        
+        .vial-shine {
+            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 45%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0.4) 55%, transparent 100%);
+        }
+        
+        .blood-bag-texture {
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0,0,0,0.03) 2px,
+                rgba(0,0,0,0.03) 4px
+            );
+        }
+        
+        .iv-bag-shine {
+            background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, transparent 50%);
+        }
+        
+        .detail-popup {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .blood-bag-container:hover .detail-popup {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .liquid-surface {
+            filter: url(#wave-filter);
+        }
+        
+        .skeuomorphic-shadow {
+            box-shadow: 
+                0 10px 30px rgba(0,0,0,0.15),
+                0 5px 15px rgba(0,0,0,0.1),
+                inset 0 1px 0 rgba(255,255,255,0.2);
+        }
+        
+        .tube-connector {
+            background: linear-gradient(180deg, #64748b 0%, #94a3b8 50%, #64748b 100%);
+        }
+        
+        .drip-chamber {
+            background: linear-gradient(180deg, #e2e8f0 0%, #f1f5f9 50%, #e2e8f0 100%);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen overflow-hidden">
+    <!-- SVG Filters -->
+    <svg class="absolute w-0 h-0">
+        <defs>
+            <filter id="wave-filter">
+                <feTurbulence type="fractalNoise" baseFrequency="0.01" numOctaves="3" result="noise" seed="1">
+                    <animate attributeName="baseFrequency" dur="10s" values="0.01;0.015;0.01" repeatCount="indefinite"/>
+                </feTurbulence>
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+            </filter>
+            
+            <linearGradient id="magnesiumGradient" x1="0%" y1="100%" x2="0%" y2="0%">
+                <stop offset="0%" style="stop-color:#1d4ed8;stop-opacity:0.9"/>
+                <stop offset="50%" style="stop-color:#3b82f6;stop-opacity:0.8"/>
+                <stop offset="100%" style="stop-color:#60a5fa;stop-opacity:0.7"/>
+            </linearGradient>
+            
+            <linearGradient id="antibioticGradient" x1="0%" y1="100%" x2="0%" y2="0%">
+                <stop offset="0%" style="stop-color:#059669;stop-opacity:0.85"/>
+                <stop offset="50%" style="stop-color:#10b981;stop-opacity:0.75"/>
+                <stop offset="100%" style="stop-color:#34d399;stop-opacity:0.65"/>
+            </linearGradient>
+            
+            <linearGradient id="bloodGradient" x1="0%" y1="100%" x2="0%" y2="0%">
+                <stop offset="0%" style="stop-color:#7f1d1d;stop-opacity:0.95"/>
+                <stop offset="50%" style="stop-color:#b91c1c;stop-opacity:0.9"/>
+                <stop offset="100%" style="stop-color:#dc2626;stop-opacity:0.85"/>
+            </linearGradient>
+            
+            <linearGradient id="glassGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:rgba(255,255,255,0.4)"/>
+                <stop offset="50%" style="stop-color:rgba(255,255,255,0.1)"/>
+                <stop offset="100%" style="stop-color:rgba(255,255,255,0.05)"/>
+            </linearGradient>
+        </defs>
+    </svg>
+
+    <div class="container mx-auto px-6 py-8 h-screen flex flex-col">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <div class="inline-flex items-center gap-3 mb-4">
+                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl flex items-center justify-center shadow-lg">
+                    <i class="fas fa-prescription-bottle-medical text-white text-xl"></i>
+                </div>
+                <div class="text-left">
+                    <h1 class="text-3xl font-bold text-slate-800">Intervenciones Médicas Principales</h1>
+                    <p class="text-slate-500 text-sm">Diapositiva 21 | El Arsenal Terapéutico</p>
+                </div>
+            </div>
+            <p class="text-lg text-slate-600 max-w-2xl mx-auto">
+                Manejo farmacológico y soporte hemodinámico <span class="font-semibold text-slate-700">(n=290 pacientes)</span>
+            </p>
+        </header>
+
+        <!-- Main Content - Three Columns -->
+        <main class="flex-1 grid grid-cols-3 gap-8 items-center max-w-7xl mx-auto w-full">
+            
+            <!-- Column 1: Sulfato de Magnesio - Vial -->
+            <div class="medical-container flex flex-col items-center">
+                <div class="float-animation relative" id="vial-container">
+                    <!-- Vial SVG -->
+                    <svg width="180" height="320" viewBox="0 0 180 320" class="drop-shadow-2xl">
+                        <!-- Vial Cap -->
+                        <rect x="60" y="0" width="60" height="20" rx="3" fill="#64748b" class="skeuomorphic-shadow"/>
+                        <rect x="65" y="5" width="50" height="10" rx="2" fill="#94a3b8"/>
+                        
+                        <!-- Vial Neck -->
+                        <path d="M70 20 L70 45 Q70 50 75 55 L75 60 L105 60 L105 55 Q110 50 110 45 L110 20" 
+                              fill="#e2e8f0" stroke="#cbd5e1" stroke-width="2"/>
+                        <rect x="72" y="22" width="36" height="20" fill="url(#glassGradient)"/>
+                        
+                        <!-- Vial Body -->
+                        <path d="M75 60 L65 80 L65 280 Q65 300 90 300 Q115 300 115 280 L115 80 L105 60" 
+                              fill="#f1f5f9" stroke="#cbd5e1" stroke-width="2"/>
+                        
+                        <!-- Liquid Container (clipped) -->
+                        <clipPath id="vialClip">
+                            <path d="M67 82 L67 278 Q67 298 90 298 Q113 298 113 278 L113 82 Z"/>
+                        </clipPath>
+                        
+                        <g clip-path="url(#vialClip)">
+                            <!-- Liquid -->
+                            <rect id="magnesium-liquid" x="67" y="298" width="46" height="0" fill="url(#magnesiumGradient)">
+                            </rect>
+                            
+                            <!-- Wave Surface -->
+                            <path id="magnesium-wave" d="M67 298 Q78 296 90 298 Q102 300 113 298 L113 300 L67 300 Z" 
+                                  fill="url(#magnesiumGradient)" class="liquid-wave"/>
+                            
+                            <!-- Bubbles Container -->
+                            <g id="magnesium-bubbles"></g>
+                        </g>
+                        
+                        <!-- Glass Shine -->
+                        <rect x="68" y="85" width="8" height="180" rx="4" fill="rgba(255,255,255,0.3)"/>
+                        <rect x="100" y="100" width="4" height="120" rx="2" fill="rgba(255,255,255,0.2)"/>
+                        
+                        <!-- Labels on Vial -->
+                        <rect x="70" y="240" width="40" height="35" rx="2" fill="white" opacity="0.9"/>
+                        <text x="90" y="255" text-anchor="middle" font-size="8" fill="#334155" font-weight="600">MgSO₄</text>
+                        <text x="90" y="268" text-anchor="middle" font-size="7" fill="#64748b">50% 10mL</text>
+                    </svg>
+                    
+                    <!-- Percentage Indicator -->
+                    <div class="absolute -right-4 top-1/2 transform -translate-y-1/2 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg">
+                        <span id="magnesium-percent" class="text-2xl font-bold">0</span>
+                        <span class="text-sm">%</span>
+                    </div>
+                </div>
+                
+                <!-- Info Card -->
+                <div class="mt-6 bg-white rounded-2xl p-5 shadow-lg border border-slate-200 w-full max-w-xs">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-shield-virus text-blue-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-800">Sulfato de Magnesio</h3>
+                            <p class="text-sm text-slate-500">185 pacientes</p>
+                        </div>
+                    </div>
+                    <div class="bg-blue-50 rounded-lg p-3 mb-3">
+                        <p class="text-xs text-blue-800 font-medium">
+     

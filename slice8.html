@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Objetivos de la Investigación - MMG HUC</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #f1f5f9 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .slide-container {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 2rem;
+            position: relative;
+        }
+        
+        .header-section {
+            text-align: center;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .main-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            color: #64748b;
+            font-weight: 400;
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        
+        .radar-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            min-height: 500px;
+        }
+        
+        .radar-svg {
+            width: 100%;
+            max-width: 700px;
+            height: auto;
+            aspect-ratio: 1;
+        }
+        
+        .connector-line {
+            stroke: #cbd5e1;
+            stroke-width: 2;
+            fill: none;
+            stroke-dasharray: 150;
+            stroke-dashoffset: 150;
+            transition: stroke 0.3s ease, stroke-width 0.3s ease;
+        }
+        
+        .connector-line.active {
+            stroke: url(#lineGradient);
+            stroke-width: 3;
+            filter: drop-shadow(0 0 6px rgba(59, 130, 246, 0.5));
+        }
+        
+        .nucleus-group {
+            cursor: pointer;
+            transform-origin: center;
+        }
+        
+        .nucleus-outer {
+            animation: pulse-ring 2s ease-out infinite;
+        }
+        
+        @keyframes pulse-ring {
+            0% {
+                opacity: 0.8;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.4;
+                transform: scale(1.1);
+            }
+            100% {
+                opacity: 0.8;
+                transform: scale(1);
+            }
+        }
+        
+        .nucleus-core {
+            filter: drop-shadow(0 4px 20px rgba(30, 58, 138, 0.4));
+        }
+        
+        .satellite-group {
+            cursor: pointer;
+            transform-origin: center;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        .satellite-group:hover {
+            transform: scale(1.15);
+        }
+        
+        .satellite-circle {
+            filter: drop-shadow(0 2px 10px rgba(59, 130, 246, 0.3));
+            transition: filter 0.3s ease;
+        }
+        
+        .satellite-group:hover .satellite-circle {
+            filter: drop-shadow(0 4px 20px rgba(59, 130, 246, 0.6));
+        }
+        
+        .satellite-icon {
+            fill: white;
+            font-size: 1.2rem;
+        }
+        
+        .tooltip-card {
+            position: absolute;
+            background: white;
+            border-radius: 16px;
+            padding: 1.25rem 1.5rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(59, 130, 246, 0.1);
+            max-width: 280px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px) scale(0.95);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 100;
+            pointer-events: none;
+        }
+        
+        .tooltip-card.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+        
+        .tooltip-card::before {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: white;
+            transform: rotate(45deg);
+            box-shadow: -2px -2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .tooltip-card.top::before {
+            bottom: -6px;
+            left: 50%;
+            margin-left: -6px;
+        }
+        
+        .tooltip-card.bottom::before {
+            top: -6px;
+            left: 50%;
+            margin-left: -6px;
+        }
+        
+        .tooltip-card.left::before {
+            right: -6px;
+            top: 50%;
+            margin-top: -6px;
+        }
+        
+        .tooltip-card.right::before {
+            left: -6px;
+            top: 50%;
+            margin-top: -6px;
+        }
+        
+        .tooltip-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0.75rem;
+            font-size: 1.2rem;
+            color: white;
+        }
+        
+        .tooltip-number {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+        }
+        
+        .tooltip-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e293b;
+            line-height: 1.4;
+        }
+        
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 24px;
+            padding: 2.5rem;
+            max-width: 500px;
+            width: 90%;
+            transform: scale(0.9) translateY(20px);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+            position: relative;
+        }
+        
+        .modal-overlay.visible .modal-content {
+            transform: scale(1) translateY(0);
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #f1f5f9;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            transition: all 0.2s ease;
+        }
+        
+        .modal-close:hover {
+            background: #e2e8f0;
+            color: #1e293b;
+        }
+        
+        .modal-icon-container {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+            color: white;
+            box-shadow: 0 10px 30px rgba(30, 58, 138, 0.3);
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        
+        .modal-description {
+            color: #64748b;
+            text-align: center;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-highlight {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .modal-highlight-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #3b82f6 0%, #0ea5e9 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            flex-shrink: 0;
+        }
+        
+        .modal-highlight-text {
+            font-size: 0.9rem;
+            color: #1e3a8a;
+            font-weight: 500;
+        }
+        
+        .grid-background {
+            position: fixed;
+            inset: 0;
+            background-image: 
+                radial-gradient(circle at 1px 1px, #cbd5e1 1px, transparent 0);
+            background-size: 40px 40px;
+            opacity: 0.3;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .floating-particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: linear-gradient(135deg, #3b82f6 0%, #0ea5e9 100%);
+            border-radius: 50%;
+            opacity: 0.4;
+            pointer-events: none;
+        }
+        
+        .legend-container {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 2rem;
+            background: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 100px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            opacity: 0;
+            z-index: 10;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+        
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .legend-dot.general {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+        }
+        
+        .legend-dot.specific {
+            background: linear-gradient(135deg, #3b82f6 0%, #0ea5e9 100%);
+        }
+        
+        .orbit-ring {
+            fill: none;
+            stroke: #e2e8f0;
+            stroke-width: 1;
+            stroke-dasharray: 8 4;
+            opacity: 0;
+        }
+        
+        .satellite-label {
+            font-size: 10px;
+            fill: #64748b;
+            text-anchor: middle;
+            font-weight: 500;
+            opacity: 0;
+        }
+        
+        @media (max-width: 768px) {
+            .slide-container {
+                padding: 1rem;
+            }
+            
+            .main-title {
+                font-size: 1.75rem;
+            }
+            
+            .subtitle {
+                font-size: 0.95rem;
+            }
+            
+            .radar-svg {
+                max-width: 100%;
+            }
+            
+            .tooltip-card {
+                max-width: 220px;
+                padding: 1rem;
+            }
+            
+            .legend-container {
+                flex-direction: column;
+                gap: 0.5rem;
+                bottom: 1rem;
+            }
+        }
+        
+        .instruction-hint {
+            position: absolute;
+            bottom: 6rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(30, 58, 138, 0.05);
+            padding: 0.5rem 1rem;
+            border-radius: 100px;
+            font-size: 0.8rem;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            opacity: 0;
+            z-index: 5;
+        }
+        
+        .instruction-hint i {
+            color: #3b82f6;
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-background"></div>
+    
+    <!-- Floating Particles -->
+    <div class="floating-particle" style="top: 15%; left: 10%;"></div>
+    <div class="floating-particle" style="top: 25%; right: 15%;"></div>
+    <div class="floating-particle" style="bottom: 20%; left: 20%;"></div>
+    <div class="floating-particle" style="bottom: 30%; right: 10%;"></div>
+    <div class="floating-particle" style="top: 50%; left: 5%;"></div>
+    <div class="floating-particle" style="top: 40%; right: 8%;"></div>
+    
+    <div class="slide-container">
+        <!-- Header Section -->
+        <header class="header-section">
+            <h1 class="main-title">Objetivos de la Investigación</h1>
+            <p class="subtitle">Hoja de ruta para caracterizar la Morbilidad Materna Grave</p>
+        </header>
+        
+        <!-- Radar Container -->
+        <div class="radar-container">
+            <svg class="radar-svg" viewBox="0 0 600 600" id="radarSvg">
+                <!-- Definitions -->
+                <defs>
+                    <!-- Nucleus Gradient -->
+                    <radialGradient id="nucleusGradient" cx="30%" cy="30%">
+                        <stop offset="0%" stop-color="#3b82f6"/>
+                        <stop offset="50%" stop-color="#1e3a8a"/>
+                        <stop offset="100%" stop-color="#1e40af"/>
+                    </radialGradient>
+                    
+                    <!-- Nucleus Outer Glow -->
+                    <radialGradient id="nucleusGlow" cx="50%" cy="50%">
+                        <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.3"/>
+                        <stop offset="100%" stop-color="#3b82f6" stop-opacity="0"/>
+                    </radialGradient>
+                    
+                    <!-- Satellite Gradients -->
+                    <radialGradient id="satelliteGradient1" cx="30%" cy="30%">
+                        <stop offset="0%" stop-color="#60a5fa"/>
+                        <stop offset="100%" stop-color="#3b82f6"/>
+                    </radialGradient>
+                    
+                    <radialGradient id="satelliteGradient2" cx="30%" cy="30%">
+                        <stop offset="0%" stop-color="#38bdf8"/>
+                        <stop offset="100%" stop-color="#0ea5e9"/>
+                    </radialGradient>
+                    
+                    <radialGradient id="satelliteGradient3" cx="30%" cy="30%">
+                        <stop offset="0%" stop-color="#22d3ee"/>
+                        <stop offset="100%" stop-color="#06b6d4"/>
+                    </radialGradient>
+                    
+                    <radialGradient id="satelliteGradient4" cx="30%" cy="30%">
+                        <stop offset="0%" stop-color="#2dd4bf"/>
+                        <stop offset="100%" stop-color="#14b8a6"/>
+                    </radialGradient>
+                    
+                    <!-- Line Gradient -->
+                    <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#1e3a8a"/>
+                        <stop offset="100%" stop-color="#3b82f6"/>
+                    </linearGradient>
+                    
+                    <!-- Shadow Filter -->
+                    <filter id="dropShadow" x="-50%" y="-50%" width="200%" height="200%">
+                        <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#1e3a8a" flood-opacity="0.2"/>
+                    </filter>
+                </defs>
+                
+                <!-- Orbit Rings -->
+                <circle class="orbit-ring" cx="300" cy="300" r="180" id="orbitRing"/>
+                
+                <!-- Connector Lines -->
+                <line class="connector-line" id="line1" x1="300" y1="300" x2="300" y2="90"/>
+                <line class="connector-line" id="line2" x1="300" y1="300" x2="510" y2="300"/>
+                <line class="connector-line" id="line3" x1="300" y1="300" x2="300" y2="510"/>
+                <line class="connector-line" id="line4" x1="300" y1="300" x2="90" y2="300"/>
+                
+                <!-- Nucleus (General Objective) -->
+                <g class="nucleus-group" id="nucleus">
+                    <!-- Outer Glow -->
+                    <circle class="nucleus-outer" cx="300" cy="300" r="85" fill="url(#nucleusGlow)"/>
+                    <!-- Core -->
+                    <circle class="nucleus-core" cx="300" cy="300" r="70" fill="url(#nucleusGradient)"/>
+                    <!-- Inner Highlight -->
+                    <ellipse cx="280" cy="280" rx="25" ry="15" fill="rgba(255,255,255,0.2)" transform="rotate(-30 280 280)"/>
+                    <!-- Icon -->
+                    <g transform="translate(300, 300)">
+                        <text x="0" y="-10" text-anchor="middle" fill="white" font-family="Font Awesome 6 Free" font-weight="900" font-size="28">&#xf19c;</text>
+                        <text x="0" y="25" text-anchor="middle" fill="white" font-size="11" font-weight="600">2011-2020</text>
+                    </g>
+                </g>
+                
+                <!-- Satellite 1 - Top (Perfil Sociodemográfico) -->
+                <g class="satellite-group" id="satellite1" data-satellite="1">
+                    <circle class="satellite-circle" cx="300" cy="90" r="45" fill="url(#satelliteGradient1)"/>
+                    <ellipse cx="285" cy="75" rx="15" ry="8" fill="rgba(255,255,255,0.25)" transform="rotate(-30 285 75)"/>
+                    <text x="300" y="95" text-anchor="middle" fill="white" font-family="Font Awesome 6 Free" font-weight="900" font-size="22">&#xf007;</text>
+                    <text class="satellite-label" x="300" y="150" id="label1">Perfil</text>
+                </g>
+                
+                <!-- Satellite 2 - Right (Descripción MMG) -->
+                <g class="satellite-group" id="satellite2" data-satellite="2">
+                    <circle class="satellite-circle" cx="510" cy="300" r="45" fill="url(#satelliteGradient2)"/>
+                    <ellipse cx="495" cy="285" rx="15" ry="8" fill="rgba(255,255,255,0.25)" transform="rotate(-30 495 285)"/>
+                    <text x="510" y="305" text-anchor="middle" fill="white" font-family="Font Awesome 6 Free" font-weight="900" font-size="22">&#xf200;</text>
+                    <text class="satellite-label" x="510" y="360" id="label2">Descripción</text>
+                </g>
+                
+                <!-- Satellite 3 - Bottom (Intervenciones) -->
+                <g class="satellite-group" id="satellite3" data-satellite="3">
+                    <circle class="satellite-circle" cx="300" cy="510" r="45" fill="url(#satelliteGradient3)"/>
+                    <ellipse cx="285" cy="495" rx="15" ry="8" fill="rgba(255,255,255,0.25)" transform="rotate(-30 285 495)"/>
+                    <text x="300" y="515" text-anchor="middle" fill="white" font-family="Font Awesome 6 Free" font-weight="900" font-size="22">&#xf0f1;</text>
+                    <text class="satellite-label" x="300" y="570" id="label3">Intervenciones</text>
+                </g>
+                
+                <!-- Satellite 4 - Left (Resultados) -->
+                <g class="satellite-group" id="satellite4" data-satellite="4">
+                    <circle class="satellite-circle" cx="90" cy="300" r="45" fill="url(#satelliteGradient4)"/>
+                    <ellipse cx="75" cy="285" rx="15" ry="8" fill="rgba(255,255,255,0.25)" transform="rotate(-30 75 285)"/>
+                    <text x="90" y="305" text-anchor="middle" fill="white" font-family="Font Awesome 6 Free" font-weight="900" font-size="22">&#xf201;</text>
+                    <text class="satellite-label" x="90" y="360" id="label4">Resultados</text>
+                </g>
+            </svg>
+            
+            <!-- Tooltip Cards -->
+            <div class="tooltip-card top" id="tooltip1">
+                <div class="tooltip-icon" style="background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="tooltip-number">Objetivo Específico 1</div>
+                <div class="tooltip-title">Caracterizar sociodemográfica y clínicamente al grupo de estudio</div>
+            </div>
+            
+            <div class="tooltip-card left" id="tooltip2">
+                <div class="tooltip-icon" style="background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%);">
+                    <i class="fas fa-chart-pie"></i>
+                </div>
+                <div class="tooltip-number">Objetivo Específico 2</div>
+                <div class="tooltip-title">Describir la MMG según momento de ocurrencia, sistema afectado y patología subyacente</div>
+            </div>
+            
+            <div class="tooltip-card bottom" id="tooltip3">
+                <div class="tooltip-icon" style="background: linear-gradient(135deg, #06b6d4 0%, #22d3ee 100%);">
+                    <i class="fas fa-user-md"></i>
+                </div>
+                <div class="tooltip-number">Objetivo Específico 3</div>
+                <div class="tooltip-title">Determinar las intervenciones médico-quirúrgicas más frecuentemente aplicadas</div>
+            </div>
+            
+            <div class="tooltip-card right" id="tooltip4">
+                <div class="tooltip-icon" style="background: linear-gradient(135deg, #14b8a6 0%, #2dd4bf 100%);">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="tooltip-number">Objetivo Específico 4</div>
+                <div class="tooltip-title">Analizar la evolución y resultados maternos diferenciando causas directas e indirectas</div>
+            </div>
+        </div>
+        
+        <!-- Instruction Hint -->
+        <div class="instruction-hint" id="instructionHint">
+            <i class="fas fa-hand-pointer"></i>
+            <span>Interactúa con los nodos para explorar los objetivos</span>
+        </div>
+        
+        <!-- Legend -->
+        <div class="legend-container" id="legend">
+            <div class="legend-item">
+                <div class="legend-dot general"></div>
+                <span>Objetivo General</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot specific"></div>
+                <span>Objetivos Específicos</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="modal-icon-container">
+                <i class="fas fa-bullseye"></i>
+            </div>
+            <h2 class="modal-title">Objetivo General</h2>
+            <p class="modal-description">
+                Caracterizar la <strong>Morbilidad Materna Grave</strong> en el Servicio de Obstetricia del 
+                <strong>Hospital Universitario de Caracas</strong> durante el período comprendido entre 
+                <strong>2011 y 2020</strong>.
+            </p>
+            <div class="modal-highlight">
+                <div class="modal-highlight-icon">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <div class="modal-highlight-text">
+                    Una década de análisis que abarca 290 casos documentados de MMG
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elements
+            const mainTitle = document.querySelector('.main-title');
+            const subtitle = document.querySelector('.subtitle');
+            const nucleus = document.getElementById('nucleus');
+            const satellites = document.querySelectorAll('.satellite-group');
+            const connectorLines = document.querySelectorAll('.connector-line');
+            const tooltips = document.querySelectorAll('.tooltip-card');
+            const modalOverlay = document.getElementById('modalOverlay');
+            const modalClose = document.getElementById('modalClose');
+            const legend = document.getElementById('legend');
+            const instructionHint = document.getElementById('instructionHint');
+            const orbitRing = document.getElementById('orbitRing');
+            const labels = document.querySelectorAll('.satellite-label');
+            const particles = document.querySelectorAll('.floating-particle');
+            
+            // Tooltip positions relative to satellites
+            const tooltipPositions = {
+                1: { top: '8%', left: '50%', transform: 'translateX(-50%)' },
+                2: { top: '42%', left: '78%', transform: 'translateX(0)' },
+                3: { top: '78%', left: '50%', transform: 'translateX(-50%)' },
+                4: { top: '42%', left: '5%', transform: 'translateX(0)' }
+            };
+            
+            // Set tooltip positions
+            Object.keys(tooltipPositions).forEach(key => {
+                const tooltip = document.getElementById(`tooltip${key}`);
+                const pos = tooltipPositions[key];
+                tooltip.style.top = pos.top;
+                tooltip.style.left = pos.left;
+                tooltip.style.transform = pos.transform;
+            });
+            
+            // Initial animations
+            function initAnimations() {
+                // Title animation
+                anime({
+                    targets: mainTitle,
+                    opacity: [0, 1],
+                    translateY: [-30, 0],
+                    duration: 800,
+                    easing: 'easeOutCubic'
+                });
+                
+                // Subtitle animation
+                anime({
+                    targets: subtitle,
+                    opacity: [0, 1],
+                    translateY: [-20, 0],
+                    duration: 800,
+                    delay: 200,
+                    easing: 'easeOutCubic'
+                });
+                
+                // Orbit ring animation
+                anime({
+                    targets: orbitRing,
+                    opacity: [0, 0.5],
+                    duration: 1000,
+                    delay: 500,
+                    easing: 'easeOutCubic'
+                });
+                
+                // Connector lines animation
+                anime({
+                    targets: connectorLines,
+                    strokeDashoffset: [150, 0],
+                    duration: 1000,
+                    delay: anime.stagger(150, { start: 600 }),
+                    easing: 'easeOutCubic'
+                });
+                
+                // Nucleus animation
+                anime({
+                    targets: nucleus,
+                    opacity: [0, 1],
+                    scale: [0.5, 1],
+                    duration: 800,
+                    delay: 400,
+                    easing: 'easeOutBack'
+                });
+                
+                // Satellites animation
+                anime({
+                    targets: satellites,
+                    opacity: [0, 1],
+                    scale: [0, 1],
+                    duration: 600,
+                    delay: anime.stagger(150, { start: 1000 }),
+                    easing: 'easeOutBack'
+                });
+                
+                // Labels animation
+                anime({
+                    targets: labels,
+                    opacity: [0, 1],
+                    duration: 500,
+                    delay: anime.stagger(100, { start: 1500 }),
+                    easing: 'easeOutCubic'
+                });
+                
+                // Legend animation
+                anime({
+                    targets: legend,
+                    opacity: [0, 1],
+                    translateY: [20, 0],
+                    duration: 600,
+                    delay: 1800,
+                    easing: 'easeOutCubic'
+                });
+                
+                // Instruction hint animation
+                anime({
+                    targets: instructionHint,
+                    opacity: [0, 1],
+                    duration: 600,
+                    delay: 2000,
+                    easing: 'easeOutCubic'
+                });
+            }
+            
+            // Floating particles animation
+            function animateParticles() {
+                particles.forEach((particle, index) => {
+                    anime({
+                        targets: particle,
+                        translateY: [-15, 15],
+                        translateX: [-10, 10],
+                        duration: 3000 + (index * 500),
+                        direction: 'alternate',
+                        loop: true,
+                        easing: 'easeInOutSine'
+                    });
+                });
+            }
+            
+            // Satellite levitation animation
+            function animateSatelliteLevitation() {
+                satellites.forEach((satellite, index) => {
+                    const direction = index % 2 === 0 ? 1 : -1;
+                    anime({
+                        targets: satellite,
+                        translateY: [0, 5 * direction, 0],
+                        duration: 2500 + (index * 300),
+                        loop: true,
+                        easing: 'easeInOutSine'
+                    });
+                });
+            }
+            
+            // Nucleus pulse animation
+            function animateNucleusPulse() {
+                const nucleusCore = nucleus.querySelector('.nucleus-core');
+                anime({
+                    targets: nucleusCore,
+                    scale: [1, 1.02, 1],
+                    duration: 2000,
+                    loop: true,
+                    easing: 'easeInOutSine'
+                });
+            }
+            
+            // Satellite hover handlers
+            satellites.forEach((satellite, index) => {
+                const satelliteNum = index + 1;
+                const tooltip = document.getElementById(`tooltip${satelliteNum}`);
+                const line = document.getElementById(`line${satelliteNum}`);
+                
+                satellite.addEventListener('mouseenter', () => {
+                    // Show tooltip
+                    tooltip.classList.add('visible');
+                    
+                    // Highlight line
+                    line.classList.add('active');
+                    
+                    // Scale animation
+                    anime({
+                        targets: satellite,
+                        scale: 1.15,
+                        duration: 300,
+                        easing: 'easeOutBack'
+                    });
+                    
+                    // Hide instruction hint
+                    anime({
+                        targets: instructionHint,
+                        opacity: 0,
+                        duration: 300,
+                        easing: 'easeOutCubic'
+                    });
+                });
+                
+                satellite.addEventListener('mouseleave', () => {
+                    // Hide tooltip
+                    tooltip.classList.remove('visible');
+                    
+                    // Remove line highlight
+                    line.classList.remove('active');
+                    
+                    // Reset scale
+                    anime({
+                        targets: satellite,
+                        scale: 1,
+                        duration: 300,
+                        easing: 'easeOutCubic'
+                    });
+                });
+            });
+            
+            // Nucleus click handler
+            nucleus.addEventListener('click', () => {
+                modalOverlay.classList.add('visible');
+            });
+            
+            // Modal close handlers
+            modalClose.addEventListener('click', () => {
+                modalOverlay.classList.remove('visible');
+            });
+            
+            modalOverlay.addEventListener('click', (e) => {
+                if (e.target === modalOverlay) {
+                    modalOverlay.classList.remove('visible');
+                }
+            });
+            
+            // Keyboard handler for modal
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && modalOverlay.classList.contains('visible')) {
+                    modalOverlay.classList.remove('visible');
+                }
+            });
+            
+            // Nucleus hover effect
+            nucleus.addEventListener('mouseenter', () => {
+                anime({
+                    targets: nucleus,
+                    scale: 1.05,
+                    duration: 300,
+                    easing: 'easeOutCubic'
+                });
+                
+                // Highlight all lines briefly
+                connectorLines.forEach(line => {
+                    line.style.stroke = '#3b82f6';
+                    line.style.opacity = '0.7';
+                });
+            });
+            
+            nucleus.addEventListener('mouseleave', () => {
+                anime({
+                    targets: nucleus,
+                    scale: 1,
+                    duration: 300,
+                    easing: 'easeOutCubic'
+                });
+                
+                // Reset lines
+                connectorLines.forEach(line => {
+                    if (!line.classList.contains('active')) {
+                        line.style.stroke = '#cbd5e1';
+                        line.style.opacity = '1';
+                    }
+                });
+            });
+            
+            // Orbit ring rotation animation
+            function animateOrbitRing() {
+                anime({
+                    targets: orbitRing,
+                    rotate: 360,
+                    duration: 60000,
+                    loop: true,
+                    easing: 'linear'
+                });
+            }
+            
+            // Initialize all animations
+            initAnimations();
+            setTimeout(() => {
+                animateParticles();
+                animateSatelliteLevitation();
+                animateNucleusPulse();
+                animateOrbitRing();
+            }, 2000);
+            
+            // Responsive tooltip positioning
+            function updateTooltipPositions() {
+                const container = document.querySelector('.radar-container');
+                const rect = container.getBoundingClientRect();
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                // Adjust for smaller screens
+                if (window.innerWidth < 768) {
+                    document.getElementById('tooltip1').style.top = '5%';
+                    document.getElementById('tooltip2').style.left = '70%';
+                    document.getElementById('tooltip3').style.top = '85%';
+                    document.getElementById('tooltip4').style.left = '2%';
+                }
+            }
+            
+            window.addEventListener('resize', updateTooltipPositions);
+            updateTooltipPositions();
+        });
+    </script>
+</body>
+</html>

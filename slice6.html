@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide 06 - Fisiopatología de la MMG</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+        }
+        
+        .organ-glow {
+            filter: drop-shadow(0 0 8px currentColor);
+        }
+        
+        .pulse-animation {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+        
+        .breathe-animation {
+            animation: breathe 3s ease-in-out infinite;
+        }
+        
+        @keyframes breathe {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(1.1); }
+        }
+        
+        .flow-particle {
+            animation: flow 2s linear infinite;
+        }
+        
+        @keyframes flow {
+            0% { offset-distance: 0%; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { offset-distance: 100%; opacity: 0; }
+        }
+        
+        .scanner-line {
+            background: linear-gradient(90deg, transparent, rgba(30, 58, 138, 0.6), transparent);
+        }
+        
+        .connector-line {
+            stroke-dasharray: 5, 5;
+            animation: dash 20s linear infinite;
+        }
+        
+        @keyframes dash {
+            to { stroke-dashoffset: -100; }
+        }
+        
+        .gauge-fill {
+            transition: width 1.5s ease-out;
+        }
+        
+        .circular-gauge {
+            transition: stroke-dashoffset 1.5s ease-out;
+        }
+        
+        .organ-interactive {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .organ-interactive:hover {
+            filter: brightness(1.2) drop-shadow(0 0 15px currentColor);
+        }
+        
+        .organ-dimmed {
+            opacity: 0.3;
+            transition: opacity 0.3s ease;
+        }
+        
+        .organ-highlighted {
+            opacity: 1;
+            filter: drop-shadow(0 0 20px currentColor);
+        }
+        
+        .data-panel {
+            transform: translateX(20px);
+            opacity: 0;
+            transition: all 0.4s ease;
+        }
+        
+        .data-panel.visible {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        
+        .blood-vessel {
+            stroke-linecap: round;
+        }
+        
+        .particle {
+            fill: #ef4444;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen overflow-hidden">
+    <!-- Scanner Line -->
+    <div id="scanner" class="scanner-line fixed top-0 left-0 w-full h-1 z-50 opacity-0"></div>
+    
+    <!-- Main Container -->
+    <div class="container mx-auto px-6 py-4 h-screen flex flex-col">
+        <!-- Header -->
+        <header class="text-center mb-4">
+            <div class="inline-flex items-center gap-3 mb-2">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-900 to-red-500 flex items-center justify-center">
+                    <i class="fas fa-heartbeat text-white text-lg"></i>
+                </div>
+                <h1 class="text-3xl font-bold bg-gradient-to-r from-blue-900 to-red-600 bg-clip-text text-transparent">
+                    Fisiopatología de la MMG
+                </h1>
+            </div>
+            <p class="text-slate-500 text-sm">Cambios adaptativos del embarazo y mecanismos de falla orgánica</p>
+        </header>
+        
+        <!-- Main Content -->
+        <div class="flex-1 flex items-center justify-center relative">
+            <!-- Left Data Panels -->
+            <div class="absolute left-4 top-1/2 -translate-y-1/2 space-y-4 z-20">
+                <!-- Cardiovascular Panel -->
+                <div id="panel-cardio" class="data-panel glass-card rounded-2xl p-4 w-64" data-organ="heart">
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center">
+                            <i class="fas fa-heart text-white text-sm"></i>
+                        </div>
+                        <h3 class="font-semibold text-slate-800">Sistema Cardiovascular</h3>
+                    </div>
+                    <div class="space-y-2 text-xs">
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-600">Volumen plasmático</span>
+                            <span class="font-bold text-red-600">+40-50%</span>
+                        </div>
+                        <div class="h-2 bg-slate-200 rounded-full overflow-hidden">
+                            <div class="gauge-fill h-full bg-gradient-to-r from-blue-500 to-red-500 rounded-full" style="width: 0%" data-target="50"></div>
+                        </div>
+                        <div class="flex justify-between items-center mt-2">
+                            <span class="text-slate-600">Gasto cardíaco</span>
+                            <span class="font-bold text-red-600">+30-50%</span>
+                        </div>
+                        <div class="h-2 bg-slate-200 rounded-full overflow-hidden">
+                            <div class="gauge-fill h-full bg-gradient-to-r from-blue-500 to-red-500 rounded-full" style="width: 0%" data-target="45"></div>
+                        </div>
+                        <div class="flex justify-between items-center mt-2">
+                            <span class="text-slate-600">Frecuencia cardíaca</span>
+                            <span class="font-bold text-red-600">+10-15 lpm</span>
+                        </div>
+                    </div>
+                    <div class="mt-3 p-2 bg-red-50 rounded-lg border border-red-200">
+                        <p class="text-xs text-red-700"><i class="fas fa-exclamation-triangle mr-1"></i>Falla: Preeclampsia, HELLP (68.3% casos)</p>
+                    </div>
+                </div>
+                
+                <!-- Respiratory Panel -->
+                <div id="panel-respiratory" class="data-panel glass-card rounded-2xl p-4 w-64" data-organ="lungs">
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
+                            <i class="fas fa-lungs text-white text-sm"></i>
+                        </div>
+                        <h3 class="font-semibold text-slate-800">Sistema Respiratorio</h3>
+                    </div>
+                    <div class="space-y-2 text-xs">
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-600">Consumo de O₂</span>
+                            <span class="font-bold text-blue-600">+20-30%</span>
+                        </div>
+                        <div class="h-2 bg-slate-200 rounded-full overflow-hidden">
+                            <div class="gauge-fill h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full" style="width: 0%" data-target="25"></div>
+                        </div>
+                        <div class="flex justify-between items-center mt-2">
+                            <span class="text-slate-600">Capacidad residual func.</span>
+                            <span class="font-bold text-orange-600">-20%</span>
+                        </div>
+                    </div>
+                    <div class="mt-3 p-2 bg-blue-50 rounded-lg border border-blue-200">
+                        <p class="text-xs text-blue-700"><i class="fas fa-info-circle mr-1"></i>Riesgo: Hipoxemia en situaciones críticas</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Data Panels -->
+            <div class="absolute right-4 top-1/2 -translate-y-1/2 space-y-4 z-20">
+                <!-- Hematological Panel -->
+                <div id="panel-hematologic" class="data-panel glass-card rounded-2xl p-4 w-64" data-organ="vessels">
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center">
+                            <i class="fas fa-tint text-white text-sm"></i>
+                        </div>
+                        <h3 class="font-semibold text-slate-800">Sistema Hematológico</h3>
+                    </div>
+                    <div class="space-y-2 text-xs">
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-600">Factores coagulación</span>
+                            <span class="font-bold text-purple-600">↑ Elevados</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-600">Actividad fibrinolítica</span>
+                            <span class="font-bold text-orange-600">↓ Disminuida</span>
+                        </div>
+                        <div class="flex items-center gap-2 mt-2">
+                            <span class="text-slate-600">Estado:</span>
+                            <span class="px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">Hipercoagulable</span>
+                        </div>
+                    </div>
+                    <div class="mt-3 p-2 bg-purple-50 rounded-lg border border-purple-200">
+                        <p class="text-xs text-purple-700"><i class="fas fa-exclamation-triangle mr-1"></i>Riesgo: Trombosis, CID (24.8% casos)</p>
+                    </div>
+                </div>
+                
+                <!-- Renal Panel -->
+                <div id="panel-renal" class="data-panel glass-card rounded-2xl p-4 w-64" data-organ="kidneys">
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center">
+                            <i class="fas fa-filter text-white text-sm"></i>
+                        </div>
+                        <h3 class="font-semibold text-slate-800">Sistema Renal/Hepático</h3>
+                    </div>
+                    <div class="space-y-2 text-xs">
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-600">Filtrado glomerular</span>
+                            <span class="font-bold text-amber-600">+50%</span>
+                        </div>
+                        <div class="h-2 bg-slate-200 rounded-full overflow-hidden">
+                            <div class="gauge-fill h-full bg-gradient-to-r from-amber-400 to-amber-600 rounded-full" style="width: 0%" data-target="50"></div>
+                        </div>
+                        <div class="flex justify-between items-center mt-2">
+                            <span class="text-slate-600">Función hepática</span>
+                            <span class="font-bold text-green-600">Adaptada</span>
+                        </div>
+                    </div>
+                    <div class="mt-3 p-2 bg-amber-50 rounded-lg border border-amber-200">
+                        <p class="text-xs text-amber-700"><i class="fas fa-info-circle mr-1"></i>Falla: Síndrome HELLP, IRA</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Central SVG Body -->
+            <div class="relative">
+                <!-- Connection Lines SVG -->
+                <svg class="absolute inset-0 w-full h-full pointer-events-none" style="width: 800px; height: 600px; left: -150px; top: -50px;">
+                    <!-- Left connections -->
+                    <line class="connector-line" x1="264" y1="150" x2="150" y2="120" stroke="#94a3b8" stroke-width="1"/>
+                    <line class="connector-line" x1="264" y1="200" x2="150" y2="280" stroke="#94a3b8" stroke-width="1"/>
+                    <!-- Right connections -->
+                    <line class="connector-line" x1="536" y1="150" x2="650" y2="100" stroke="#94a3b8" stroke-width="1"/>
+                    <line class="connector-line" x1="536" y1="280" x2="650" y2="280" stroke="#94a3b8" stroke-width="1"/>
+                </svg>
+                
+                <!-- Main Body SVG -->
+                <svg id="body-svg" viewBox="0 0 400 500" class="w-96 h-auto relative z-10">
+                    <defs>
+                        <!-- Gradients -->
+                        <linearGradient id="bodyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#cbd5e1;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#94a3b8;stop-opacity:1" />
+                        </linearGradient>
+                        <linearGradient id="heartGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#ef4444;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#991b1b;stop-opacity:1" />
+                        </linearGradient>
+                        <linearGradient id="lungGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#1e40af;stop-opacity:1" />
+                        </linearGradient>
+                        <linearGradient id="kidneyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#b45309;stop-opacity:1" />
+                        </linearGradient>
+                        <linearGradient id="uterusGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#f472b6;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#be185d;stop-opacity:1" />
+                        </linearGradient>
+                        <linearGradient id="vesselGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#a855f7;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#6b21a8;stop-opacity:1" />
+                        </linearGradient>
+                        
+                        <!-- Glow filter -->
+                        <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                            <feMerge>
+                                <feMergeNode in="coloredBlur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                        
+                        <!-- Blood flow path -->
+                        <path id="bloodPath" d="M200,120 Q180,150 190,180 Q200,210 210,180 Q220,150 200,120" fill="none"/>
+                    </defs>
+                    
+                    <!-- Female Silhouette -->
+                    <g id="silhouette">
+                        <!-- Head -->
+                        <ellipse cx="200" cy="45" rx="28" ry="35" fill="url(#bodyGradient)"/>
+                        
+                        <!-- Neck -->
+                        <path d="M188,78 L188,95 Q188,100 193,100 L207,100 Q212,100 212,95 L212,78" fill="url(#bodyGradient)"/>
+                        
+                        <!-- Shoulders and Arms -->
+                        <path d="M140,105 Q160,100 193,100 L207,100 Q240,100 260,105 Q280,112 295,140 L290,145 Q275,120 260,115 L260,220 Q258,225 255,225 L250,225 Q247,225 245,220 L245,115 Q230,110 207,108" fill="url(#bodyGradient)"/>
+                        <path d="M155,115 L155,220 Q153,225 150,225 L145,225 Q142,225 140,220 L140,140 Q145,120 155,115" fill="url(#bodyGradient)"/>
+                        
+                        <!-- Torso -->
+                        <path d="M155,108 Q175,105 200,105 Q225,105 245,108 L245,115 Q235,112 200,110 Q165,112 155,115 Z" fill="url(#bodyGradient)"/>
+                        
+                        <!-- Chest area -->
+                        <path d="M155,115 Q150,140 148,170 Q145,200 150,240 Q152,260 160,280 L160,290 Q175,295 200,300 Q225,295 240,290 L240,280 Q248,260 250,240 Q255,200 252,170 Q250,140 245,115 Q235,112 200,110 Q165,112 155,115 Z" fill="url(#bodyGradient)"/>
+                        
+                        <!-- Pregnant Belly -->
+                        <path d="M160,290 Q155,320 158,360 Q162,400 180,430 Q190,445 200,450 Q210,445 220,430 Q238,400 242,360 Q245,320 240,290 Q225,295 200,300 Q175,295 160,290 Z" fill="url(#bodyGradient)" opacity="0.95"/>
+                        
+                        <!-- Legs (partial) -->
+                        <path d="M180,450 Q175,460 172,480 L172,495 Q175,498 182,498 L188,498 Q192,498 195,495 L195,460 Q197,455 200,450" fill="url(#bodyGradient)"/>
+                        <path d="M220,450 Q225,460 228,480 L228,495 Q225,498 218,498 L212,498 Q208,498 205,495 L205,460 Q203,455 200,450" fill="url(#bodyGradient)"/>
+                    </g>
+                    
+                    <!-- Internal Organs Group -->
+                    <g id="organs">
+                        <!-- Heart -->
+                        <g id="heart" class="organ-interactive" data-organ="heart">
+                            <path class="pulse-animation" transform-origin="200 145" d="M200,125 Q185,125 180,138 Q175,150 180,162 Q185,175 200,188 Q215,175 220,162 Q225,150 220,138 Q215,125 200,125 Z" fill="url(#heartGradient)" style="color: #ef4444;"/>
+                            <!-- Aorta -->
+                            <path d="M200,125 Q200,115 195,108 Q190,100 192,95" stroke="#ef4444" stroke-width="4" fill="none"/>
+                        </g>
+                        
+                        <!-- Lungs -->
+                        <g id="lungs" class="organ-interactive" data-organ="lungs">
+                            <!-- Left Lung -->
+                            <path class="breathe-animation" transform-origin="165 155" d="M155,130 Q145,135 142,155 Q140,180 145,200 Q150,215 160,220 Q170,215 175,200 Q178,180 176,155 Q174,135 165,130 Q160,128 155,130 Z" fill="url(#lungGradient)" opacity="0.85" style="color: #3b82f6;"/>
+                            <!-- Right Lung -->
+                            <path class="breathe-animation" transform-origin="235 155" d="M245,130 Q255,135 258,155 Q260,180 255,200 Q250,215 240,220 Q230,215 225,200 Q222,180 224,155 Q226,135 235,130 Q240,128 245,130 Z" fill="url(#lungGradient)" opacity="0.85" style="color: #3b82f6;"/>
+                        </g>
+                        
+                        <!-- Blood Vessels -->
+                        <g id="vessels" class="organ-interactive" data-organ="vessels">
+                            <!-- Main vessels -->
+                            <path class="blood-vessel" d="M200,188 L200,250 Q200,260 195,270 Q190,280 188,300" stroke="url(#vesselGradient)" stroke-width="5" fill="none" style="color: #a855f7;"/>
+                            <path class="blood-vessel" d="M200,188 L200,250 Q200,260 205,270 Q210,280 212,300" stroke="url(#vesselGradient)" stroke-width="5" fill="none" style="color: #a855f7;"/>
+                            
+                            <!-- Vessel branches to organs -->
+                            <path class="blood-vessel" d="M192,220 Q185,225 178,230" stroke="url(#vesselGradient)" stroke-width="3" fill="none"/>
+                            <path class="blood-vessel" d="M208,220 Q215,225 222,230" stroke="url(#vesselGradient)" stroke-width="3" fill="none"/>
+                            
+                            <!-- Animated blood particles -->
+                            <g id="blood-particles">
+                                <circle class="particle" r="3" opacity="0">
+                                    <animateMotion dur="2s" repeatCount="indefinite" path="M200,188 L200,250 Q200,260 195,270 Q190,280 188,300"/>
+                                    <animate attributeName="opacity" values="0;1;1;0" dur="2s" repeatCount="indefinite"/>
+                                </circle>
+                                <circle class="particle" r="3" opacity="0">
+                                    <animateMotion dur="2s" repeatCount="indefinite" begin="0.5s" path="M200,188 L200,250 Q200,260 205,270 Q210,280 212,300"/>
+                                    <animate attributeName="opacity" values="0;1;1;0" dur="2s" repeatCount="indefinite" begin="0.5s"/>
+                                </circle>
+                                <circle class="particle" r="2" opacity="0">
+                                    <animateMotion dur="1.5s" repeatCount="indefinite" begin="1s" path="M200,188 L200,250 Q200,260 195,270"/>
+                                    <animate attributeName="opacity" values="0;1;1;0" dur="1.5s" repeatCount="indefinite" begin="1s"/>
+                                </circle>
+                            </g>
+                        </g>
+                        
+                        <!-- Kidneys -->
+                        <g id="kidneys" class="organ-interactive" data-organ="kidneys">
+                            <!-- Left Kidney -->
+                            <path d="M165,235 Q158,240 156,255 Q155,270 160,280 Q165,288 172,285 Q178,280 180,265 Q182,250 178,240 Q174,233 165,235 Z" fill="url(#kidneyGradient)" style="color: #f59e0b;"/>
+                            <!-- Right Kidney -->
+                            <path d="M235,235 Q242,240 244,255 Q245,270 240,280 Q235,288 228,285 Q222,280 220,265 Q218,250 222,240 Q226,233 235,235 Z" fill="url(#kidneyGradient)" style="color: #f59e0b;"/>
+                            
+                            <!-- Liver (simplified) -->
+                            <path d="M225,210 Q240,215 250,225 Q255,240 250,250 Q240,255 225,250 Q215,245 215,230 Q215,215 225,210 Z" fill="#92400e" opacity="0.7"/>
+                        </g>
+                        
+                        <!-- Uterus with fetus silhouette -->
+                        <g id="uterus" class="organ-interactive" data-organ="uterus">
+                            <!-- Uterus outline -->
+                            <path d="M170,310 Q165,330 168,360 Q172,390 185,415 Q195,430 200,435 Q205,430 215,415 Q228,390 232,360 Q235,330 230,310 Q220,305 200,305 Q180,305 170,310 Z" fill="url(#uterusGradient)" opacity="0.7" style="color: #ec4899;"/>
+                            
+                            <!-- Fetus silhouette -->
+                            <g opacity="0.6">
+                                <!-- Fetal head -->
+                                <ellipse cx="195" cy="345" rx="15" ry="18" fill="#fce7f3"/>
+                                <!-- Fetal body curl -->
+                                <path d="M195,363 Q190,375 192,390 Q195,400 200,405 Q210,400 215,385 Q218,370 215,360 Q212,355 205,358 Q198,362 195,363 Z" fill="#fce7f3"/>
+                            </g>
+                            
+                            <!-- Placenta indicator -->
+                            <ellipse cx="220" cy="340" rx="12" ry="20" fill="#be185d" opacity="0.5"/>
+                        </g>
+                    </g>
+                    
+                    <!-- Circular Gauges around organs -->
+                    <g id="gauges" opacity="0">
+                        <!-- Heart gauge -->
+                        <g transform="translate(240, 130)">
+                            <circle cx="0" cy="0" r="15" fill="none" stroke="#e2e8f0" stroke-width="3"/>
+                            <circle id="gauge-heart" cx="0" cy="0" r="15" fill="none" stroke="#ef4444" stroke-width="3" 
+                                    stroke-dasharray="94.2" stroke-dashoffset="94.2" transform="rotate(-90)"
+                                    class="circular-gauge"/>
+                            <text x="0" y="4" text-anchor="middle" font-size="8" fill="#ef4444" font-weight="bold">50%</text>
+                        </g>
+                        
+                        <!-- Lungs gauge -->
+                        <g transform="translate(130, 170)">
+                            <circle cx="0" cy="0" r="12" fill="none" stroke="#e2e8f0" stroke-width="2"/>
+                            <circle id="gauge-lungs" cx="0" cy="0" r="12" fill="none" stroke="#3b82f6" stroke-width="2" 
+                                    stroke-dasharray="75.4" stroke-dashoffset="75.4" transform="rotate(-90)"
+                                    class="circular-gauge"/>
+                            <text x="0" y="3" text-anchor="middle" font-size="6" fill="#3b82f6" font-weight="bold">25%</text>
+                        </g>
+                        
+                        <!-- Kidney gauge -->
+                        <g transform="translate(260, 260)">
+                            <circle cx="0" cy="0" r="12" fill="none" stroke="#e2e8f0" stroke-width="2"/>
+                            <circle id="gauge-kidney" cx="0" cy="0" r="12" fill="none" stroke="#f59e0b" stroke-width="2" 
+                                    stroke-dasharray="75.4" stroke-dashoffset="75.4" transform="rotate(-90)"
+                                    class="circular-gauge"/>
+                            <text x="0" y="3" text-anchor="middle" font-size="6" fill="#f59e0b" font-weight="bold">50%</text>
+                        </g>
+                    </g>
+                    
+                    <!-- Scan line overlay -->
+                    <rect id="scan-rect" x="0" y="0" width="400" height="3" fill="url(#scanGradient)" opacity="0">
+                        <defs>
+                            <linearGradient id="scanGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:transparent"/>
+                                <stop offset="50%" style="stop-color:#1e3a8a;stop-opacity:0.8"/>
+                                <stop offset="100%" style="stop-color:transparent"/>
+                            </linearGradient>
+                        </defs>
+                    </rect>
+                </svg>
+            </div>
+        </div>
+        
+        <!-- Bottom Info Bar -->
+        <div class="glass-card rounded-2xl p-4 mt-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-red-500 animate-pulse"></div>
+                        <span class="text-xs text-slate-600">Cardiovascular (68.3%)</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-purple-500"></div>
+                        <span class="text-xs text-slate-600">Hematológico (24.8%)</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-amber-500"></div>
+                        <span class="text-xs text-slate-600">Infección/Sepsis (10.0%)</span>
+                    </div>
+                </div>
+                <div class="text-xs text-slate-500">
+                    <i class="fas fa-mouse-pointer mr-1"></i>
+                    Interactúe con los órganos para ver datos detallados
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Detail Modal -->
+    <div id="detail-modal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center">
+        <div class="glass-card rounded-3xl p-6 max-w-md mx-4 transform scale-95 opacity-0 transition-all duration-300" id="modal-content">
+            <div class="flex justify-between items-start mb-4">
+                <div class="flex items-center gap-3">
+                    <div id="modal-icon" class="w-12 h-12 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-heart text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 id="modal-title" class="font-bold text-lg text-slate-800">Sistema</h3>
+                        <p id="modal-subtitle" class="text-sm text-slate-500">Sobrecarga fisiológica</p>
+                    </div>
+                </div>
+                <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition-colors">
+                    <i class="fas fa-times text-slate-500"></i>
+                </button>
+            </div>
+            <div id="modal-body" class="space-y-3">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data for each organ system
+        const organData = {
+            heart: {
+                title: 'Sistema Cardiovascular',
+                subtitle: 'Principal causa de MMG (68.3%)',
+                icon: 'fa-heart',
+                gradient: 'from-red-500 to-red-700',
+                color: '#ef4444',
+                content: `
+                    <div class="bg-red-50 rounded-xl p-4 border border-red-100">
+                        <h4 class="font-semibold text-red-800 mb-2">Cambios Adaptativos</h4>
+                        <ul class="space-y-2 text-sm text-red-700">
+                            <li class="flex items-center gap-2"><i class="fas fa-arrow-up text-red-500"></i> Volumen plasmático: +40-50%</li>
+                            <li class="flex items-center gap-2"><i class="fas fa-arrow-up text-red-500"></i> Gasto cardíaco: +30-50%</li>
+                            <li class="flex items-center gap-2"><i class="fas fa-arrow-up text-red-500"></i> Frecuencia cardíaca: +10-15 lpm</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 rounded-xl p-4 border border-slate-200">
+                        <h4 class="font-semibold text-slate-800 mb-2">Mecanismo de Falla</h4>
+                        <p class="text-sm text-slate-600">El daño endotelial sistémico y la vasoconstricción generalizada en la <strong>preeclampsia</strong> comprometen la reserva cardiovascular, llevando a disfunción multiorgánica.</p>
+                    </div>
+                    <div class="flex items-center gap-2 p-3 bg-yellow-50 rounded-xl border border-yellow-200">
+                        <i class="fas fa-exclamation-triangle text-yellow-600"></i>
+                        <span class="text-sm text-yellow-800">198 casos (68.3%) presentaron compromiso cardiovascular</span>
+                    </div>
+                `
+            },
+            lungs: {
+                title: 'Sistema Respiratorio',
+                subtitle: 'Reserva funcional comprometida',
+                icon: 'fa-lungs',
+                gradient: 'from-blue-400 to-blue-600',
+                color: '#3b82f6',
+                content: `
+                    <div class="bg-blue-50 rounded-xl p-4 border border-blue-100">
+                        <h4 class="font-semibold text-blue-800 mb-2">Cambios Adaptativos</h4>
+                        <ul class="space-y-2 text-sm text-blue-700">
+                            <li class="flex items-center gap-2"><i class="fas fa-arrow-up text-blue-500"></i> Consumo de oxígeno: +20-30%</li>
+                            <li class="flex items-center gap-2"><i class="fas fa-arrow-down text-orange-500"></i> Capacidad residual funcional: -20%</li>
+                            <li class="flex items-center gap-2"><i class="fas fa-arrow-up text-blue-500"></i> Ventilación minuto aumentada</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 rounded-xl p-4 border border-slate-200">
+                        <h4 class="font-semibold text-slate-800 mb-2">Riesgo Clínico</h4>
+                        <p class="text-sm text-slate-600">La disminución de la reserva respiratoria puede comprometer rápidamente la oxigenación en situaciones críticas como <strong>shock séptico</strong> o <strong>edema pulmonar</strong>.</p>
+                    </div>
+                    <div class="flex items-center gap-2 p-3 bg-blue-50 rounded-xl border border-blue-200">
+                        <i class="fas fa-info-circle text-blue-600"></i>
+                        <span class="text-sm text-blue-800">61 casos (21.0%) presentaron compromiso respiratorio</span>
+                    </div>
+                `
+            },
+            vessels: {
+                title: 'Sistema Hematológico',
+                subtitle: 'Estado protrombótico fisiológico',
+                icon: 'fa-tint',
+                gradient: 'from-purple-500 to-purple-700',
+                color: '#a855f7',
+                content: `
+                    <div class="bg-purple-50 rounded-xl p-4 border border-purple-100">
+                        <h4 class="font-semibold text-purple-800 mb-2">Estado Hipercoagulable</h4>
+                        <ul class="space-y-2 text-sm text-purple-700">
+                            <li class="flex items-center gap-2"><i class="fas fa-arrow-up text-purple-500"></i> Factores de coagulación elevados</li>
+                            <li class="flex items-center gap-2"><i class="fas fa-arrow-down text-orange-500"></i> Actividad fibrinolítica disminuida</li>
+                            <li class="flex items-center gap-2"><i class="fas fa-circle text-purple-500"></i> Hemodilución fisiológica</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 rounded-xl p-4 border border-slate-200">
+                        <h4 class="font-semibold text-slate-800 mb-2">Complicaciones</h4>
+                        <p class="text-sm text-slate-600">El estado de hipercoagulabilidad predispone a <strong>trombosis</strong> y puede evolucionar a <strong>coagulación intravascular diseminada (CID)</strong> en contexto de sepsis o preeclampsia grave.</p>
+                    </div>
+                    <div class="flex items-center gap-2 p-3 bg-purple-50 rounded-xl border border-purple-200">
+                        <i class="fas fa-exclamation-triangle text-purple-600"></i>
+                        <span class="text-sm text-purple-800">72 casos (24.8%) requirieron transfusión de hemoderivados</span>
+                    </div>
+                `
+            },
+            kidneys: {
+                title: 'Sistema Renal/Hepático',
+                subtitle: 'Filtración aumentada',
+                icon: 'fa-filter',
+                gradient: 'from-amber-500 to-amber-700',
+                color: '#f59e0b',
+                content: `
+                    <div class="bg-amber-50 rounded-xl p-4 border border-amber-100">
+                        <h4 class="font-semibold text-amber-800 mb-2">Cambios Adaptativos</h4>
+                        <ul class="space-y-2 text-sm text-amber-700">
+                            <li class="flex items-center gap-2"><i class="fas fa-arrow-up text-amber-500"></i> Filtrado glomerular: +50%</li>
+                            <li class="flex items-center gap-2"><i class="fas fa-circle text-amber-500"></i> Cambios en manejo de electrolitos</li>
+                            <li class="flex items-center gap-2"><i class="fas fa-circle text-amber-500"></i> Función hepática adaptada</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 rounded-xl p-4 border border-slate-200">
+                        <h4 class="font-semibold text-slate-800 mb-2">Síndrome HELLP</h4>
+                        <p class="text-sm text-slate-600">Variante grave de preeclampsia que combina <strong>hemólisis</strong>, <strong>elevación de enzimas hepáticas</strong> y <strong>plaquetopenia</strong>. Se presenta en 10-20% de preeclampsias graves.</p>
+                    </div>
+                    <div class="flex items-center gap-2 p-3 bg-amber-50 rounded-xl border border-amber-200">
+                        <i class="fas fa-info-circle text-amber-600"></i>
+                        <span class="text-sm text-amber-800">Compromiso hepático en 12 casos (4.1%), renal en 2 casos (0.7%)</span>
+                    </div>
+                `
+            },
+            uterus: {
+                title: 'Útero Gestante',
+                subtitle: 'Órgano central del embarazo',
+                icon: 'fa-baby',
+                gradient: 'from-pink-500 to-pink-700',
+                color: '#ec4899',
+                content: `
+                    <div class="bg-pink-50 rounded-xl p-4 border border-pink-100">
+                        <h4 class="font-semibold text-pink-800 mb-2">Complicaciones Uterinas</h4>
+                        <ul class="space-y-2 text-sm text-pink-700">
+                            <li class="flex items-center gap-2"><i class="fas fa-circle text-pink-500"></i> Atonía uterina (principal causa HPP)</li>
+                            <li class="flex items-center gap-2"><i class="fas fa-circle text-pink-500"></i> Ruptura uterina</li>
+                            <li class="flex items-center gap-2"><i class="fas fa-circle text-pink-500"></i> Inversión uterina</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 rounded-xl p-4 border border-slate-200">
+                        <h4 class="font-semibold text-slate-800 mb-2">Hemorragia Obstétrica</h4>
+                        <p class="text-sm text-slate-600">Segunda causa de MMG (20.0%). La <strong>atonía uterina</strong> representa el 70-80% de las hemorragias postparto. Solo 1.7% requirió histerectomía.</p>
+                    </div>
+                    <div class="flex items-center gap-2 p-3 bg-pink-50 rounded-xl border border-pink-200">
+                        <i class="fas fa-check-circle text-green-600"></i>
+                        <span class="text-sm text-pink-800">Manejo conservador exitoso en la mayoría de casos</span>
+                    </div>
+                `
+            }
+        };
+
+        // Initialize animations
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initial scan animation
+            runScanAnimation();
+            
+            // Setup organ interactions
+            setupOrganInteractions();
+            
+            // Animate gauges after scan
+            setTimeout(() => {
+                animateGauges();
+                showPanels();
+            }, 2500);
+        });
+
+        function runScanAnimation() {
+            const scanRect = document.getElementById('scan-rect');
+            
+            anime({
+                targets: scanRect,
+                opacity: [0, 1, 1, 0],
+                translateY: [0, 500],
+                duration: 2000,
+                easing: 'linear',
+                complete: () => {
+                    // Show gauges after scan
+                    anime({
+                        targets: '#gauges',
+                        opacity: 1,
+                        duration: 500,
+                        easing: 'easeOutQuad'
+                    });
+                }
+            });
+        }
+
+        function animateGauges() {
+            // Linear gauges in panels
+            document.querySelectorAll('.gauge-fill').forEach(gauge => {
+                const target = gauge.dataset.target;
+                gauge.style.width = target + '%';
+            });
+            
+            // Circular gauges on SVG
+            // Heart gauge (50%)
+            const heartGauge = document.getElementById('gauge-heart');
+            const circumference = 2 * Math.PI * 15;
+            heartGauge.style.strokeDashoffset = circumference * 0.5;
+            
+            // Lungs gauge (25%)
+            const lungsGauge = document.getElementById('gauge-lungs');
+            const lungCircumference = 2 * Math.PI * 12;
+            lungsGauge.style.strokeDashoffset = lungCircumference * 0.75;
+            
+            // Kidney gauge (50%)
+            const kidneyGauge = document.getElementById('gauge-kidney');
+            kidneyGauge.style.strokeDashoffset = lungCircumference * 0.5;
+        }
+
+        function showPanels() {
+            const panels = document.querySelectorAll('.data-panel');
+            panels.forEach((panel, index) => {
+                setTimeout(() => {
+                    panel.classList.add('visible');
+                }, index * 200);
+            });
+        }
+
+        function setupOrganInteractions() {
+            const organs = document.querySelectorAll('.organ-interactive');
+            
+            organs.forEach(organ => {
+                organ.addEventListener('mouseenter', () => {
+                    // Dim other organs
+                    organs.forEach(o => {
+                        if (o !== organ) {
+                            o.classList.add('organ-dimmed');
+                        }
+                    });
+                    organ.classList.add('organ-highlighted');
+                    
+                    // Highlight corresponding panel
+                    const organType = organ.dataset.organ;
+                    highlightPanel(organType);
+                });
+                
+                organ.addEventListener('mouseleave', () => {
+                    organs.forEach(o => {
+                        o.classList.remove('organ-dimmed', 'organ-highlighted');
+                    });
+                    resetPanels();
+                });
+                
+                organ.addEventListener('click', () => {
+                    const organType = organ.dataset.organ;
+                    openModal(organType);
+                });
+            });
+        }
+
+        function highlightPanel(organType) {
+            const panelMap = {
+                heart: 'panel-cardio',
+                lungs: 'panel-respiratory',
+                vessels: 'panel-hematologic',
+                kidneys: 'panel-renal'
+            };
+            
+            const panelId = panelMap[organType];
+            if (panelId) {
+                const panel = document.getElementById(panelId);
+                if (panel) {
+                    panel.style.transform = 'scale(1.05)';
+                    panel.style.boxShadow = '0 20px 40px rgba(31, 38, 135, 0.3)';
+                }
+            }
+        }
+
+        function resetPanels() {
+            document.querySelectorAll('.data-panel').forEach(panel => {
+                panel.style.transform = '';
+                panel.style.boxShadow = '';
+            });
+        }
+
+        function openModal(organType) {
+            const modal = document.getElementById('detail-modal');
+            const content = document.getElementById('modal-content');
+            const data = organData[organType];
+            
+            if (!data) return;
+            
+            // Update modal content
+            document.getElementById('modal-title').textContent = data.title;
+            document.getElementById('modal-subtitle').textContent = data.subtitle;
+            document.getElementById('modal-body').innerHTML = data.content;
+            
+            // Update icon
+            const iconContainer = document.getElementById('modal-icon');
+            iconContainer.className = `w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-to-br ${data.gradient}`;
+            iconContainer.innerHTML = `<i class="fas ${data.icon} text-white text-xl"></i>`;
+            
+            // Show modal
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
+            setTimeout(() => {
+                content.style.transform = 'scale(1)';
+                content.style.opacity = '1';
+            }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('detail-modal');
+            const content = document.getElementById('modal-content');
+            
+            content.style.transform = 'scale(0.95)';
+            content.style.opacity = '0';
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        }
+
+        // Close modal on background click
+        document.getElementById('detail-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'detail-modal') {
+                closeModal();
+            }
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

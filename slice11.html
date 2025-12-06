@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide 11 - Procedencia y Paridad | MMG HUC 2011-2020</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'huc-blue': '#1e3a8a',
+                        'huc-violet': '#8b5cf6',
+                        'huc-cyan': '#06b6d4',
+                        'huc-teal': '#0f766e',
+                        'huc-blue-light': '#3b82f6',
+                        'huc-violet-light': '#a78bfa',
+                    },
+                    fontFamily: {
+                        'montserrat': ['Montserrat', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 
+                0 8px 32px rgba(31, 38, 135, 0.1),
+                0 4px 16px rgba(0, 0, 0, 0.05),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        }
+
+        .glass-card-dark {
+            background: rgba(30, 58, 138, 0.05);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(30, 58, 138, 0.1);
+        }
+
+        .radial-ring {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+
+        .radial-ring:hover {
+            filter: drop-shadow(0 0 20px currentColor) brightness(1.1);
+            transform: scale(1.02);
+        }
+
+        .ring-glow-blue {
+            filter: drop-shadow(0 0 12px rgba(30, 58, 138, 0.6));
+        }
+
+        .ring-glow-violet {
+            filter: drop-shadow(0 0 12px rgba(139, 92, 246, 0.6));
+        }
+
+        .pictogram-icon {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        .pictogram-icon.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .tooltip-custom {
+            position: absolute;
+            background: rgba(15, 23, 42, 0.95);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            pointer-events: none;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            z-index: 100;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .tooltip-custom.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .center-info {
+            transition: all 0.3s ease;
+        }
+
+        .legend-item {
+            transition: all 0.3s ease;
+        }
+
+        .legend-item:hover {
+            transform: translateX(4px);
+        }
+
+        .parity-group {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .parity-group:hover {
+            transform: translateY(-2px);
+        }
+
+        .parity-group:hover .pictogram-container {
+            background: rgba(6, 182, 212, 0.1);
+        }
+
+        .slide-number {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            font-size: 0.75rem;
+            color: #64748b;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+        }
+
+        .header-decoration {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #1e3a8a 0%, #8b5cf6 50%, #06b6d4 100%);
+        }
+
+        @keyframes pulse-ring {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .pulse-animation {
+            animation: pulse-ring 2s ease-in-out infinite;
+        }
+
+        .stat-badge {
+            background: linear-gradient(135deg, rgba(30, 58, 138, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            border: 1px solid rgba(30, 58, 138, 0.2);
+        }
+
+        .icon-female {
+            transition: all 0.3s ease;
+        }
+
+        .icon-female:hover {
+            transform: scale(1.2);
+        }
+
+        .progress-track {
+            stroke: #e2e8f0;
+            stroke-width: 12;
+            fill: none;
+        }
+
+        .progress-bar-blue {
+            stroke: #1e3a8a;
+            stroke-width: 14;
+            fill: none;
+            stroke-linecap: round;
+        }
+
+        .progress-bar-violet {
+            stroke: #8b5cf6;
+            stroke-width: 12;
+            fill: none;
+            stroke-linecap: round;
+        }
+
+        .map-icon-container {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            box-shadow: 0 8px 32px rgba(30, 58, 138, 0.3);
+        }
+
+        .data-highlight {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(15, 118, 110, 0.15) 100%);
+            border-left: 4px solid #06b6d4;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen overflow-hidden">
+    <!-- Header Decoration -->
+    <div class="header-decoration"></div>
+
+    <!-- Main Container -->
+    <div class="w-full h-screen p-6 lg:p-8 flex flex-col">
+        
+        <!-- Header Section -->
+        <header class="mb-6 lg:mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-huc-blue to-huc-violet flex items-center justify-center">
+                            <i class="fas fa-map-marker-alt text-white text-lg"></i>
+                        </div>
+                        <span class="text-xs font-semibold text-huc-blue uppercase tracking-wider bg-blue-50 px-3 py-1 rounded-full">
+                            Caracterización Sociodemográfica
+                        </span>
+                    </div>
+                    <h1 class="text-3xl lg:text-4xl font-bold text-slate-800 tracking-tight">
+                        Procedencia y <span class="text-transparent bg-clip-text bg-gradient-to-r from-huc-blue to-huc-violet">Paridad</span>
+                    </h1>
+                    <p class="text-slate-500 mt-2 text-sm lg:text-base font-medium">
+                        Origen geográfico y carga obstétrica previa de las pacientes con MMG <span class="text-slate-400">(n=290)</span>
+                    </p>
+                </div>
+                <div class="hidden lg:flex items-center gap-2 text-xs text-slate-400">
+                    <i class="fas fa-hospital text-huc-blue"></i>
+                    <span>Hospital Universitario de Caracas | 2011-2020</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Grid -->
+        <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
+            
+            <!-- Left Panel: Procedencia -->
+            <div class="lg:col-span-5">
+                <div class="glass-card rounded-3xl p-6 lg:p-8 h-full relative overflow-hidden">
+                    <!-- Panel Header -->
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                                <i class="fas fa-globe-americas text-huc-blue"></i>
+                                Procedencia Geográfica
+                            </h2>
+                            <p class="text-xs text-slate-500 mt-1">Distribución por área de origen</p>
+                        </div>
+                        <div class="stat-badge px-3 py-1.5 rounded-full">
+                            <span class="text-xs font-semibold text-huc-blue">n=290</span>
+                        </div>
+                    </div>
+
+                    <!-- Radial Chart Container -->
+                    <div class="relative flex items-center justify-center py-4">
+                        <!-- SVG Radial Rings -->
+                        <svg viewBox="0 0 200 200" class="w-64 h-64 lg:w-72 lg:h-72 transform -rotate-90">
+                            <!-- Background Tracks -->
+                            <circle cx="100" cy="100" r="85" class="progress-track" stroke-opacity="0.3"/>
+                            <circle cx="100" cy="100" r="65" class="progress-track" stroke-opacity="0.2"/>
+                            
+                            <!-- Outer Ring: Distrito Capital (67.9%) -->
+                            <circle 
+                                id="ring-dc"
+                                cx="100" 
+                                cy="100" 
+                                r="85" 
+                                class="progress-bar-blue radial-ring cursor-pointer"
+                                stroke-dasharray="534.07"
+                                stroke-dashoffset="534.07"
+                                data-target="362.63"
+                                data-percentage="67.9"
+                                data-label="Distrito Capital"
+                                data-count="197"
+                            />
+                            
+                            <!-- Inner Ring: Miranda + Otros (32.1%) -->
+                            <circle 
+                                id="ring-miranda"
+                                cx="100" 
+                                cy="100" 
+                                r="65" 
+                                class="progress-bar-violet radial-ring cursor-pointer"
+                                stroke-dasharray="408.41"
+                                stroke-dashoffset="408.41"
+                                data-target="277.30"
+                                data-percentage="32.1"
+                                data-label="Miranda y Otros"
+                                data-count="93"
+                            />
+                        </svg>
+
+                        <!-- Center Content -->
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div id="center-content" class="text-center center-info">
+                                <div class="map-icon-container w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                                    <i id="center-icon" class="fas fa-map-marked-alt text-white text-2xl"></i>
+                                </div>
+                                <p id="center-label" class="text-sm font-semibold text-slate-700">Área de Influencia</p>
+                                <p id="center-sublabel" class="text-xs text-slate-500 mt-1">Hover para detalles</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Legend -->
+                    <div class="mt-6 space-y-3">
+                        <div class="legend-item flex items-center justify-between p-3 rounded-xl bg-blue-50/50 border border-blue-100/50 cursor-pointer" data-ring="ring-dc">
+                            <div class="flex items-center gap-3">
+                                <div class="w-4 h-4 rounded-full bg-huc-blue shadow-sm"></div>
+                                <div>
+                                    <span class="text-sm font-semibold text-slate-700">Distrito Capital</span>
+                                    <p class="text-xs text-slate-500">Caracas metropolitana</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-xl font-bold text-huc-blue">67.9%</span>
+                                <p class="text-xs text-slate-500">n=197</p>
+                            </div>
+                        </div>
+                        
+                        <div class="legend-item flex items-center justify-between p-3 rounded-xl bg-violet-50/50 border border-violet-100/50 cursor-pointer" data-ring="ring-miranda">
+                            <div class="flex items-center gap-3">
+                                <div class="w-4 h-4 rounded-full bg-huc-violet shadow-sm"></div>
+                                <div>
+                                    <span class="text-sm font-semibold text-slate-700">Miranda y Otros</span>
+                                    <p class="text-xs text-slate-500">Estados circundantes</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-xl font-bold text-huc-violet">32.1%</span>
+                                <p class="text-xs text-slate-500">n=93</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Insight Badge -->
+                    <div class="mt-4 p-3 rounded-xl bg-gradient-to-r from-blue-50 to-violet-50 border border-blue-100/50">
+                        <p class="text-xs text-slate-600 flex items-start gap-2">
+                            <i class="fas fa-info-circle text-huc-blue mt-0.5"></i>
+                            <span><strong>2 de cada 3</strong> pacientes provienen del Distrito Capital, confirmando al HUC como centro de referencia metropolitano.</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Paridad -->
+            <div class="lg:col-span-7">
+                <div class="glass-card rounded-3xl p-6 lg:p-8 h-full relative overflow-hidden">
+                    <!-- Panel Header -->
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                                <i class="fas fa-baby text-huc-cyan"></i>
+                                Paridad (Historia Obstétrica)
+                            </h2>
+                            <p class="text-xs text-slate-500 mt-1">Número de gestaciones previas al evento</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="stat-badge px-3 py-1.5 rounded-full">
+                                <span class="text-xs font-semibold text-huc-teal">Mediana: 2 partos</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pictogram Groups Container -->
+                    <div class="space-y-6">
+                        
+                        <!-- Primigestas -->
+                        <div class="parity-group" id="group-primigesta" data-info="Primer embarazo: Mayor riesgo por desconocimiento de signos de alarma">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-xl bg-cyan-100 flex items-center justify-center">
+                                        <span class="text-lg font-bold text-huc-cyan">IG</span>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-semibold text-slate-700">Primigestas</h3>
+                                        <p class="text-xs text-slate-500">Primer embarazo</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-2xl font-bold text-huc-cyan">37.2%</span>
+                                    <p class="text-xs text-slate-500">n=108</p>
+                                </div>
+                            </div>
+                            <div class="pictogram-container p-4 rounded-2xl bg-cyan-50/30 border border-cyan-100/50 transition-all">
+                                <div id="pictograms-primigesta" class="flex flex-wrap gap-1.5">
+                                    <!-- Pictograms will be generated by JS -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Multíparas (II-IV) -->
+                        <div class="parity-group" id="group-multipara" data-info="Mediana de paridad: 2 (Rango 1-6 partos). Cicatrices y complicaciones previas aumentan el riesgo.">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-xl bg-teal-100 flex items-center justify-center">
+                                        <span class="text-base font-bold text-huc-teal">II-IV</span>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-semibold text-slate-700">Multíparas</h3>
+                                        <p class="text-xs text-slate-500">2 a 4 gestaciones</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-2xl font-bold text-huc-teal">47.6%</span>
+                                    <p class="text-xs text-slate-500">n=138</p>
+                                </div>
+                            </div>
+                            <div class="pictogram-container p-4 rounded-2xl bg-teal-50/30 border border-teal-100/50 transition-all">
+                                <div id="pictograms-multipara" class="flex flex-wrap gap-1.5">
+                                    <!-- Pictograms will be generated by JS -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Gran Multíparas (V+) -->
+                        <div class="parity-group" id="group-granmultipara" data-info="Alto riesgo obstétrico: Mayor probabilidad de atonía uterina y hemorragia postparto">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center">
+                                        <span class="text-lg font-bold text-emerald-700">≥V</span>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-semibold text-slate-700">Gran Multíparas</h3>
+                                        <p class="text-xs text-slate-500">5 o más gestaciones</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-2xl font-bold text-emerald-700">15.2%</span>
+                                    <p class="text-xs text-slate-500">n=44</p>
+                                </div>
+                            </div>
+                            <div class="pictogram-container p-4 rounded-2xl bg-emerald-50/30 border border-emerald-100/50 transition-all">
+                                <div id="pictograms-granmultipara" class="flex flex-wrap gap-1.5">
+                                    <!-- Pictograms will be generated by JS -->
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Key Insight -->
+                    <div class="mt-6 data-highlight p-4 rounded-xl">
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-cyan-100 flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-exclamation-triangle text-huc-cyan"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-slate-800 text-sm">Dato Relevante</h4>
+                                <p class="text-xs text-slate-600 mt-1">
+                                    <strong class="text-huc-teal">62.8%</strong> de las pacientes (Multíparas + Gran Multíparas) tenían antecedentes obstétricos previos, 
+                                    lo que implica posibles cicatrices uterinas y mayor riesgo de complicaciones en embarazos subsecuentes.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tooltip Container -->
+                    <div id="parity-tooltip" class="tooltip-custom">
+                        <div class="flex items-center gap-2 mb-1">
+                            <i class="fas fa-info-circle text-cyan-400"></i>
+                            <span class="font-semibold" id="tooltip-title">Info</span>
+                        </div>
+                        <p id="tooltip-content" class="text-xs text-slate-300"></p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer Stats -->
+        <footer class="mt-6 lg:mt-8">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-2 text-xs text-slate-500">
+                        <i class="fas fa-database text-slate-400"></i>
+                        <span>Fuente: Historias clínicas HUC</span>
+                    </div>
+                    <div class="h-4 w-px bg-slate-300"></div>
+                    <div class="flex items-center gap-2 text-xs text-slate-500">
+                        <i class="fas fa-chart-pie text-slate-400"></i>
+                        <span>Período: 2011-2020</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-1 text-xs text-slate-400">
+                    <span>Medina Ron, Moreno Contreras</span>
+                    <span class="mx-1">•</span>
+                    <span>UCV 2025</span>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- Slide Number -->
+    <div class="slide-number">
+        <span class="text-slate-400">11</span> / <span class="text-slate-300">25</span>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // Configuration
+            const config = {
+                parityData: [
+                    { id: 'primigesta', count: 108, color: '#06b6d4', iconClass: 'text-huc-cyan' },
+                    { id: 'multipara', count: 138, color: '#0f766e', iconClass: 'text-huc-teal' },
+                    { id: 'granmultipara', count: 44, color: '#047857', iconClass: 'text-emerald-700' }
+                ],
+                iconScale: 10, // Each icon represents ~10 patients
+                animationDelay: 50
+            };
+
+            // Initialize Radial Charts
+            function initRadialCharts() {
+                const rings = document.querySelectorAll('.radial-ring');
+                
+                rings.forEach((ring, index) => {
+                    const targetOffset = parseFloat(ring.dataset.target);
+                    const circumference = parseFloat(ring.getAttribute('stroke-dasharray'));
+                    const finalOffset = circumference - (circumference * (parseFloat(ring.dataset.percentage) / 100));
+                    
+                    // Animate ring
+                    anime({
+                        targets: ring,
+                        strokeDashoffset: [circumference, finalOffset],
+                        duration: 1500,
+                        delay: index * 300,
+                        easing: 'easeOutExpo'
+                    });
+
+                    // Hover events
+                    ring.addEventListener('mouseenter', function() {
+                        updateCenterContent(
+                            ring.dataset.label,
+                            `n=${ring.dataset.count}`,
+                            ring.dataset.percentage + '%'
+                        );
+                        ring.classList.add(ring.id === 'ring-dc' ? 'ring-glow-blue' : 'ring-glow-violet');
+                    });
+
+                    ring.addEventListener('mouseleave', function() {
+                        resetCenterContent();
+                        ring.classList.remove('ring-glow-blue', 'ring-glow-violet');
+                    });
+                });
+            }
+
+            // Update center content on hover
+            function updateCenterContent(label, sublabel, percentage) {
+                const centerLabel = document.getElementById('center-label');
+                const centerSublabel = document.getElementById('center-sublabel');
+                const centerIcon = document.getElementById('center-icon');
+                
+                anime({
+                    targets: '#center-content',
+                    scale: [1, 0.9, 1],
+                    duration: 300,
+                    easing: 'easeInOutQuad'
+                });
+
+                centerLabel.innerHTML = `<span class="text-2xl font-bold">${percentage}</span>`;
+                centerSublabel.textContent = `${label} (${sublabel})`;
+                centerIcon.className = 'fas fa-users text-white text-2xl';
+            }
+
+            // Reset center content
+            function resetCenterContent() {
+                const centerLabel = document.getElementById('center-label');
+                const centerSublabel = document.getElementById('center-sublabel');
+                const centerIcon = document.getElementById('center-icon');
+                
+                centerLabel.textContent = 'Área de Influencia';
+                centerSublabel.textContent = 'Hover para detalles';
+                centerIcon.className = 'fas fa-map-marked-alt text-white text-2xl';
+            }
+
+            // Legend hover events
+            function initLegendHovers() {
+                const legendItems = document.querySelectorAll('.legend-item');
+                
+                legendItems.forEach(item => {
+                    const ringId = item.dataset.ring;
+                    const ring = document.getElementById(ringId);
+                    
+                    item.addEventListener('mouseenter', function() {
+                        if (ring) {
+                            updateCenterContent(
+                                ring.dataset.label,
+                                `n=${ring.dataset.count}`,
+                                ring.dataset.percentage + '%'
+                            );
+                            ring.classList.add(ringId === 'ring-dc' ? 'ring-glow-blue' : 'ring-glow-violet');
+                        }
+                    });
+
+                    item.addEventListener('mouseleave', function() {
+                        if (ring) {
+                            resetCenterContent();
+                            ring.classList.remove('ring-glow-blue', 'ring-glow-violet');
+                        }
+                    });
+                });
+            }
+
+            // Generate pictograms
+            function generatePictograms() {
+                config.parityData.forEach(group => {
+                    const container = document.getElementById(`pictograms-${group.id}`);
+                    const iconCount = Math.round(group.count / config.iconScale);
+                    
+                    container.innerHTML = '';
+                    
+                    for (let i = 0; i < iconCount; i++) {
+                        const icon = document.createElement('i');
+                        icon.className = `fas fa-female pictogram-icon icon-female ${group.iconClass}`;
+                        icon.style.fontSize = '1.25rem';
+                        icon.dataset.index = i;
+                        container.appendChild(icon);
+                    }
+                });
+            }
+
+            // Animate pictograms
+            function animatePictograms() {
+                config.parityData.forEach((group, groupIndex) => {
+                    const icons = document.querySelectorAll(`#pictograms-${group.id} .pictogram-icon`);
+                    
+                    icons.forEach((icon, iconIndex) => {
+                        setTimeout(() => {
+                            anime({
+                                targets: icon,
+                                opacity: [0, 1],
+                                translateY: [10, 0],
+                                duration: 300,
+                                easing: 'easeOutQuad',
+                                complete: () => {
+                                    icon.classList.add('visible');
+                                }
+                            });
+                        }, (groupIndex * 500) + (iconIndex * config.animationDelay));
+                    });
+                });
+            }
+
+            // Initialize parity group tooltips
+            function initParityTooltips() {
+                const groups = document.querySelectorAll('.parity-group');
+                const tooltip = document.getElementById('parity-tooltip');
+                const tooltipTitle = document.getElementById('tooltip-title');
+                const tooltipContent = document.getElementById('tooltip-content');
+
+                groups.forEach(group => {
+                    group.addEventListener('click', function(e) {
+                        const info = group.dataset.info;
+                        const groupName = group.querySelector('h3').textContent;
+                        
+                        tooltipTitle.textContent = groupName;
+                        tooltipContent.textContent = info;
+                        
+                        // Position tooltip
+                        const rect = group.getBoundingClientRect();
+                        const parentRect = group.closest('.glass-card').getBoundingClientRect();
+                        
+                        tooltip.style.left = `${rect.left - parentRect.left + 20}px`;
+                        tooltip.style.top = `${rect.top - parentRect.top - 80}px`;
+                        
+                        tooltip.classList.add('active');
+                        
+                        // Hide after 3 seconds
+                        setTimeout(() => {
+                            tooltip.classList.remove('active');
+                        }, 4000);
+                    });
+                });
+
+                // Close tooltip on click outside
+                document.addEventListener('click', function(e) {
+                    if (!e.target.closest('.parity-group')) {
+                        tooltip.classList.remove('active');
+                    }
+                });
+            }
+
+            // Entrance animation for cards
+            function animateEntrance() {
+                anime({
+                    targets: '.glass-card',
+                    opacity: [0, 1],
+                    translateY: [30, 0],
+                    duration: 800,
+                    delay: anime.stagger(200),
+                    easing: 'easeOutQuart'
+                });
+
+                anime({
+                    targets: 'header',
+                    opacity: [0, 1],
+                    translateY: [-20, 0],
+                    duration: 600,
+                    easing: 'easeOutQuart'
+                });
+            }
+
+            // Animate legend items
+            function animateLegendItems() {
+                anime({
+                    targets: '.legend-item',
+                    opacity: [0, 1],
+                    translateX: [-20, 0],
+                    duration: 500,
+                    delay: anime.stagger(150, { start: 1000 }),
+                    easing: 'easeOutQuad'
+                });
+            }
+
+            // Animate insight boxes
+            function animateInsights() {
+                anime({
+                    targets: '.data-highlight, .glass-card > div:last-child',
+                    opacity: [0, 1],
+                    translateY: [20, 0],
+                    duration: 600,
+                    delay: 2000,
+                    easing: 'easeOutQuad'
+                });
+            }
+
+            // Initialize all animations and interactions
+            function init() {
+                generatePictograms();
+                animateEntrance();
+                
+                setTimeout(() => {
+                    initRadialCharts();
+                    initLegendHovers();
+                }, 500);
+
+                setTimeout(() => {
+                    animatePictograms();
+                }, 1000);
+
+                setTimeout(() => {
+                    animateLegendItems();
+                }, 1200);
+
+                setTimeout(() => {
+                    initParityTooltips();
+                }, 1500);
+            }
+
+            // Run initialization
+            init();
+
+            // Add subtle floating animation to center icon
+            anime({
+                targets: '.map-icon-container',
+                translateY: [-3, 3],
+                duration: 2000,
+                direction: 'alternate',
+                loop: true,
+                easing: 'easeInOutSine'
+            });
+
+            // Keyboard navigation hint
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'ArrowRight') {
+                    // Navigate to next slide (placeholder)
+                    console.log('Navigate to next slide');
+                } else if (e.key === 'ArrowLeft') {
+                    // Navigate to previous slide (placeholder)
+                    console.log('Navigate to previous slide');
+                }
+            });
+
+        });
+    </script>
+</body>
+</html>
