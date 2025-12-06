@@ -252,6 +252,27 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
             }
 
+            // Interruptor visual: contexto institucional HUC
+            const contextGrid = document.querySelector(".huc-context-grid");
+            if (contextGrid) {
+                const toggleButtons = Array.from(contextGrid.querySelectorAll(".switch-btn"));
+                const modeBlocks = Array.from(contextGrid.querySelectorAll("[data-mode-block]"));
+
+                function setMode(mode) {
+                    contextGrid.dataset.mode = mode;
+                    toggleButtons.forEach((btn) => btn.classList.toggle("active", btn.dataset.mode === mode));
+                    modeBlocks.forEach((block) => {
+                        block.classList.toggle("active", block.dataset.modeBlock === mode);
+                    });
+                }
+
+                toggleButtons.forEach((btn) => {
+                    btn.addEventListener("click", () => setMode(btn.dataset.mode || "capacidad"));
+                });
+
+                setMode(contextGrid.dataset.mode || "capacidad");
+            }
+
             // Cerrar overlays al hacer clic fuera
             document.querySelectorAll(".overlay").forEach((overlay) => {
                 overlay.addEventListener("click", (event) => {
