@@ -676,14 +676,14 @@
         .nav-btn {
             border-radius: 999px;
             border: none;
-            padding: 8px 16px;
+            padding: 10px 13px;
             font-size: 13px;
             font-weight: 500;
             letter-spacing: 0.06em;
-            text-transform: uppercase;
+            text-transform: none;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             cursor: pointer;
             background: rgba(15, 23, 42, 0.96);
             color: #e5e7eb;
@@ -702,14 +702,51 @@
         }
 
         .slide-counter {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
             border-radius: 999px;
-            padding: 8px 13px;
-            font-size: 11px;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
+            padding: 8px 12px;
+            font-size: 12px;
+            letter-spacing: 0.08em;
             background: rgba(15, 23, 42, 0.94);
             color: #e5e7eb;
             box-shadow: 0 12px 35px rgba(15, 23, 42, 0.75);
+        }
+
+        .slide-counter .slide-input {
+            width: 64px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 6px 8px;
+            background: rgba(255, 255, 255, 0.05);
+            color: inherit;
+            font: inherit;
+            text-align: center;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .slide-counter .slide-input:focus {
+            outline: 2px solid rgba(94, 234, 212, 0.7);
+            outline-offset: 2px;
+            border-color: rgba(94, 234, 212, 0.8);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .slide-counter .slide-input::-webkit-inner-spin-button,
+        .slide-counter .slide-input::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .slide-counter .slide-input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        .slide-counter .slide-total {
+            opacity: 0.75;
+            font-weight: 600;
+            letter-spacing: 0.12em;
         }
 
         /* Nav dots laterales */

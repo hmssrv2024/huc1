@@ -20,19 +20,37 @@ document.addEventListener("DOMContentLoaded", () => {
                 prev.type = "button";
                 prev.id = "prevBtn";
                 prev.className = "nav-btn";
-                prev.innerHTML = '<span class="icon">◀</span><span>Anterior</span>';
+                prev.setAttribute("aria-label", "Slide anterior");
+                prev.innerHTML = '<span class="icon">◀</span>';
                 nav.appendChild(prev);
 
-                const counter = document.createElement("div");
-                counter.id = "slideCounter";
-                counter.className = "slide-counter";
-                nav.appendChild(counter);
+                const counterWrapper = document.createElement("div");
+                counterWrapper.className = "slide-counter";
+
+                const counterInput = document.createElement("input");
+                counterInput.type = "number";
+                counterInput.id = "slideCounter";
+                counterInput.className = "slide-input";
+                counterInput.min = "1";
+                counterInput.max = String(totalSlides);
+                counterInput.value = "1";
+                counterInput.inputMode = "numeric";
+                counterInput.setAttribute("aria-label", "Ir al número de diapositiva");
+                counterWrapper.appendChild(counterInput);
+
+                const counterTotal = document.createElement("span");
+                counterTotal.className = "slide-total";
+                counterTotal.textContent = `/ ${totalSlides}`;
+                counterWrapper.appendChild(counterTotal);
+
+                nav.appendChild(counterWrapper);
 
                 const next = document.createElement("button");
                 next.type = "button";
                 next.id = "nextBtn";
                 next.className = "nav-btn";
-                next.innerHTML = '<span>Siguiente</span><span class="icon">▶</span>';
+                next.setAttribute("aria-label", "Siguiente slide");
+                next.innerHTML = '<span class="icon">▶</span>';
                 nav.appendChild(next);
 
                 document.body.appendChild(nav);
@@ -58,7 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             function updateCounter() {
                 if (counterEl) {
-                    counterEl.textContent = `${currentIndex + 1} / ${totalSlides}`;
+                    counterEl.value = `${currentIndex + 1}`;
                 }
             }
 
@@ -182,6 +200,29 @@ document.addEventListener("DOMContentLoaded", () => {
             // Eventos de botones
             if (nextButton) nextButton.addEventListener("click", nextSlide);
             if (prevButton) prevButton.addEventListener("click", prevSlide);
+
+            if (counterEl) {
+                const goToInputSlide = () => {
+                    const value = parseInt(counterEl.value, 10);
+                    if (Number.isNaN(value)) {
+                        counterEl.value = `${currentIndex + 1}`;
+                        return;
+                    }
+
+                    const targetIndex = Math.min(Math.max(value - 1, 0), totalSlides - 1);
+                    goToSlide(targetIndex);
+                };
+
+                counterEl.addEventListener("change", goToInputSlide);
+                counterEl.addEventListener("keydown", (event) => {
+                    if (event.key === "Enter") {
+                        goToInputSlide();
+                    }
+                });
+                counterEl.addEventListener("blur", () => {
+                    counterEl.value = `${currentIndex + 1}`;
+                });
+            }
 
             // Navegación por teclado
             document.addEventListener("keydown", (e) => {
