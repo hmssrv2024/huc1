@@ -1483,7 +1483,11 @@
             justify-content: center;
             min-height: 60vh;
             max-height: calc(96vh - 90px);
-            overflow: auto;
+            overflow: hidden;
+            position: relative;
+            cursor: grab;
+            user-select: none;
+            touch-action: none;
         }
 
         .overlay-image-frame img {
@@ -1492,6 +1496,7 @@
             transition: transform 0.2s ease;
             transform-origin: center;
             cursor: zoom-in;
+            will-change: transform;
         }
 
         .overlay-image-controls {
