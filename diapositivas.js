@@ -282,10 +282,44 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
             });
 
+            const imageOverlay = document.getElementById("overlay-image-viewer");
+            const overlayImage = document.getElementById("overlayImage");
+            const overlayZoomValue = document.getElementById("overlayZoomValue");
+            let overlayZoom = 1;
+
+            const updateOverlayZoom = (value) => {
+                if (!overlayImage) return;
+                overlayZoom = Math.min(3, Math.max(0.5, value));
+                overlayImage.style.transform = `scale(${overlayZoom})`;
+                if (overlayZoomValue) overlayZoomValue.textContent = `${Math.round(overlayZoom * 100)}%`;
+            };
+
+            document.querySelectorAll("[data-image-zoom]").forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    const direction = btn.dataset.imageZoom === "in" ? 0.25 : -0.25;
+                    updateOverlayZoom(overlayZoom + direction);
+                });
+            });
+
+            if (overlayImage) {
+                overlayImage.addEventListener("click", () => {
+                    const targetZoom = overlayZoom >= 2.5 ? 1 : overlayZoom + 0.75;
+                    updateOverlayZoom(targetZoom);
+                });
+            }
+
             // Exponer funciones para botones inline
             window.openOverlay = function (id) {
                 const overlay = document.getElementById(id);
                 if (overlay) overlay.classList.add("active");
+            };
+
+            window.openImageOverlay = function (src, altText) {
+                if (!imageOverlay || !overlayImage) return;
+                overlayImage.src = src;
+                overlayImage.alt = altText || "Imagen de la diapositiva";
+                updateOverlayZoom(1);
+                imageOverlay.classList.add("active");
             };
 
             window.closeOverlay = function (id) {
