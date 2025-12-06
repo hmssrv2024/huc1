@@ -91,6 +91,18 @@
             animation: fadeInUpSlide 0.45s ease;
         }
 
+        .slide-compact {
+            padding: 32px 40px 26px;
+        }
+
+        .slide-compact .slide-title {
+            margin-bottom: 2px;
+        }
+
+        .slide-compact .slide-subtitle {
+            margin-bottom: 6px;
+        }
+
         @keyframes fadeInUpSlide {
             from {
                 opacity: 0;
@@ -1028,8 +1040,8 @@
             --mode-shadow: 0 16px 38px rgba(37, 99, 235, 0.25);
             display: grid;
             grid-template-columns: 0.95fr 1.45fr;
-            gap: 22px;
-            margin-top: 20px;
+            gap: 18px;
+            margin-top: 14px;
             align-items: stretch;
         }
 
@@ -1049,7 +1061,7 @@
             flex-direction: column;
             gap: 12px;
             color: #e2e8f0;
-            min-height: 320px;
+            min-height: 300px;
         }
 
         .huc-panel-title {
@@ -1266,6 +1278,43 @@
 
             .mode-block {
                 position: relative;
+            }
+        }
+
+        /* Evolución hospitalaria */
+
+        .evolution-layout {
+            display: grid;
+            grid-template-columns: 1.05fr 0.95fr;
+            gap: 18px;
+            margin-top: 16px;
+            align-items: start;
+        }
+
+        .evolution-col {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            min-height: 0;
+        }
+
+        .evolution-col .grid-3,
+        .evolution-col .grid-2 {
+            margin-top: 0;
+        }
+
+        .perinatal-grid {
+            align-items: stretch;
+            gap: 14px;
+        }
+
+        .perinatal-grid .stat-box {
+            height: 100%;
+        }
+
+        @media (max-width: 992px) {
+            .evolution-layout {
+                grid-template-columns: 1fr;
             }
         }
 
