@@ -196,6 +196,62 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
 
+            // Interactividad del diagrama conceptual
+            const flowNodes = Array.from(document.querySelectorAll(".flow-node"));
+            const flowTitle = document.getElementById("flowTitle");
+            const flowDescription = document.getElementById("flowDescription");
+            const flowBadge = document.getElementById("flowBadge");
+
+            const flowContent = {
+                embarazo: {
+                    title: "Embarazo (Inicio)",
+                    text: "Curso fisiológico normal.",
+                    badge: "Inicio",
+                    badgeClass: "flow-badge-primary",
+                },
+                complicacion: {
+                    title: "Complicación (Alerta)",
+                    text: "Evento agudo (Hemorragia, THE, Sepsis).",
+                    badge: "Alerta",
+                    badgeClass: "flow-badge-warning",
+                },
+                nearmiss: {
+                    title: "Near Miss (Crítico)",
+                    text: "Falla orgánica / Criterios OMS. Punto de no retorno.",
+                    badge: "Crítico",
+                    badgeClass: "flow-badge-danger",
+                },
+                sobrevida: {
+                    title: "Sobrevida (Éxito HUC)",
+                    text: "Intervención oportuna = 100% Sobrevida.",
+                    badge: "Éxito",
+                    badgeClass: "flow-badge-success",
+                },
+            };
+
+            function setFlowState(key) {
+                const data = flowContent[key];
+                if (!data || !flowTitle || !flowDescription || !flowBadge) return;
+                flowTitle.textContent = data.title;
+                flowDescription.textContent = data.text;
+                flowBadge.textContent = data.badge;
+                flowBadge.className = `flow-badge ${data.badgeClass}`;
+            }
+
+            if (flowNodes.length) {
+                const activeNode = flowNodes.find((node) => node.classList.contains("active")) || flowNodes[0];
+                if (activeNode) {
+                    setFlowState(activeNode.dataset.node || "");
+                }
+
+                flowNodes.forEach((node) => {
+                    node.addEventListener("click", () => {
+                        flowNodes.forEach((el) => el.classList.toggle("active", el === node));
+                        setFlowState(node.dataset.node || "");
+                    });
+                });
+            }
+
             // Cerrar overlays al hacer clic fuera
             document.querySelectorAll(".overlay").forEach((overlay) => {
                 overlay.addEventListener("click", (event) => {

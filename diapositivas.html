@@ -80,8 +80,93 @@
             </div>
         </section>
 
-        <!-- SLIDE 2: INTRODUCCIÓN / DEFINICIÓN -->
-        <section class="slide" data-slide="1" data-label="Introducción">
+        <!-- SLIDE 2: MARCO CONCEPTUAL -->
+        <section class="slide" data-slide="1" data-label="Marco conceptual">
+            <div class="slide-inner">
+                <div class="section-label">Marco conceptual</div>
+                <h2 class="slide-title">Ruta crítica de la morbilidad materna</h2>
+                <p class="slide-subtitle">
+                    Del curso fisiológico del embarazo a la supervivencia materna: visualizar la progresión
+                    de eventos permite anticipar complicaciones, activar alertas y evaluar la capacidad de
+                    respuesta del equipo asistencial.
+                </p>
+
+                <div class="conceptual-flow">
+                    <div class="flow-graphic" data-animate="fade-right">
+                        <div class="flow-svg-shell">
+                            <svg viewBox="0 0 960 460" height="100%" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Diagrama de flujo embarazo a sobrevida">
+                                <defs>
+                                    <marker id="arrow-primary" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="10" markerHeight="10" orient="auto">
+                                        <path d="M0,0 L10,5 L0,10 z" fill="var(--primary)" />
+                                    </marker>
+                                    <marker id="arrow-warning" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="10" markerHeight="10" orient="auto">
+                                        <path d="M0,0 L10,5 L0,10 z" fill="var(--warning)" />
+                                    </marker>
+                                    <marker id="arrow-danger" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="10" markerHeight="10" orient="auto">
+                                        <path d="M0,0 L10,5 L0,10 z" fill="var(--danger)" />
+                                    </marker>
+                                    <marker id="arrow-success" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="10" markerHeight="10" orient="auto">
+                                        <path d="M0,0 L10,5 L0,10 z" fill="var(--success)" />
+                                    </marker>
+                                </defs>
+
+                                <line x1="160" y1="230" x2="320" y2="230" class="flow-connector connector-primary" marker-end="url(#arrow-primary)" />
+                                <line x1="400" y1="230" x2="560" y2="230" class="flow-connector connector-warning" marker-end="url(#arrow-warning)" />
+                                <line x1="640" y1="230" x2="800" y2="230" class="flow-connector connector-success" marker-end="url(#arrow-success)" />
+
+                                <line x1="640" y1="260" x2="760" y2="360" class="flow-connector connector-muted" stroke-dasharray="10 10" marker-end="url(#arrow-danger)" />
+
+                                <g class="flow-node node-start active" data-node="embarazo">
+                                    <circle cx="120" cy="230" r="64" />
+                                    <text x="120" y="228" class="node-title">Embarazo</text>
+                                    <text x="120" y="252" class="node-sub">Inicio</text>
+                                </g>
+
+                                <g class="flow-node node-warning" data-node="complicacion">
+                                    <circle cx="360" cy="230" r="64" />
+                                    <text x="360" y="228" class="node-title">Complicación</text>
+                                    <text x="360" y="252" class="node-sub">Alerta</text>
+                                </g>
+
+                                <g class="flow-node node-critical" data-node="nearmiss">
+                                    <circle class="pulse-ring" cx="600" cy="230" r="82" />
+                                    <circle cx="600" cy="230" r="64" />
+                                    <text x="600" y="226" class="node-title">Near Miss</text>
+                                    <text x="600" y="250" class="node-sub">Crítico</text>
+                                </g>
+
+                                <g class="flow-node node-success" data-node="sobrevida">
+                                    <circle cx="840" cy="230" r="64" />
+                                    <text x="840" y="228" class="node-title">Sobrevida</text>
+                                    <text x="840" y="252" class="node-sub">Éxito</text>
+                                </g>
+
+                                <g class="node-muted">
+                                    <circle cx="780" cy="370" r="46" />
+                                    <text x="780" y="366" class="node-title muted">Muerte</text>
+                                    <text x="780" y="390" class="node-sub muted">Ruta evitada</text>
+                                </g>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="flow-info" data-animate="fade-left">
+                        <div class="info-card flow-info-card">
+                            <div class="flow-badge flow-badge-primary" id="flowBadge">Inicio</div>
+                            <h3 class="flow-info-title" id="flowTitle">Embarazo (Inicio)</h3>
+                            <p class="flow-info-text" id="flowDescription">Curso fisiológico normal.</p>
+                            <div class="flow-note">
+                                Haz clic en cada nodo para ver la descripción del momento crítico en la cadena de
+                                atención.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 3: INTRODUCCIÓN / DEFINICIÓN -->
+        <section class="slide" data-slide="2" data-label="Introducción">
             <div class="slide-inner">
                 <div class="section-label">Introducción</div>
                 <h2 class="slide-title">¿Qué es la morbilidad materna grave?</h2>
@@ -154,8 +239,8 @@
             </div>
         </section>
 
-        <!-- SLIDE 3: IMPORTANCIA / VIGILANCIA -->
-        <section class="slide" data-slide="2" data-label="Importancia">
+        <!-- SLIDE 4: IMPORTANCIA / VIGILANCIA -->
+        <section class="slide" data-slide="3" data-label="Importancia">
             <div class="slide-inner">
                 <div class="section-label">Marco teórico</div>
                 <h2 class="slide-title">MMG como indicador de calidad</h2>
@@ -209,8 +294,8 @@
             </div>
         </section>
 
-        <!-- SLIDE 4: ANTECEDENTES -->
-        <section class="slide" data-slide="3" data-label="Antecedentes">
+        <!-- SLIDE 5: ANTECEDENTES -->
+        <section class="slide" data-slide="4" data-label="Antecedentes">
             <div class="slide-inner">
                 <div class="section-label">Estado del arte</div>
                 <h2 class="slide-title">Antecedentes de la investigación</h2>
@@ -276,8 +361,8 @@
             </div>
         </section>
 
-        <!-- SLIDE 5: MARCO TEÓRICO / SISTEMAS -->
-        <section class="slide" data-slide="4" data-label="Marco teórico">
+        <!-- SLIDE 6: MARCO TEÓRICO / SISTEMAS -->
+        <section class="slide" data-slide="5" data-label="Marco teórico">
             <div class="slide-inner">
                 <div class="section-label">Marco teórico</div>
                 <h2 class="slide-title">De la complicación obstétrica al fallo orgánico</h2>
@@ -352,8 +437,8 @@
             </div>
         </section>
 
-        <!-- SLIDE 6: MODELO DE LAS DEMORAS -->
-        <section class="slide" data-slide="5" data-label="Demoras">
+        <!-- SLIDE 7: MODELO DE LAS DEMORAS -->
+        <section class="slide" data-slide="6" data-label="Demoras">
             <div class="slide-inner">
                 <div class="section-label">Marco conceptual</div>
                 <h2 class="slide-title">Modelo de las demoras</h2>
@@ -417,8 +502,8 @@
             </div>
         </section>
 
-        <!-- SLIDE 7: PLANTEAMIENTO DEL PROBLEMA -->
-        <section class="slide" data-slide="6" data-label="Problema">
+        <!-- SLIDE 8: PLANTEAMIENTO DEL PROBLEMA -->
+        <section class="slide" data-slide="7" data-label="Problema">
             <div class="slide-inner">
                 <div class="section-label">Contexto</div>
                 <h2 class="slide-title">Planteamiento del problema</h2>
@@ -469,8 +554,8 @@
             </div>
         </section>
 
-        <!-- SLIDE 8: JUSTIFICACIÓN -->
-        <section class="slide" data-slide="7" data-label="Justificación">
+        <!-- SLIDE 9: JUSTIFICACIÓN -->
+        <section class="slide" data-slide="8" data-label="Justificación">
             <div class="slide-inner">
                 <div class="section-label">Justificación</div>
                 <h2 class="slide-title">¿Por qué estudiar la MMG en el HUC?</h2>
@@ -520,8 +605,8 @@
             </div>
         </section>
 
-        <!-- SLIDE 9: OBJETIVOS -->
-        <section class="slide" data-slide="8" data-label="Objetivos">
+        <!-- SLIDE 10: OBJETIVOS -->
+        <section class="slide" data-slide="9" data-label="Objetivos">
             <div class="slide-inner">
                 <div class="section-label">Objetivos</div>
                 <h2 class="slide-title">Objetivos del estudio</h2>
@@ -564,8 +649,8 @@
             </div>
         </section>
 
-        <!-- SLIDE 10: MÉTODOS -->
-        <section class="slide" data-slide="9" data-label="Métodos">
+        <!-- SLIDE 11: MÉTODOS -->
+        <section class="slide" data-slide="10" data-label="Métodos">
             <div class="slide-inner">
                 <div class="section-label">Metodología</div>
                 <h2 class="slide-title">Diseño del estudio</h2>
@@ -639,8 +724,8 @@
             </div>
         </section>
 
-        <!-- SLIDE 11: FRECUENCIA Y TIPO -->
-        <section class="slide" data-slide="10" data-label="Frecuencia">
+        <!-- SLIDE 12: FRECUENCIA Y TIPO -->
+        <section class="slide" data-slide="11" data-label="Frecuencia">
             <div class="slide-inner">
                 <div class="section-label">Resultados</div>
                 <h2 class="slide-title">Frecuencia y tipo de morbilidad</h2>
@@ -683,8 +768,8 @@
             </div>
         </section>
 
-        <!-- SLIDE 12: SOCIODEMOGRÁFICAS -->
-        <section class="slide" data-slide="11" data-label="Sociodemográficas">
+        <!-- SLIDE 13: SOCIODEMOGRÁFICAS -->
+        <section class="slide" data-slide="12" data-label="Sociodemográficas">
             <div class="slide-inner">
                 <div class="section-label">Resultados</div>
                 <h2 class="slide-title">Características sociodemográficas</h2>
@@ -728,8 +813,8 @@
             </div>
         </section>
 
-        <!-- SLIDE 13: OBSTÉTRICAS Y CONTROL PRENATAL -->
-        <section class="slide" data-slide="12" data-label="Clínicas">
+        <!-- SLIDE 14: OBSTÉTRICAS Y CONTROL PRENATAL -->
+        <section class="slide" data-slide="13" data-label="Clínicas">
             <div class="slide-inner">
                 <div class="section-label">Resultados</div>
                 <h2 class="slide-title">Características obstétricas y control prenatal</h2>
@@ -841,8 +926,8 @@
             </div>
         </section>
 
-        <!-- SLIDE 14: SISTEMAS ORGÁNICOS AFECTADOS -->
-        <section class="slide" data-slide="13" data-label="Sistemas">
+        <!-- SLIDE 15: SISTEMAS ORGÁNICOS AFECTADOS -->
+        <section class="slide" data-slide="14" data-label="Sistemas">
             <div class="slide-inner">
                 <div class="section-label">Resultados</div>
                 <h2 class="slide-title">Sistemas orgánicos afectados</h2>
@@ -904,8 +989,8 @@
             </div>
         </section>
 
-        <!-- SLIDE 15: PATOLOGÍAS DIRECTAS -->
-        <section class="slide" data-slide="14" data-label="Directas">
+        <!-- SLIDE 16: PATOLOGÍAS DIRECTAS -->
+        <section class="slide" data-slide="15" data-label="Directas">
             <div class="slide-inner">
                 <div class="section-label">Resultados</div>
                 <h2 class="slide-title">Patologías obstétricas directas</h2>
@@ -948,8 +1033,8 @@
             </div>
         </section>
 
-        <!-- SLIDE 16: PATOLOGÍAS INDIRECTAS -->
-        <section class="slide" data-slide="15" data-label="Indirectas">
+        <!-- SLIDE 17: PATOLOGÍAS INDIRECTAS -->
+        <section class="slide" data-slide="16" data-label="Indirectas">
             <div class="slide-inner">
                 <div class="section-label">Resultados</div>
                 <h2 class="slide-title">Patologías obstétricas indirectas</h2>
@@ -1000,8 +1085,8 @@
             </div>
         </section>
 
-        <!-- SLIDE 17: INTERVENCIONES Y VÍA DE RESOLUCIÓN -->
-        <section class="slide" data-slide="16" data-label="Intervenciones">
+        <!-- SLIDE 18: INTERVENCIONES Y VÍA DE RESOLUCIÓN -->
+        <section class="slide" data-slide="17" data-label="Intervenciones">
             <div class="slide-inner">
                 <div class="section-label">Resultados</div>
                 <h2 class="slide-title">Intervenciones terapéuticas y vía de resolución</h2>
@@ -1086,8 +1171,8 @@
             </div>
         </section>
 
-        <!-- SLIDE 18: EVOLUCIÓN HOSPITALARIA Y PERINATAL -->
-        <section class="slide" data-slide="17" data-label="Evolución">
+        <!-- SLIDE 19: EVOLUCIÓN HOSPITALARIA Y PERINATAL -->
+        <section class="slide" data-slide="18" data-label="Evolución">
             <div class="slide-inner">
                 <div class="section-label">Resultados</div>
                 <h2 class="slide-title">Evolución hospitalaria y resultados perinatales</h2>
@@ -1220,8 +1305,8 @@
             </div>
         </section>
 
-        <!-- SLIDE 19: PARADOJA DEL HUC -->
-        <section class="slide" data-slide="18" data-label="Paradoja HUC">
+        <!-- SLIDE 20: PARADOJA DEL HUC -->
+        <section class="slide" data-slide="19" data-label="Paradoja HUC">
             <div class="slide-inner">
                 <div class="section-label">Discusión</div>
                 <h2 class="slide-title">La paradoja del HUC</h2>
@@ -1269,8 +1354,8 @@
             </div>
         </section>
 
-        <!-- SLIDE 20: CONCLUSIONES -->
-        <section class="slide" data-slide="19" data-label="Conclusiones">
+        <!-- SLIDE 21: CONCLUSIONES -->
+        <section class="slide" data-slide="20" data-label="Conclusiones">
             <div class="slide-inner">
                 <div class="section-label">Síntesis</div>
                 <h2 class="slide-title">Conclusiones principales</h2>
@@ -1314,8 +1399,8 @@
             </div>
         </section>
 
-        <!-- SLIDE 21: RECOMENDACIONES -->
-        <section class="slide" data-slide="20" data-label="Recomendaciones">
+        <!-- SLIDE 22: RECOMENDACIONES -->
+        <section class="slide" data-slide="21" data-label="Recomendaciones">
             <div class="slide-inner">
                 <div class="section-label">Propuesta</div>
                 <h2 class="slide-title">Recomendaciones</h2>
@@ -1376,8 +1461,8 @@
             </div>
         </section>
 
-        <!-- SLIDE 22: CIERRE -->
-        <section class="slide final-slide" data-slide="21" data-label="Cierre">
+        <!-- SLIDE 23: CIERRE -->
+        <section class="slide final-slide" data-slide="22" data-label="Cierre">
             <div class="slide-inner">
                 <div class="final-center">
                     <div class="section-label" style="color: #bfdbfe;">Cierre</div>
