@@ -326,13 +326,60 @@ document.addEventListener("DOMContentLoaded", () => {
             const imageOverlay = document.getElementById("overlay-image-viewer");
             const overlayImage = document.getElementById("overlayImage");
             const overlayZoomValue = document.getElementById("overlayZoomValue");
+            const overlayImageFrame = document.getElementById("overlayImageFrame");
             let overlayZoom = 1;
+            let panX = 0;
+            let panY = 0;
+            let isPanning = false;
+            let panStart = { x: 0, y: 0 };
+            let panOrigin = { x: 0, y: 0 };
+
+            const clampPan = () => {
+                if (!overlayImage || !overlayImageFrame || !overlayImage.naturalWidth || !overlayImage.naturalHeight) {
+                    panX = 0;
+                    panY = 0;
+                    return;
+                }
+
+                const frameRect = overlayImageFrame.getBoundingClientRect();
+                const baseScale = Math.min(
+                    frameRect.width / overlayImage.naturalWidth,
+                    frameRect.height / overlayImage.naturalHeight,
+                    1
+                );
+
+                const scaledWidth = overlayImage.naturalWidth * baseScale * overlayZoom;
+                const scaledHeight = overlayImage.naturalHeight * baseScale * overlayZoom;
+
+                const maxX = Math.max(0, (scaledWidth - frameRect.width) / 2);
+                const maxY = Math.max(0, (scaledHeight - frameRect.height) / 2);
+
+                panX = Math.min(maxX, Math.max(-maxX, panX));
+                panY = Math.min(maxY, Math.max(-maxY, panY));
+            };
+
+            const updateOverlayTransform = () => {
+                if (!overlayImage) return;
+
+                clampPan();
+                overlayImage.style.transform = `translate(${panX}px, ${panY}px) scale(${overlayZoom})`;
+
+                if (overlayZoomValue) overlayZoomValue.textContent = `${Math.round(overlayZoom * 100)}%`;
+
+                const shouldGrab = overlayZoom > 1;
+                overlayImage.style.cursor = shouldGrab ? (isPanning ? "grabbing" : "grab") : "zoom-in";
+            };
 
             const updateOverlayZoom = (value) => {
                 if (!overlayImage) return;
                 overlayZoom = Math.min(3, Math.max(0.5, value));
-                overlayImage.style.transform = `scale(${overlayZoom})`;
-                if (overlayZoomValue) overlayZoomValue.textContent = `${Math.round(overlayZoom * 100)}%`;
+
+                if (overlayZoom <= 1) {
+                    panX = 0;
+                    panY = 0;
+                }
+
+                updateOverlayTransform();
             };
 
             document.querySelectorAll("[data-image-zoom]").forEach((btn) => {
@@ -343,10 +390,45 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             if (overlayImage) {
+                overlayImage.addEventListener("load", () => {
+                    panX = 0;
+                    panY = 0;
+                    overlayZoom = 1;
+                    updateOverlayTransform();
+                });
+
                 overlayImage.addEventListener("click", () => {
                     const targetZoom = overlayZoom >= 2.5 ? 1 : overlayZoom + 0.75;
                     updateOverlayZoom(targetZoom);
                 });
+
+                overlayImage.addEventListener("pointerdown", (event) => {
+                    if (overlayZoom <= 1) return;
+                    isPanning = true;
+                    panStart = { x: event.clientX, y: event.clientY };
+                    panOrigin = { x: panX, y: panY };
+                    overlayImage.setPointerCapture(event.pointerId);
+                    overlayImage.style.cursor = "grabbing";
+                });
+
+                overlayImage.addEventListener("pointermove", (event) => {
+                    if (!isPanning) return;
+                    panX = panOrigin.x + (event.clientX - panStart.x);
+                    panY = panOrigin.y + (event.clientY - panStart.y);
+                    updateOverlayTransform();
+                });
+
+                const endPan = (event) => {
+                    if (!isPanning) return;
+                    isPanning = false;
+                    if (overlayImage.hasPointerCapture(event.pointerId)) {
+                        overlayImage.releasePointerCapture(event.pointerId);
+                    }
+                    updateOverlayTransform();
+                };
+
+                overlayImage.addEventListener("pointerup", endPan);
+                overlayImage.addEventListener("pointerleave", endPan);
             }
 
             // Exponer funciones para botones inline
@@ -359,7 +441,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (!imageOverlay || !overlayImage) return;
                 overlayImage.src = src;
                 overlayImage.alt = altText || "Imagen de la diapositiva";
+                panX = 0;
+                panY = 0;
+                isPanning = false;
                 updateOverlayZoom(1);
+                requestAnimationFrame(() => {
+                    updateOverlayTransform();
+                });
                 imageOverlay.classList.add("active");
             };
 
