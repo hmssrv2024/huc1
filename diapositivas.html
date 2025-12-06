@@ -437,8 +437,137 @@
             </div>
         </section>
 
-        <!-- SLIDE 7: MODELO DE LAS DEMORAS -->
-        <section class="slide" data-slide="6" data-label="Demoras">
+        <!-- SLIDE 7: CONTEXTO INSTITUCIONAL HUC -->
+        <section class="slide" data-slide="6" data-label="Contexto HUC">
+            <div class="slide-inner">
+                <div class="section-label">Contexto institucional</div>
+                <h2 class="slide-title">Contexto Institucional: HUC</h2>
+                <p class="slide-subtitle">
+                    Resiliencia de un hospital tipo IV frente a la crisis: la misma institución que sostiene la
+                    academia y la alta complejidad responde a la escasez y las fallas estructurales.
+                </p>
+
+                <div class="huc-context-grid" data-mode="capacidad">
+                    <div class="huc-panel" data-animate="fade-right">
+                        <div class="huc-panel-meta">
+                            <div class="huc-panel-title">Hospital Universitario de Caracas</div>
+                            <div class="huc-panel-subtitle">Centro de Referencia Nacional Tipo IV</div>
+                        </div>
+
+                        <div class="huc-switch" role="group" aria-label="Interruptor visual">
+                            <button class="switch-btn active" type="button" data-mode="capacidad">Capacidad</button>
+                            <div class="switch-divider" aria-hidden="true"></div>
+                            <button class="switch-btn" type="button" data-mode="desafio">Desafío</button>
+                        </div>
+
+                        <div class="mode-legend">
+                            <span class="legend-dot legend-capacidad"></span>
+                            <span class="legend-label">Excelencia institucional</span>
+                            <span class="legend-dot legend-desafio"></span>
+                            <span class="legend-label">Contexto crítico</span>
+                        </div>
+
+                        <div class="mode-blocks">
+                            <div class="mode-block active" data-mode-block="capacidad">
+                                <div class="mode-card">
+                                    <div class="mode-card-title">Academia UCV</div>
+                                    <div class="mode-card-text">Residencias, docencia y protocolos universitarios.</div>
+                                </div>
+                                <div class="mode-card">
+                                    <div class="mode-card-title">Alta Complejidad</div>
+                                    <div class="mode-card-text">Unidad de cuidados críticos y equipos de rescate.</div>
+                                </div>
+                                <div class="mode-card">
+                                    <div class="mode-card-title">Referencia Nacional</div>
+                                    <div class="mode-card-text">Casos remitidos desde la red de maternidades.</div>
+                                </div>
+                            </div>
+
+                            <div class="mode-block" data-mode-block="desafio">
+                                <div class="mode-card warning">
+                                    <div class="mode-card-title">Escasez de Insumos</div>
+                                    <div class="mode-card-text">Medicamentos, hemocomponentes y reactivos limitados.</div>
+                                </div>
+                                <div class="mode-card warning">
+                                    <div class="mode-card-title">Déficit de Personal</div>
+                                    <div class="mode-card-text">Rotación acelerada, guardias reducidas y fatiga.</div>
+                                </div>
+                                <div class="mode-card warning">
+                                    <div class="mode-card-title">Fallas Estructurales</div>
+                                    <div class="mode-card-text">Servicios públicos inestables y equipos obsoletos.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="huc-visual" data-animate="fade-left">
+                        <div class="hospital-shell">
+                            <svg viewBox="0 0 240 220" aria-label="Esquema del hospital" class="hospital-svg">
+                                <defs>
+                                    <linearGradient id="hospitalRoof" x1="0" x2="1" y1="0" y2="1">
+                                        <stop offset="0%" stop-color="var(--mode-color)" stop-opacity="0.95" />
+                                        <stop offset="100%" stop-color="var(--mode-color)" stop-opacity="0.6" />
+                                    </linearGradient>
+                                    <filter id="hospitalGlow" x="-40%" y="-40%" width="180%" height="180%">
+                                        <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur" />
+                                        <feMerge>
+                                            <feMergeNode in="blur" />
+                                            <feMergeNode in="SourceGraphic" />
+                                        </feMerge>
+                                    </filter>
+                                </defs>
+
+                                <rect x="42" y="90" width="156" height="92" rx="12" class="hospital-body" />
+                                <rect x="82" y="56" width="76" height="50" rx="10" class="hospital-top" />
+                                <path d="M64 96 L120 56 L176 96" class="hospital-roof" />
+
+                                <rect x="110" y="122" width="20" height="38" rx="6" class="hospital-door" />
+                                <rect x="78" y="116" width="18" height="18" rx="4" class="hospital-window" />
+                                <rect x="144" y="116" width="18" height="18" rx="4" class="hospital-window" />
+                                <rect x="78" y="146" width="18" height="18" rx="4" class="hospital-window" />
+                                <rect x="144" y="146" width="18" height="18" rx="4" class="hospital-window" />
+
+                                <g class="hospital-cross" filter="url(#hospitalGlow)">
+                                    <rect x="114" y="70" width="12" height="34" rx="5" />
+                                    <rect x="100" y="84" width="40" height="12" rx="5" />
+                                </g>
+
+                                <circle cx="120" cy="192" r="42" class="hospital-halo" />
+                            </svg>
+                        </div>
+
+                        <div class="mode-stats active" data-mode-block="capacidad">
+                            <div>
+                                <div class="stat-label">Casos atendidos</div>
+                                <div class="stat-number">290</div>
+                                <div class="stat-footnote">Cobertura integral en la década 2011–2020.</div>
+                            </div>
+                            <div>
+                                <div class="stat-label">Supervivencia</div>
+                                <div class="stat-number">100%</div>
+                                <div class="stat-footnote">Rescate materno pese a la gravedad de ingreso.</div>
+                            </div>
+                        </div>
+
+                        <div class="mode-stats" data-mode-block="desafio">
+                            <div>
+                                <div class="stat-label">Control prenatal</div>
+                                <div class="stat-number">86.9%</div>
+                                <div class="stat-footnote">Ingreso tardío con controles deficientes.</div>
+                            </div>
+                            <div>
+                                <div class="stat-label">Complejidad</div>
+                                <div class="stat-number">Alta</div>
+                                <div class="stat-footnote">Casos remitidos en condiciones críticas.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 8: MODELO DE LAS DEMORAS -->
+        <section class="slide" data-slide="7" data-label="Demoras">
             <div class="slide-inner">
                 <div class="section-label">Marco conceptual</div>
                 <h2 class="slide-title">Modelo de las demoras</h2>
@@ -502,8 +631,8 @@
             </div>
         </section>
 
-        <!-- SLIDE 8: PLANTEAMIENTO DEL PROBLEMA -->
-        <section class="slide" data-slide="7" data-label="Problema">
+        <!-- SLIDE 9: PLANTEAMIENTO DEL PROBLEMA -->
+        <section class="slide" data-slide="8" data-label="Problema">
             <div class="slide-inner">
                 <div class="section-label">Contexto</div>
                 <h2 class="slide-title">Planteamiento del problema</h2>
@@ -585,8 +714,8 @@
             </div>
         </section>
 
-        <!-- SLIDE 9: JUSTIFICACIÓN -->
-        <section class="slide" data-slide="8" data-label="Justificación">
+        <!-- SLIDE 10: JUSTIFICACIÓN -->
+        <section class="slide" data-slide="9" data-label="Justificación">
             <div class="slide-inner">
                 <div class="section-label">Justificación</div>
                 <h2 class="slide-title">¿Por qué estudiar la MMG en el HUC?</h2>
@@ -636,8 +765,8 @@
             </div>
         </section>
 
-        <!-- SLIDE 10: OBJETIVOS -->
-        <section class="slide" data-slide="9" data-label="Objetivos">
+        <!-- SLIDE 11: OBJETIVOS -->
+        <section class="slide" data-slide="10" data-label="Objetivos">
             <div class="slide-inner">
                 <div class="section-label">Objetivos</div>
                 <h2 class="slide-title">Objetivos del estudio</h2>
@@ -680,8 +809,8 @@
             </div>
         </section>
 
-        <!-- SLIDE 11: MÉTODOS -->
-        <section class="slide" data-slide="10" data-label="Métodos">
+        <!-- SLIDE 12: MÉTODOS -->
+        <section class="slide" data-slide="11" data-label="Métodos">
             <div class="slide-inner">
                 <div class="section-label">Metodología</div>
                 <h2 class="slide-title">Diseño del estudio</h2>
@@ -755,8 +884,8 @@
             </div>
         </section>
 
-        <!-- SLIDE 12: FRECUENCIA Y TIPO -->
-        <section class="slide" data-slide="11" data-label="Frecuencia">
+        <!-- SLIDE 13: FRECUENCIA Y TIPO -->
+        <section class="slide" data-slide="12" data-label="Frecuencia">
             <div class="slide-inner">
                 <div class="section-label">Resultados</div>
                 <h2 class="slide-title">Frecuencia y tipo de morbilidad</h2>
@@ -799,8 +928,8 @@
             </div>
         </section>
 
-        <!-- SLIDE 13: SOCIODEMOGRÁFICAS -->
-        <section class="slide" data-slide="12" data-label="Sociodemográficas">
+        <!-- SLIDE 14: SOCIODEMOGRÁFICAS -->
+        <section class="slide" data-slide="13" data-label="Sociodemográficas">
             <div class="slide-inner">
                 <div class="section-label">Resultados</div>
                 <h2 class="slide-title">Características sociodemográficas</h2>
@@ -844,8 +973,8 @@
             </div>
         </section>
 
-        <!-- SLIDE 14: OBSTÉTRICAS Y CONTROL PRENATAL -->
-        <section class="slide" data-slide="13" data-label="Clínicas">
+        <!-- SLIDE 15: OBSTÉTRICAS Y CONTROL PRENATAL -->
+        <section class="slide" data-slide="14" data-label="Clínicas">
             <div class="slide-inner">
                 <div class="section-label">Resultados</div>
                 <h2 class="slide-title">Características obstétricas y control prenatal</h2>
@@ -957,8 +1086,8 @@
             </div>
         </section>
 
-        <!-- SLIDE 15: SISTEMAS ORGÁNICOS AFECTADOS -->
-        <section class="slide" data-slide="14" data-label="Sistemas">
+        <!-- SLIDE 16: SISTEMAS ORGÁNICOS AFECTADOS -->
+        <section class="slide" data-slide="15" data-label="Sistemas">
             <div class="slide-inner">
                 <div class="section-label">Resultados</div>
                 <h2 class="slide-title">Sistemas orgánicos afectados</h2>
@@ -1020,8 +1149,8 @@
             </div>
         </section>
 
-        <!-- SLIDE 16: PATOLOGÍAS DIRECTAS -->
-        <section class="slide" data-slide="15" data-label="Directas">
+        <!-- SLIDE 17: PATOLOGÍAS DIRECTAS -->
+        <section class="slide" data-slide="16" data-label="Directas">
             <div class="slide-inner">
                 <div class="section-label">Resultados</div>
                 <h2 class="slide-title">Patologías obstétricas directas</h2>
@@ -1064,8 +1193,8 @@
             </div>
         </section>
 
-        <!-- SLIDE 17: PATOLOGÍAS INDIRECTAS -->
-        <section class="slide" data-slide="16" data-label="Indirectas">
+        <!-- SLIDE 18: PATOLOGÍAS INDIRECTAS -->
+        <section class="slide" data-slide="17" data-label="Indirectas">
             <div class="slide-inner">
                 <div class="section-label">Resultados</div>
                 <h2 class="slide-title">Patologías obstétricas indirectas</h2>
@@ -1116,8 +1245,8 @@
             </div>
         </section>
 
-        <!-- SLIDE 18: INTERVENCIONES Y VÍA DE RESOLUCIÓN -->
-        <section class="slide" data-slide="17" data-label="Intervenciones">
+        <!-- SLIDE 19: INTERVENCIONES Y VÍA DE RESOLUCIÓN -->
+        <section class="slide" data-slide="18" data-label="Intervenciones">
             <div class="slide-inner">
                 <div class="section-label">Resultados</div>
                 <h2 class="slide-title">Intervenciones terapéuticas y vía de resolución</h2>
@@ -1202,8 +1331,8 @@
             </div>
         </section>
 
-        <!-- SLIDE 19: EVOLUCIÓN HOSPITALARIA Y PERINATAL -->
-        <section class="slide" data-slide="18" data-label="Evolución">
+        <!-- SLIDE 20: EVOLUCIÓN HOSPITALARIA Y PERINATAL -->
+        <section class="slide" data-slide="19" data-label="Evolución">
             <div class="slide-inner">
                 <div class="section-label">Resultados</div>
                 <h2 class="slide-title">Evolución hospitalaria y resultados perinatales</h2>
@@ -1336,8 +1465,8 @@
             </div>
         </section>
 
-        <!-- SLIDE 20: PARADOJA DEL HUC -->
-        <section class="slide" data-slide="19" data-label="Paradoja HUC">
+        <!-- SLIDE 21: PARADOJA DEL HUC -->
+        <section class="slide" data-slide="20" data-label="Paradoja HUC">
             <div class="slide-inner">
                 <div class="section-label">Discusión</div>
                 <h2 class="slide-title">La paradoja del HUC</h2>
@@ -1385,8 +1514,8 @@
             </div>
         </section>
 
-        <!-- SLIDE 21: CONCLUSIONES -->
-        <section class="slide" data-slide="20" data-label="Conclusiones">
+        <!-- SLIDE 22: CONCLUSIONES -->
+        <section class="slide" data-slide="21" data-label="Conclusiones">
             <div class="slide-inner">
                 <div class="section-label">Síntesis</div>
                 <h2 class="slide-title">Conclusiones principales</h2>
@@ -1430,8 +1559,8 @@
             </div>
         </section>
 
-        <!-- SLIDE 22: RECOMENDACIONES -->
-        <section class="slide" data-slide="21" data-label="Recomendaciones">
+        <!-- SLIDE 23: RECOMENDACIONES -->
+        <section class="slide" data-slide="22" data-label="Recomendaciones">
             <div class="slide-inner">
                 <div class="section-label">Propuesta</div>
                 <h2 class="slide-title">Recomendaciones</h2>
