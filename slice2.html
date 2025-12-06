@@ -47,15 +47,15 @@
         }
         
         html, body {
-            height: 100%;
-            overflow: hidden;
+            min-height: 100%;
+            overflow-x: hidden;
         }
 
         body {
             font-family: 'Open Sans', sans-serif;
             background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
             min-height: 100vh;
-            overflow: hidden;
+            overflow-x: hidden;
         }
         
         .font-montserrat {
@@ -114,7 +114,7 @@
 
         .node-interactive:hover {
             filter: brightness(1.2) drop-shadow(0 0 10px currentColor);
-            transform: scale(1.15);
+            transform: scale(1.2);
         }
         
         /* Tooltip Styles */
@@ -261,7 +261,7 @@
     <div class="deco-circle w-48 h-48 bg-healthy top-1/2 -left-24 fixed"></div>
     
     <!-- Main Container -->
-    <div class="h-screen p-6 relative flex flex-col overflow-hidden">
+    <div class="min-h-screen p-6 relative flex flex-col">
         <!-- Slide Counter -->
         <div class="slide-counter fixed top-6 right-6 text-white px-4 py-2 rounded-full font-montserrat font-bold text-sm shadow-lg z-50">
             <i class="fas fa-presentation-screen mr-2"></i>02 / 15
@@ -317,7 +317,7 @@
         </header>
         
         <!-- Main Content: Split Screen -->
-        <main class="max-w-7xl mx-auto flex-1 w-full flex flex-col overflow-hidden">
+        <main class="max-w-7xl mx-auto flex-1 w-full flex flex-col overflow-visible">
             <div class="flex flex-col lg:flex-row gap-6 h-full min-h-0">
                 
                 <!-- Left Panel: Interactive SVG (70%) -->
@@ -592,7 +592,7 @@
                 </div>
                 
                 <!-- Right Panel: Dynamic Information (30%) -->
-                <div class="lg:w-[30%] glass-panel rounded-2xl p-4 relative overflow-y-auto h-full bg-white/70 min-h-0" id="info-panel">
+                <div class="lg:w-[30%] glass-panel rounded-2xl p-4 relative bg-white/70" id="info-panel">
                     
                     <!-- Panel Header -->
                     <div class="flex items-center justify-between mb-6">
