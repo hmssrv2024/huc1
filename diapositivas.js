@@ -262,10 +262,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     badge: "Crítico",
                     badgeClass: "flow-badge-danger",
                 },
-                sobrevida: {
-                    title: "Sobrevida (Éxito HUC)",
-                    text: "Intervención oportuna = 100% Sobrevida.",
-                    badge: "Éxito",
+                egresovivo: {
+                    title: "Egreso Vivo (Rescate)",
+                    text: "Intervención crítica efectiva = Letalidad Nula.",
+                    badge: "Rescate",
                     badgeClass: "flow-badge-success",
                 },
             };
