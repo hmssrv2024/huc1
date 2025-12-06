@@ -103,6 +103,19 @@
             margin-bottom: 6px;
         }
 
+        .slide-dense {
+            padding: 30px 36px 22px;
+            gap: 6px;
+        }
+
+        .slide-dense .slide-title {
+            margin-bottom: 4px;
+        }
+
+        .slide-dense .slide-subtitle {
+            margin-bottom: 8px;
+        }
+
         @keyframes fadeInUpSlide {
             from {
                 opacity: 0;
@@ -1040,8 +1053,8 @@
             --mode-shadow: 0 16px 38px rgba(37, 99, 235, 0.25);
             display: grid;
             grid-template-columns: 0.95fr 1.45fr;
-            gap: 18px;
-            margin-top: 14px;
+            gap: 14px;
+            margin-top: 10px;
             align-items: stretch;
         }
 
@@ -1055,13 +1068,13 @@
             background: linear-gradient(150deg, rgba(15, 23, 42, 0.88), rgba(14, 165, 233, 0.08));
             border: 1px solid rgba(148, 163, 184, 0.25);
             border-radius: 18px;
-            padding: 16px;
+            padding: 14px;
             box-shadow: var(--shadow-sm);
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
             color: #e2e8f0;
-            min-height: 300px;
+            min-height: 280px;
         }
 
         .huc-panel-title {
@@ -1184,11 +1197,11 @@
             background: linear-gradient(145deg, #f8fafc, #e2e8f0);
             border-radius: 18px;
             border: 1px solid var(--border);
-            padding: 14px;
+            padding: 12px;
             box-shadow: var(--shadow-sm);
             display: grid;
             grid-template-rows: minmax(0, 1fr) auto;
-            gap: 14px;
+            gap: 12px;
         }
 
         .hospital-shell {
@@ -1286,15 +1299,15 @@
         .evolution-layout {
             display: grid;
             grid-template-columns: 1.05fr 0.95fr;
-            gap: 18px;
-            margin-top: 16px;
+            gap: 14px;
+            margin-top: 12px;
             align-items: start;
         }
 
         .evolution-col {
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 12px;
             min-height: 0;
         }
 
