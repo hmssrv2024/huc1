@@ -508,45 +508,76 @@
                 <div class="section-label">Contexto</div>
                 <h2 class="slide-title">Planteamiento del problema</h2>
                 <p class="slide-subtitle">
-                    La MMG tiene alta frecuencia y graves implicaciones, pero su caracterización sistemática en
-                    el HUC era limitada antes de este estudio.
+                    Desde la magnitud global de la MMG hasta el vacío local en el HUC: ¿cómo luce el mapa
+                    hospitalario cuando falta un nodo clave de información?
                 </p>
 
-                <div class="grid-2">
-                    <div>
-                        <div class="info-card" data-animate="fade-right">
-                            <h3>Magnitud del problema</h3>
+                <div class="grid-2 problem-grid">
+                    <div class="problem-column" data-animate="fade-right">
+                        <div class="info-card embudo-card">
+                            <div class="embudo-label">Mundo / Región</div>
+                            <h3>Panorama general</h3>
                             <p>
-                                A nivel global, la MMG afecta entre
-                                <strong>0,7&nbsp;% y 8,2&nbsp;% de los embarazos</strong>,
-                                con variaciones importantes según el acceso y la calidad de la atención. En entornos
-                                de recursos limitados, las mujeres suelen llegar tardíamente a los centros
-                                hospitalarios, ya en condición crítica.
+                                MMG afecta <strong>0,7–8,2&nbsp;%</strong> de embarazos. Latinoamérica mantiene tasas altas
+                                por inequidad en el acceso y la calidad de la atención.
                             </p>
-                            <p style="margin-top: 6px;">
-                                En Venezuela, la crisis humanitaria compleja ha tensionado la red de maternidades y
-                                hospitales universitarios, aumentando la probabilidad de complicaciones graves sin
-                                atención oportuna.
+                        </div>
+                        <div class="info-card embudo-card">
+                            <div class="embudo-label">Venezuela (Crisis)</div>
+                            <h3>Red en tensión</h3>
+                            <p>
+                                Crisis humanitaria compleja con escasez de insumos y fuga de talento. Falta de boletines
+                                oficiales actualizados.
+                            </p>
+                        </div>
+                        <div class="info-card embudo-card">
+                            <div class="embudo-label">Caracas (El vacío)</div>
+                            <h3>Brecha local</h3>
+                            <p>
+                                Existen datos recientes de la <strong>MCP (2019)</strong> y <strong>Pérez Carreño (2023)</strong>,
+                                pero <strong>no del HUC</strong>.
                             </p>
                         </div>
                     </div>
 
-                    <div>
-                        <div class="highlight-box" data-animate="fade-left">
-                            <h3>Pregunta de investigación</h3>
-                            <p>
-                                <strong>¿Cuáles son las características epidemiológicas, clínicas y evolutivas de la
-                                    morbilidad materna grave en el Servicio de Obstetricia del Hospital
-                                    Universitario de Caracas durante el período 2011–2020?</strong>
-                            </p>
-                        </div>
+                    <div class="problem-column" data-animate="fade-left">
+                        <div class="network-card">
+                            <div class="network-shell">
+                                <svg viewBox="0 0 360 280" role="img" aria-label="Mapa simplificado de red hospitalaria">
+                                    <defs>
+                                        <linearGradient id="nodeGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+                                            <stop offset="0%" stop-color="var(--secondary)" stop-opacity="0.9" />
+                                            <stop offset="100%" stop-color="var(--primary)" stop-opacity="0.85" />
+                                        </linearGradient>
+                                    </defs>
 
-                        <div class="stat-box" style="margin-top: 16px;" data-animate="fade-left">
-                            <div class="stat-number">Centro de referencia nacional</div>
-                            <div class="stat-label">Rol del HUC</div>
-                            <div class="stat-footnote">
-                                Atiende casos complejos provenientes de Distrito Capital, Miranda y otros estados,
-                                lo que hace indispensable conocer el perfil de MMG que recibe.
+                                    <line x1="90" y1="210" x2="270" y2="80" class="network-connector" />
+                                    <line x1="270" y1="80" x2="240" y2="220" class="network-connector" />
+                                    <line x1="90" y1="210" x2="240" y2="220" class="network-connector" />
+
+                                    <g class="network-node node-verified" transform="translate(90 210)">
+                                        <circle r="34" />
+                                        <text class="node-code" dy="-6">MCP</text>
+                                        <text class="node-status" dy="14">Datos ✔</text>
+                                    </g>
+
+                                    <g class="network-node node-verified" transform="translate(270 80)">
+                                        <circle r="34" />
+                                        <text class="node-code" dy="-6">HPC</text>
+                                        <text class="node-status" dy="14">Datos ✔</text>
+                                    </g>
+
+                                    <g class="network-node node-pending" transform="translate(240 220)">
+                                        <circle class="pending-pulse" r="40" />
+                                        <circle r="32" />
+                                        <text class="node-code" dy="-4">HUC</text>
+                                        <text class="node-status" dy="16">¿Datos?</text>
+                                        <text class="node-mark" dy="36">?</text>
+                                    </g>
+                                </svg>
+                            </div>
+                            <div class="research-question">
+                                ¿Cuáles son las características de la MMG en el HUC (2011–2020)?
                             </div>
                         </div>
                     </div>
