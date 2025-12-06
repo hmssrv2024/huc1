@@ -46,11 +46,16 @@
             box-sizing: border-box;
         }
         
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+
         body {
             font-family: 'Open Sans', sans-serif;
             background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
             min-height: 100vh;
-            overflow-x: hidden;
+            overflow: hidden;
         }
         
         .font-montserrat {
@@ -256,14 +261,14 @@
     <div class="deco-circle w-48 h-48 bg-healthy top-1/2 -left-24 fixed"></div>
     
     <!-- Main Container -->
-    <div class="min-h-screen p-6 relative">
+    <div class="h-screen p-6 relative flex flex-col overflow-hidden">
         <!-- Slide Counter -->
         <div class="slide-counter fixed top-6 right-6 text-white px-4 py-2 rounded-full font-montserrat font-bold text-sm shadow-lg z-50">
             <i class="fas fa-presentation-screen mr-2"></i>02 / 15
         </div>
         
         <!-- Header Section -->
-        <header class="max-w-7xl mx-auto mb-8">
+        <header class="max-w-7xl mx-auto mb-6 flex-shrink-0">
             <div class="glass-panel rounded-2xl p-8 relative overflow-hidden">
                 <!-- Header Accent Line -->
                 <div class="header-accent w-32 mb-6"></div>
@@ -312,11 +317,11 @@
         </header>
         
         <!-- Main Content: Split Screen -->
-        <main class="max-w-7xl mx-auto">
-            <div class="flex flex-col lg:flex-row gap-6">
+        <main class="max-w-7xl mx-auto flex-1 w-full flex flex-col overflow-hidden">
+            <div class="flex flex-col lg:flex-row gap-6 h-full min-h-0">
                 
                 <!-- Left Panel: Interactive SVG (70%) -->
-                <div class="lg:w-[70%] glass-panel rounded-2xl p-6 relative" id="svg-container">
+                <div class="lg:w-[70%] glass-panel rounded-2xl p-4 relative flex flex-col overflow-hidden min-h-0" id="svg-container">
                     <div class="flex items-center justify-between mb-4">
                         <h2 class="font-montserrat text-xl font-semibold text-primary">
                             <i class="fas fa-route mr-2 text-secondary"></i>
@@ -328,7 +333,7 @@
                     </div>
                     
                     <!-- SVG Diagram -->
-                    <svg id="flowchart" viewBox="0 0 900 450" class="w-full h-auto" preserveAspectRatio="xMidYMid meet">
+                    <svg id="flowchart" viewBox="0 0 900 450" class="w-full flex-1" preserveAspectRatio="xMidYMid meet">
                         <defs>
                             <!-- Gradients -->
                             <linearGradient id="gradHealthy" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -587,7 +592,7 @@
                 </div>
                 
                 <!-- Right Panel: Dynamic Information (30%) -->
-                <div class="lg:w-[30%] glass-panel rounded-2xl p-6 relative overflow-hidden min-h-[500px]" id="info-panel">
+                <div class="lg:w-[30%] glass-panel rounded-2xl p-4 relative overflow-y-auto h-full bg-white/70 min-h-0" id="info-panel">
                     
                     <!-- Panel Header -->
                     <div class="flex items-center justify-between mb-6">
