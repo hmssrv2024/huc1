@@ -419,6 +419,159 @@
             line-height: 1.6;
         }
 
+        /* Planteamiento del problema */
+
+        .problem-grid {
+            align-items: stretch;
+        }
+
+        .problem-column {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            height: 100%;
+        }
+
+        .embudo-card {
+            background: linear-gradient(165deg, rgba(37, 99, 235, 0.12), rgba(15, 23, 42, 0.85));
+            border: 1px solid rgba(37, 99, 235, 0.35);
+            color: #e2e8f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .embudo-card h3 {
+            color: #e2e8f0;
+        }
+
+        .embudo-card p {
+            color: rgba(226, 232, 240, 0.82);
+        }
+
+        .embudo-label {
+            display: inline-flex;
+            align-self: flex-start;
+            padding: 6px 10px;
+            background: rgba(14, 165, 233, 0.15);
+            border: 1px solid rgba(14, 165, 233, 0.35);
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            color: #e0f2fe;
+            margin-bottom: 10px;
+        }
+
+        .network-card {
+            background: linear-gradient(150deg, var(--bg-alt), #0b1224 55%, rgba(30, 64, 175, 0.55));
+            border: 1px solid rgba(37, 99, 235, 0.35);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            height: 100%;
+        }
+
+        .network-shell {
+            background: rgba(15, 23, 42, 0.45);
+            border: 1px solid rgba(14, 165, 233, 0.24);
+            border-radius: 12px;
+            padding: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 220px;
+            max-height: 320px;
+        }
+
+        .network-shell svg {
+            width: 100%;
+            height: 100%;
+            max-height: 280px;
+        }
+
+        .network-connector {
+            stroke: rgba(125, 211, 252, 0.65);
+            stroke-width: 6px;
+            stroke-linecap: round;
+            fill: none;
+        }
+
+        .network-node text {
+            fill: #e2e8f0;
+            text-anchor: middle;
+            font-family: "Inter", system-ui, -apple-system, sans-serif;
+            pointer-events: none;
+        }
+
+        .node-code {
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .node-status {
+            font-size: 11px;
+            letter-spacing: 0.02em;
+            fill: #cbd5e1;
+        }
+
+        .node-verified circle {
+            fill: url(#nodeGlow);
+            stroke: rgba(14, 165, 233, 0.55);
+            stroke-width: 3px;
+        }
+
+        .node-pending circle {
+            fill: var(--bg-alt);
+            stroke: rgba(249, 115, 22, 0.75);
+            stroke-width: 3px;
+        }
+
+        .pending-pulse {
+            fill: none;
+            stroke: rgba(249, 115, 22, 0.45);
+            stroke-width: 2px;
+            animation: pulseRing 2.4s ease-in-out infinite;
+        }
+
+        .node-mark {
+            font-size: 26px;
+            font-weight: 800;
+            fill: var(--accent);
+        }
+
+        @keyframes pulseRing {
+            0% {
+                r: 24px;
+                opacity: 0.9;
+            }
+
+            70% {
+                r: 46px;
+                opacity: 0.08;
+            }
+
+            100% {
+                r: 24px;
+                opacity: 0.9;
+            }
+        }
+
+        .research-question {
+            background: rgba(14, 165, 233, 0.12);
+            border: 1px solid rgba(37, 99, 235, 0.25);
+            color: #e2e8f0;
+            border-radius: 12px;
+            padding: 12px 14px;
+            font-weight: 700;
+            text-align: center;
+            font-size: 14px;
+            line-height: 1.5;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+        }
+
         .highlight-box {
             border-radius: 18px;
             padding: 16px 18px;
